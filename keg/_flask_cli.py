@@ -394,10 +394,12 @@ def run_command(info, host, port, reload, debugger, eager_loading,
     Flask is enabled and disabled otherwise.
     """
     from werkzeug.serving import run_simple
+
+    kegapp = info.load_app()
     if reload is None:
-        reload = info.debug
+        reload = kegapp.debug
     if debugger is None:
-        debugger = info.debug
+        debugger = kegapp.debug
     if eager_loading is None:
         eager_loading = not reload
 

@@ -10,11 +10,12 @@ import appdirs
 import flask
 from werkzeug.utils import ImportStringError
 
-import keg.blueprint
+from keg.blueprints import keg as kegbp
 import keg.cli
 import keg.config
 import keg.compat as compat
 from keg.utils import ensure_dirs
+import keg.web
 
 
 class KegError(Exception):
@@ -24,6 +25,7 @@ class KegError(Exception):
 class Keg(flask.Flask):
     import_name = None
     use_blueprints = []
+    oauth_providers = []
 
     @classmethod
     def create_app(cls, config_profile, *args, **kwargs):
@@ -36,7 +38,9 @@ class Keg(flask.Flask):
     def init(self, config_profile):
         self.dirs = appdirs.AppDirs(self.import_name, appauthor=False, multipath=True)
         self.init_config(config_profile)
+        self.init_oath()
         self.init_blueprints()
+        self.init_error_handling()
         if not self.testing:
             self.init_logging()
 
@@ -54,10 +58,9 @@ class Keg(flask.Flask):
         self.config['KEG_LOG_DEBUG_FPATH'] = osp.join(self.dirs.user_log_dir,
                                                       '{}-debug.log'.format(self.import_name))
 
-        # lock it down by default
-        self.config['KEG_DIRS_MODE'] = 0o700
-
         possible_config_objs = [
+            # Keg's defaults
+            'keg.config:Default',
             # Keg's defaults for the selected profile
             'keg.config:{}'.format(profile),
             # App defaults for all profiles
@@ -76,7 +79,7 @@ class Keg(flask.Flask):
                     self.config.from_object(configobj)
 
     def init_blueprints(self):
-        self.register_blueprint(keg.blueprint.keg)
+        self.register_blueprint(kegbp)
         for blueprint in self.use_blueprints:
             self.register_blueprint(blueprint)
 
@@ -111,6 +114,19 @@ class Keg(flask.Flask):
         generic_errors = range(500, 506)
         for err in generic_errors:
             self.errorhandler(err)(self.handle_server_error)
+
+        # utility to abort responses
+        self.errorhandler(keg.web.ImmediateResponse)(keg.web.handle_immediate_response)
+
+    def init_oath(self):
+        # if no providers are listed, then we don't need to do anything else
+        if not self.oauth_providers:
+            return
+
+        from keg.oauth import oauthlib, bp, manager
+        self.register_blueprint(bp)
+        oauthlib.init_app(self)
+        manager.register_providers(self.oauth_providers)
 
     def handle_server_error(self, error):
         #shousend_exception_email()

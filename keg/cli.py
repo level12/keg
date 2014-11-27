@@ -13,6 +13,7 @@ class KegGroup(FlaskGroup):
         FlaskGroup.__init__(self, add_default_commands, *args, **kwargs)
         if add_default_commands:
             self.add_command(routes_command)
+            self.add_command(config_command)
 
 
 @click.command('routes', short_help='List the routes defined for this app.')
@@ -35,6 +36,17 @@ def routes_command():
 
     for line in sorted(output):
         print(line)
+
+
+@click.command('config', short_help='List all configuration values.')
+@with_appcontext
+def config_command():
+    config = flask.current_app.config
+    keys = config.keys()
+    keys.sort()
+
+    for key in keys:
+        print('{} = {}'.format(key, config[key]))
 
 
 def init_app_cli(appcls):

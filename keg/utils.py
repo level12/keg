@@ -1,4 +1,10 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
+import sys
+
 import flask
+from flask._compat import reraise
 import pathlib
 
 
@@ -23,3 +29,8 @@ def ensure_dirs(newdir, mode=NotGiven):
                       " directory, '{}', already exists.".format(dpath))
     ensure_dirs(dpath.parent, mode=mode)
     dpath.mkdir(mode)
+
+
+def reraise_lastexc():
+    exc_type, exc_value, tb = sys.exc_info()
+    reraise(exc_type, exc_value, tb)

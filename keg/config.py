@@ -26,9 +26,19 @@ def config_files(app):
     return fpaths
 
 
+class Default(object):
+    # lock it down by default
+    KEG_DIRS_MODE = 0o700
+    KEG_ENDPOINTS = dict(
+        home='public.home',
+        login='public.home',
+        after_login='public.home',
+        after_logout='public.home',
+    )
+
+
 class Dev(object):
     DEBUG = True
-    TESTING = False
 
 
 class Test(object):
