@@ -1,0 +1,5 @@
+syntax: glob
+*.komodo*
+*.pyc
+*.egg-info
+.noseids
