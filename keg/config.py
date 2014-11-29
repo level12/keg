@@ -4,26 +4,33 @@ from __future__ import unicode_literals
 import os.path as osp
 
 import appdirs
+import flask
 
 
-def config_files(app):
-    dirs = app.dirs
+class ConfigurationError(Exception):
+    pass
 
-    config_fname = '{}.py'.format(app.import_name)
 
-    dpaths = []
-    if appdirs.system != 'win32':
-        dpaths.extend(dirs.site_config_dir.split(':'))
-        dpaths.append('/etc/{}'.format(app.import_name))
-    else:
-        dpaths.append(dirs.site_config_dir)
-    dpaths.append(dirs.user_config_dir)
+class Config(flask.Config):
 
-    fpaths = map(lambda dpath: osp.join(dpath, config_fname), dpaths)
+    def config_files(self, app):
+        dirs = app.dirs
 
-    fpaths.append(osp.join(osp.dirname(app.root_path), '{}-config.py'.format(app.import_name)))
+        config_fname = '{}.py'.format(app.import_name)
 
-    return fpaths
+        dpaths = []
+        if appdirs.system != 'win32':
+            dpaths.extend(dirs.site_config_dir.split(':'))
+            dpaths.append('/etc/{}'.format(app.import_name))
+        else:
+            dpaths.append(dirs.site_config_dir)
+        dpaths.append(dirs.user_config_dir)
+
+        fpaths = map(lambda dpath: osp.join(dpath, config_fname), dpaths)
+
+        fpaths.append(osp.join(osp.dirname(app.root_path), '{}-config.py'.format(app.import_name)))
+
+        return fpaths
 
 
 class Default(object):

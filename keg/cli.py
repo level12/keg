@@ -14,6 +14,8 @@ class KegGroup(FlaskGroup):
         if add_default_commands:
             self.add_command(routes_command)
             self.add_command(config_command)
+            self.add_command(keyring_command)
+            self.add_command(keyring_setup_command)
 
 
 @click.command('routes', short_help='List the routes defined for this app.')
@@ -35,7 +37,7 @@ def routes_command():
         output.append(line)
 
     for line in sorted(output):
-        print(line)
+        click.echo(line)
 
 
 @click.command('config', short_help='List all configuration values.')
@@ -46,7 +48,51 @@ def config_command():
     keys.sort()
 
     for key in keys:
-        print('{} = {}'.format(key, config[key]))
+        click.echo('{} = {}'.format(key, config[key]))
+
+
+@click.command('keyring', short_help='List keyring info')
+@click.option('--unavailable', default=False, is_flag=True,
+              help='Show unavailable backends with reasons.')
+@with_appcontext
+def keyring_command(unavailable):
+    import keyring
+    import keyring.backend as kb
+    viable = kb.get_all_keyring()
+
+    # call get_all_keyring() before this so we are sure all keyrings are loaded
+    # on KeyringBackend
+    if unavailable:
+        click.echo('Unavailable backends')
+        for cls in kb.KeyringBackend._classes:
+            try:
+                cls.priority
+            except Exception as e:
+                click.echo('    {0.__module__}:{0.__name__} - {1}'.format(cls, e))
+
+    click.echo('Available backends (backends with priority < 1 are not'
+               ' recommended and may be insecure')
+    for backend in viable:
+        click.echo('    {0.__module__}:{0.__name__} (priority: {1})'
+                   .format(backend.__class__, backend.priority))
+
+    click.echo('Default backend')
+    backend = keyring.get_keyring()
+    click.echo('    {0.__module__}:{0.__name__}'.format(backend.__class__))
+    if hasattr(backend, 'file_path'):
+        click.echo('    file path: {}'.format(backend.file_path))
+    if not flask.current_app.keyring_manager.verify_backend():
+        click.echo('WARNING: the current backend is not recommended,'
+                   ' keyring substitution unavailable.')
+        click.echo('\n---> You can try this app\'s keyring-setup command to fix this. <---')
+
+
+@click.command('keyring-setup', short_help='Attempt to setup your virtualenv for keyring support')
+@with_appcontext
+def keyring_setup_command():
+    flask.current_app.keyring_manager.venv_link_backend()
+    click.echo('Keyring setup attempted, check log messages and the output from the keyring'
+               ' command to verify status.')
 
 
 def init_app_cli(appcls):

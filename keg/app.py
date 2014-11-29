@@ -26,6 +26,24 @@ class Keg(flask.Flask):
     import_name = None
     use_blueprints = []
     oauth_providers = []
+    keyring_sub_enabled = True
+    config_class = keg.config.Config
+    keyring_manager_class = None
+
+    def __init__(self, *args, **kwargs):
+        flask.Flask.__init__(self, *args, **kwargs)
+        from keg._flask_cli import AppGroup
+        self.cli = AppGroup(self)
+
+    def make_config(self, instance_relative=False):
+        """
+            Needed for Flask <= 10.x so we can set the configuration class
+            being used.
+        """
+        root_path = self.root_path
+        if instance_relative:
+            root_path = self.instance_path
+        return self.config_class(root_path, self.default_config)
 
     @classmethod
     def create_app(cls, config_profile, *args, **kwargs):
@@ -38,11 +56,12 @@ class Keg(flask.Flask):
     def init(self, config_profile):
         self.dirs = appdirs.AppDirs(self.import_name, appauthor=False, multipath=True)
         self.init_config(config_profile)
+        if not self.testing:
+            self.init_logging()
+        self.init_keyring()
         self.init_oath()
         self.init_blueprints()
         self.init_error_handling()
-        if not self.testing:
-            self.init_logging()
 
     def _config_from_obj_location(self, obj_location):
         try:
@@ -72,11 +91,19 @@ class Keg(flask.Flask):
             self._config_from_obj_location(obj_location)
 
         # apply settings from any of this app's configuration files
-        for fpath in keg.config.config_files(self):
+        for fpath in self.config.config_files(self):
             if osp.isfile(fpath):
                 configobj = compat.object_from_source(fpath, profile)
                 if configobj:
                     self.config.from_object(configobj)
+
+    def init_keyring(self):
+        self.keyring_manager = None
+        # do keyring substitution
+        if self.keyring_sub_enabled:
+            from keg.keyring import Manager
+            self.keyring_manager = Manager(self)
+            self.keyring_manager.substitute(self.config)
 
     def init_blueprints(self):
         self.register_blueprint(kegbp)
@@ -84,6 +111,9 @@ class Keg(flask.Flask):
             self.register_blueprint(blueprint)
 
     def init_logging(self):
+        # adjust Flask's default logging for the application logger to not include debugging
+        self.logger.handlers[0].setLevel(logging.INFO)
+
         dirs_mode = self.config['KEG_DIRS_MODE']
         ensure_dirs(Path(self.config['KEG_LOG_INFO_FPATH']).parent, dirs_mode)
         ensure_dirs(Path(self.config['KEG_LOG_DEBUG_FPATH']).parent, dirs_mode)
@@ -105,7 +135,6 @@ class Keg(flask.Flask):
 
         for logger in loggers:
             logger.setLevel(logging.DEBUG)
-            logger.handlers = []
             logger.addHandler(info_file_handler)
             logger.addHandler(debug_file_handler)
 
