@@ -33,6 +33,7 @@ class Config(flask.Config):
         return fpaths
 
 
+# The following three classes are default configuration profiles
 class Default(object):
     # lock it down by default
     KEG_DIRS_MODE = 0o700
@@ -42,6 +43,7 @@ class Default(object):
         after_login='public.home',
         after_logout='public.home',
     )
+    KEG_KEYRING_ENABLE = True
 
 
 class Dev(object):

@@ -16,6 +16,8 @@ class KegGroup(FlaskGroup):
             self.add_command(config_command)
             self.add_command(keyring_command)
             self.add_command(keyring_setup_command)
+            self.add_command(keyring_keys_command)
+            self.add_command(keyring_delete_command)
 
 
 @click.command('routes', short_help='List the routes defined for this app.')
@@ -93,6 +95,21 @@ def keyring_setup_command():
     flask.current_app.keyring_manager.venv_link_backend()
     click.echo('Keyring setup attempted, check log messages and the output from the keyring'
                ' command to verify status.')
+
+
+@click.command('keyring-keys', short_help='Show all keys used in substitution')
+@with_appcontext
+def keyring_keys_command():
+    km = flask.current_app.keyring_manager
+    for key in sorted(km.sub_keys_seen):
+        click.echo(key)
+
+
+@click.command('keyring-delete', short_help='Delete an entry from the keyring.')
+@click.argument('key')
+@with_appcontext
+def keyring_delete_command(key):
+    flask.current_app.keyring_manager.delete(key)
 
 
 def init_app_cli(appcls):

@@ -5,9 +5,11 @@ import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 import os.path as osp
+import warnings
 
 import appdirs
 import flask
+from flask.config import ConfigAttribute
 from werkzeug.utils import ImportStringError
 
 from keg.blueprints import keg as kegbp
@@ -26,7 +28,7 @@ class Keg(flask.Flask):
     import_name = None
     use_blueprints = []
     oauth_providers = []
-    keyring_sub_enabled = True
+    keyring_enabled = ConfigAttribute('KEG_KEYRING_ENABLE')
     config_class = keg.config.Config
     keyring_manager_class = None
 
@@ -37,8 +39,8 @@ class Keg(flask.Flask):
 
     def make_config(self, instance_relative=False):
         """
-            Needed for Flask <= 10.x so we can set the configuration class
-            being used.
+            Needed for Flask <= 0.10.x so we can set the configuration class
+            being used.  Once 0.11 comes out, Flask supports setting the config_class on the app.
         """
         root_path = self.root_path
         if instance_relative:
@@ -100,8 +102,15 @@ class Keg(flask.Flask):
     def init_keyring(self):
         self.keyring_manager = None
         # do keyring substitution
-        if self.keyring_sub_enabled:
-            from keg.keyring import Manager
+        if self.keyring_enabled:
+            from keg.keyring import Manager, keyring
+            if keyring is None:
+                warnings.warn('Keyring substitution is enabled, but the keyring package is not'
+                              ' installed.  Please install the keyring package (pip install'
+                              ' keyring) or disable keyring support by setting `KEG_ENABLE_KEYRING'
+                              ' = False` in your configuration profile.')
+                return
+
             self.keyring_manager = Manager(self)
             self.keyring_manager.substitute(self.config)
 

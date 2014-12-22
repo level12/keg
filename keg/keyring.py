@@ -8,7 +8,10 @@ import platform
 import re
 import sys
 
-import keyring
+try:
+    import keyring
+except ImportError:
+    keyring = None
 
 
 class KeyringError(Exception):
@@ -36,6 +39,7 @@ class Manager(object):
         self.sub_re = re.compile(self.sub_pattern)
         self.log = app.logger
         self.app = app
+        self.sub_keys_seen = set()
 
         if not self.verify_backend():
             self.log.warning(
@@ -97,7 +101,9 @@ class Manager(object):
                 replace_this = match.group(1)
                 keyring_key = match.group(2)
 
-                self.log.debug('keyring substittue: replacing {0} for data key "{1}"'
+                self.sub_keys_seen.add(keyring_key)
+
+                self.log.debug('keyring substitute: replacing {0} for data key "{1}"'
                                .format(replace_this, key))
 
                 # reassign value for cases when there is more than one keyring replacement
@@ -110,3 +116,5 @@ class Manager(object):
                     keyring.set_password(self.app.name, keyring_key, keyring_value)
                 data[key] = value.replace(replace_this, keyring_value, 1)
 
+    def delete(self, key):
+        keyring.delete_password(self.app.name, key)

@@ -9,11 +9,11 @@ VERSION = open(osp.join(cdir, 'keg', 'version.txt')).read().strip()
 setup(
     name="Keg",
     version=VERSION,
-    description="A web framework built on Flask & SQLAlchemy."
-        "  Somewhere North of Flask but South of Django.",
+    description=("A web framework built on Flask & SQLAlchemy."
+                 "  Somewhere North of Flask but South of Django."),
     long_description='\n\n'.join((README, CHANGELOG)),
     author="Randy Syring",
-    author_email="randy@thesyrings.us",
+    author_email="randy.syring@level12.io",
     url='http://bitbucket.org/level12/keg/',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -26,5 +26,12 @@ setup(
     packages=['keg'],
     zip_safe=False,
     include_package_data=True,
-    install_requires=['appdirs'],
+    install_requires=[
+        'appdirs',
+        'blazeutils',
+        'Click>=3.0',
+        'Flask>=0.10.1',
+        'pathlib',
+        'six',
+    ],
 )
