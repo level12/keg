@@ -68,18 +68,20 @@ class Keg(flask.Flask):
     def _config_from_obj_location(self, obj_location):
         try:
             self.config.from_object(obj_location)
+            self.configs_found.append(obj_location)
         except ImportStringError as e:
             if obj_location not in str(e):
                 raise
 
     def init_config(self, profile):
+        self.configs_found = []
 
         self.config['KEG_LOG_INFO_FPATH'] = osp.join(self.dirs.user_log_dir,
                                                      '{}-info.log'.format(self.import_name))
         self.config['KEG_LOG_DEBUG_FPATH'] = osp.join(self.dirs.user_log_dir,
                                                       '{}-debug.log'.format(self.import_name))
 
-        possible_config_objs = [
+        self.default_config_objs = [
             # Keg's defaults
             'keg.config:Default',
             # Keg's defaults for the selected profile
@@ -89,14 +91,16 @@ class Keg(flask.Flask):
             # apply the profile defaults that are in the app's config file
             '{}.config:{}'.format(self.import_name, profile),
         ]
-        for obj_location in possible_config_objs:
+        for obj_location in self.default_config_objs:
             self._config_from_obj_location(obj_location)
 
         # apply settings from any of this app's configuration files
-        for fpath in self.config.config_files(self):
+        self.possible_config_files = self.config.config_files(self)
+        for fpath in self.possible_config_files:
             if osp.isfile(fpath):
                 configobj = compat.object_from_source(fpath, profile)
                 if configobj:
+                    self.configs_found.append('{}:{}'.format(fpath, profile))
                     self.config.from_object(configobj)
 
     def init_keyring(self):

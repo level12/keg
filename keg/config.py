@@ -22,6 +22,7 @@ class Config(flask.Config):
         if appdirs.system != 'win32':
             dpaths.extend(dirs.site_config_dir.split(':'))
             dpaths.append('/etc/{}'.format(app.import_name))
+            dpaths.append('/etc')
         else:
             dpaths.append(dirs.site_config_dir)
         dpaths.append(dirs.user_config_dir)
