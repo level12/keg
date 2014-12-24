@@ -107,7 +107,7 @@ class Keg(flask.Flask):
             if keyring is None:
                 warnings.warn('Keyring substitution is enabled, but the keyring package is not'
                               ' installed.  Please install the keyring package (pip install'
-                              ' keyring) or disable keyring support by setting `KEG_ENABLE_KEYRING'
+                              ' keyring) or disable keyring support by setting `KEG_KEYRING_ENABLE'
                               ' = False` in your configuration profile.')
                 return
 
@@ -177,7 +177,7 @@ class Keg(flask.Flask):
         return cls._cli_group.command(*args, **kwargs)
 
     @classmethod
-    def runcli(cls):
+    def cli_run(cls):
         if not hasattr(cls, '_cli_group'):
             cls._cli_group = keg.cli.init_app_cli(cls)
 
