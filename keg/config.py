@@ -5,6 +5,7 @@ import os.path as osp
 
 import appdirs
 import flask
+from pathlib import PurePath
 
 
 class ConfigurationError(Exception):
@@ -16,7 +17,7 @@ class Config(flask.Config):
     def config_files(self, app):
         dirs = app.dirs
 
-        config_fname = '{}.py'.format(app.import_name)
+        config_fname = '{}-config.py'.format(app.import_name)
 
         dpaths = []
         if appdirs.system != 'win32':
@@ -24,12 +25,17 @@ class Config(flask.Config):
             dpaths.append('/etc/{}'.format(app.import_name))
             dpaths.append('/etc')
         else:
-            dpaths.append(dirs.site_config_dir)
+            system_drive = PurePath(dirs.site_config_dir).drive
+            system_etc_dir = PurePath(system_drive, '/', 'etc')
+            dpaths.extend((
+                dirs.site_config_dir,
+                system_etc_dir.joinpath(app.import_name).__str__(),
+                system_etc_dir.__str__()
+            ))
         dpaths.append(dirs.user_config_dir)
+        dpaths.append(osp.dirname(app.root_path))
 
         fpaths = map(lambda dpath: osp.join(dpath, config_fname), dpaths)
-
-        fpaths.append(osp.join(osp.dirname(app.root_path), '{}-config.py'.format(app.import_name)))
 
         return fpaths
 
