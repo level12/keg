@@ -34,8 +34,7 @@ class Keg(flask.Flask):
 
     def __init__(self, *args, **kwargs):
         flask.Flask.__init__(self, *args, **kwargs)
-        from keg._flask_cli import AppGroup
-        self.cli = AppGroup(self)
+        self.keyring_manager = None
 
     def make_config(self, instance_relative=False):
         """
@@ -104,7 +103,6 @@ class Keg(flask.Flask):
                     self.config.from_object(configobj)
 
     def init_keyring(self):
-        self.keyring_manager = None
         # do keyring substitution
         if self.keyring_enabled:
             from keg.keyring import Manager, keyring
@@ -175,14 +173,16 @@ class Keg(flask.Flask):
         return '500 SERVER ERROR<br/><br/>administrators notified'
 
     @classmethod
-    def command(cls, *args, **kwargs):
+    def cli_prep(cls):
         if not hasattr(cls, '_cli_group'):
             cls._cli_group = keg.cli.init_app_cli(cls)
+
+    @classmethod
+    def command(cls, *args, **kwargs):
+        cls.cli_prep()
         return cls._cli_group.command(*args, **kwargs)
 
     @classmethod
     def cli_run(cls):
-        if not hasattr(cls, '_cli_group'):
-            cls._cli_group = keg.cli.init_app_cli(cls)
-
+        cls.cli_prep()
         cls._cli_group()

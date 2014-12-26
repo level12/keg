@@ -12,3 +12,9 @@ ToDo
 
   * maybe not due to the fact that defaults are defined by the application, if
     a user wants a default, they simply inherit from a parent config?
+
+* reorganize the default commands so they are more usable for non-web contexts?
+
+  * put all diagnostic commands under a group?
+  * put all web commands under a group?  Optionally allow disabling this group from being listed
+    for when the app is a CLI only app.
