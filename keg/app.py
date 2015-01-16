@@ -16,7 +16,7 @@ from keg.blueprints import keg as kegbp
 import keg.cli
 import keg.config
 import keg.compat as compat
-from keg.utils import ensure_dirs
+from keg.utils import ensure_dirs, classproperty
 import keg.web
 
 
@@ -169,20 +169,19 @@ class Keg(flask.Flask):
         manager.register_providers(self.oauth_providers)
 
     def handle_server_error(self, error):
-        #shousend_exception_email()
+        #send_exception_email()
         return '500 SERVER ERROR<br/><br/>administrators notified'
 
-    @classmethod
-    def cli_prep(cls):
+    @classproperty
+    def cli_group(cls):
         if not hasattr(cls, '_cli_group'):
             cls._cli_group = keg.cli.init_app_cli(cls)
+        return cls._cli_group
 
     @classmethod
     def command(cls, *args, **kwargs):
-        cls.cli_prep()
-        return cls._cli_group.command(*args, **kwargs)
+        return cls.cli_group.command(*args, **kwargs)
 
     @classmethod
     def cli_run(cls):
-        cls.cli_prep()
-        cls._cli_group()
+        cls.cli_group()
