@@ -18,3 +18,6 @@ ToDo
   * put all diagnostic commands under a group?
   * put all web commands under a group?  Optionally allow disabling this group from being listed
     for when the app is a CLI only app.
+
+* there are problems with CLI tests if commands don't get added to the app.  This can happen if
+  you have a test that imports the app from .app instead of .cli.
