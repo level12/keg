@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
+import os
 import os.path as osp
 import warnings
 
@@ -16,6 +17,7 @@ from keg.blueprints import keg as kegbp
 import keg.cli
 import keg.config
 import keg.compat as compat
+import keg.signals as signals
 from keg.utils import ensure_dirs, classproperty
 import keg.web
 
@@ -31,10 +33,26 @@ class Keg(flask.Flask):
     keyring_enabled = ConfigAttribute('KEG_KEYRING_ENABLE')
     config_class = keg.config.Config
     keyring_manager_class = None
+    sqlalchemy_enabled = False
 
-    def __init__(self, *args, **kwargs):
-        flask.Flask.__init__(self, *args, **kwargs)
+    def __init__(self, config_profile=None, *args, **kwargs):
+        if self.import_name is None:
+            raise KegError('please set the import_name attribute on your app')
+        if config_profile is None:
+            config_profile = self.environ_get('CONFIG_PROFILE')
+            if config_profile is None:
+                raise KegError('The configuration profile was not passed into this Keg app and was'
+                               ' also not given as an environment variable.')
+
         self.keyring_manager = None
+        self.config_profile = config_profile
+
+        flask.Flask.__init__(self, self.import_name, *args, **kwargs)
+        self.init()
+
+    def environ_get(self, key):
+        environ_key = '{}_{}'.format(self.import_name.upper(), key.upper())
+        return os.environ.get(environ_key)
 
     def make_config(self, instance_relative=False):
         """
@@ -46,23 +64,19 @@ class Keg(flask.Flask):
             root_path = self.instance_path
         return self.config_class(root_path, self.default_config)
 
-    @classmethod
-    def create_app(cls, config_profile, *args, **kwargs):
-        if cls.import_name is None:
-            raise KegError('please set the import_name attribute on your app')
-        app = cls(cls.import_name, *args, **kwargs)
-        app.init(config_profile)
-        return app
-
-    def init(self, config_profile):
+    def init(self):
         self.dirs = appdirs.AppDirs(self.import_name, appauthor=False, multipath=True)
-        self.init_config(config_profile)
+        self.init_config()
         if not self.testing:
             self.init_logging()
         self.init_keyring()
         self.init_oath()
+        self.init_extensions()
         self.init_blueprints()
         self.init_error_handling()
+        self.init_filters()
+
+        signals.app_ready.send(self)
 
     def _config_from_obj_location(self, obj_location):
         try:
@@ -72,7 +86,8 @@ class Keg(flask.Flask):
             if obj_location not in str(e):
                 raise
 
-    def init_config(self, profile):
+    def init_config(self):
+        profile = self.config_profile
         self.configs_found = []
 
         self.config['KEG_LOG_INFO_FPATH'] = osp.join(self.dirs.user_log_dir,
@@ -115,6 +130,14 @@ class Keg(flask.Flask):
 
             self.keyring_manager = Manager(self)
             self.keyring_manager.substitute(self.config)
+
+    def init_extensions(self):
+        self.init_sqlalchemy()
+
+    def init_sqlalchemy(self):
+        if self.sqlalchemy_enabled:
+            from keg.sqlalchemy import db
+            db.init_app(self)
 
     def init_blueprints(self):
         self.register_blueprint(kegbp)
@@ -167,6 +190,9 @@ class Keg(flask.Flask):
         self.register_blueprint(bp)
         oauthlib.init_app(self)
         manager.register_providers(self.oauth_providers)
+
+    def init_filters(self):
+        pass
 
     def handle_server_error(self, error):
         #send_exception_email()

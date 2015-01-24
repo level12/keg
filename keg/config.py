@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import os.path as osp
 
 import appdirs
+from blazeutils.helpers import tolist
 import flask
 from pathlib import PurePath
 
@@ -39,6 +40,13 @@ class Config(flask.Config):
 
         return fpaths
 
+    def email_error_to(self):
+        error_to = self.get('KEG_ERROR_EMAIL_TO')
+        override_to = self.get('KEG_EMAIL_OVERRIDE_TO')
+        if override_to:
+            return tolist(override_to)
+        return tolist(error_to)
+
 
 # The following three classes are default configuration profiles
 class Default(object):
@@ -51,6 +59,8 @@ class Default(object):
         after_logout='public.home',
     )
     KEG_KEYRING_ENABLE = True
+
+    KEG_SMTP_HOST = 'localhost'
 
 
 class Dev(object):
