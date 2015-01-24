@@ -175,7 +175,9 @@ def keyring_delete(key):
 
 def init_app_cli(appcls):
     def _create_app(script_info):
-        return appcls.create_app(script_info.data['config_profile'])
+        app = appcls(script_info.data['config_profile'])
+        #app.app_context().push()
+        return app
 
     @click.group(cls=KegGroup, create_app=_create_app)
     @script_info_option('--profile', script_info_key='config_profile', default='Dev',

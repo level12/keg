@@ -6,6 +6,17 @@ README = open(osp.join(cdir, 'readme.rst')).read()
 CHANGELOG = open(osp.join(cdir, 'changelog.rst')).read()
 VERSION = open(osp.join(cdir, 'keg', 'version.txt')).read().strip()
 
+# libraries needed to develop & test on Keg itself
+develop_requires = [
+    'pytest'
+]
+
+# Libraries needed to support assumptions Keg makes about how Keg apps will be tested.
+# Defined separately so that these libraries can be skipped for production environments.
+testing_requires = [
+    'Flask-WebTest'
+]
+
 setup(
     name="Keg",
     version=VERSION,
@@ -31,7 +42,9 @@ setup(
         'blazeutils',
         'Click>=3.0',
         'Flask>=0.10.1',
+        'Flask-SQLAlchemy',
         'pathlib',
         'six',
     ],
+    extras_require=dict(develop=develop_requires, testing=testing_requires),
 )
