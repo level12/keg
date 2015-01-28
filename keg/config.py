@@ -42,7 +42,7 @@ class Config(flask.Config):
         return fpaths
 
     def email_error_to(self):
-        error_to = self.get('KEG_ERROR_EMAIL_TO')
+        error_to = self.get('KEG_EMAIL_ERROR_TO')
         override_to = self.get('KEG_EMAIL_OVERRIDE_TO')
         if override_to:
             return tolist(override_to)
