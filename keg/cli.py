@@ -180,8 +180,8 @@ def init_app_cli(appcls):
         return app
 
     @click.group(cls=KegGroup, create_app=_create_app)
-    @script_info_option('--profile', script_info_key='config_profile', default='Dev',
-                        help='Name of the configuration profile to use (default: Dev).')
+    @script_info_option('--profile', script_info_key='config_profile', default=None,
+                        help='Name of the configuration profile to use.')
     def cli(**kwargs):
         pass
 

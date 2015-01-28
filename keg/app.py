@@ -38,11 +38,6 @@ class Keg(flask.Flask):
     def __init__(self, config_profile=None, *args, **kwargs):
         if self.import_name is None:
             raise KegError('please set the import_name attribute on your app')
-        if config_profile is None:
-            config_profile = self.environ_get('CONFIG_PROFILE')
-            if config_profile is None:
-                raise KegError('The configuration profile was not passed into this Keg app and was'
-                               ' also not given as an environment variable.')
 
         self.keyring_manager = None
         self.config_profile = config_profile
@@ -88,6 +83,14 @@ class Keg(flask.Flask):
 
     def init_config(self):
         profile = self.config_profile
+
+        if profile is None:
+            profile = self.config.find_default_profile(self)
+            if profile is None:
+                raise KegError('The configuration profile was not passed into this Keg app and'
+                               ' could not be determined from the environment or configuration'
+                               ' files.')
+
         self.configs_found = []
 
         self.config['KEG_LOG_INFO_FPATH'] = osp.join(self.dirs.user_log_dir,
