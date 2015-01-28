@@ -1,5 +1,5 @@
 import os.path as osp
-from setuptools import setup
+from setuptools import setup, find_packages
 
 cdir = osp.abspath(osp.dirname(__file__))
 README = open(osp.join(cdir, 'readme.rst')).read()
@@ -34,7 +34,7 @@ setup(
         'Programming Language :: Python :: 2.7',
     ],
     license='BSD',
-    packages=['keg'],
+    packages=find_packages(include=['keg']),
     zip_safe=False,
     include_package_data=True,
     install_requires=[
