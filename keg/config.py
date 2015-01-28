@@ -6,6 +6,7 @@ import os.path as osp
 import appdirs
 from blazeutils.helpers import tolist
 import flask
+import keg.compat as compat
 from pathlib import PurePath
 
 
@@ -46,6 +47,21 @@ class Config(flask.Config):
         if override_to:
             return tolist(override_to)
         return tolist(error_to)
+
+    def find_default_profile(self, app):
+        # if we find the value in the environment, use it
+        profile = app.environ_get('CONFIG_PROFILE')
+        if profile is not None:
+            return profile
+
+        # look for it in all the config files
+        possible_config_files = self.config_files(app)
+        for fpath in possible_config_files:
+            if osp.isfile(fpath):
+                default_profile = compat.object_from_source(fpath, 'DEFAULT_PROFILE')
+                if default_profile:
+                    profile = default_profile
+        return profile
 
 
 # The following three classes are default configuration profiles
