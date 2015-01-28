@@ -34,7 +34,7 @@ setup(
         'Programming Language :: Python :: 2.7',
     ],
     license='BSD',
-    packages=find_packages(include=['keg']),
+    packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
     install_requires=[
