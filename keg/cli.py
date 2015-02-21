@@ -49,19 +49,19 @@ def config_command():
     keys = config.keys()
     keys.sort()
 
-    click.echo('default config objects:')
-    for val in app.default_config_objs:
+    click.echo('Default config objects:')
+    for val in config.default_config_locations_parsed():
         click.echo('    {}'.format(val))
 
-    click.echo('default config files:')
-    for val in app.possible_config_files:
+    click.echo('Config file locations:')
+    for val in config.config_file_paths():
         click.echo('    {}'.format(val))
 
-    click.echo('config objects used:')
-    for val in app.configs_found:
+    click.echo('Config objects used:')
+    for val in config.configs_found:
         click.echo('    {}'.format(val))
 
-    click.echo('resulting app config (including Flask defaults):')
+    click.echo('Resulting app config (including Flask defaults):')
     for key in keys:
         click.echo('    {} = {}'.format(key, config[key]))
 

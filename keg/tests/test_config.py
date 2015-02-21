@@ -30,3 +30,29 @@ class TestConfigDefaults(object):
         config = Config('', {})
         config.init_app(None, __name__, '', config_file_objs)
         assert config.profile == 'baz'
+
+    def test_default_config_objects_no_profile(self):
+        config = Config('', {})
+        config.init_app(None, 'fakeapp', '')
+
+        # No profile given, so only the default profiles from Keg and the App should be tried.
+        expected = [
+            'keg.config.DefaultProfile',
+            'fakeapp.config.DefaultProfile'
+        ]
+        assert config.default_config_locations_parsed() == expected
+
+    def test_default_config_objects_with_profile(self):
+        config = Config('', {})
+
+        config.init_app('SomeProfile', 'fakeapp', '')
+
+        # No profile given, so only the default profiles from Keg and the App should be tried.
+        expected = [
+            'keg.config.DefaultProfile',
+            'keg.config.SomeProfile',
+            'fakeapp.config.DefaultProfile',
+            'fakeapp.config.SomeProfile',
+        ]
+        assert config.default_config_locations_parsed() == expected
+

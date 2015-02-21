@@ -74,4 +74,7 @@ Recent Breaking Changes
 * A Keg instance needs to have .init() called manually after object instantation.  This facilitates
   being able to grab the Keg instance before all the setup work is done, similiar to how Flask
   extensions can usually be instantiated and then .init_app(app) called later.
+* pytest setup code should use the new testing_create() method on the app:
 
+    def pytest_configure(config):
+        FISResid.testing_create()
