@@ -2,7 +2,7 @@ Keg is an opinionated but flexible web framework built on Flask and SQLAlchemy.
 
 
 Keg's Goal
-----------
+==========
 
 The goal for this project is to encapsulate Flask best practices and libraries so devs can avoid
 boilerplate and work on the important stuff.
@@ -12,8 +12,8 @@ supporting hooks and customizations as much as possible.
 
 Think North of Flask but South of Django.
 
-Plans
------------
+Features
+========
 
 - stdout logging
 
@@ -35,14 +35,43 @@ Plans
     - main usage is to avoid putting secret values in config files
     - enabled by default, but should be easily and/or automatically turned off (if insecure)
 
+- configuration
+
+Installation
+============
+
+- pip install keg
+- pip install keg[testing]  # if you will test your apps according to Keg's assumptions
+
+Keg Development
+===============
+
+- Checkout the source code
+- pip install -e .
+- pip install -e .[development]
+- cd keg
+- py.test
+
 Questions & Comments
----------------------
+====================
 
 For now, please visit: http://groups.google.com/group/blazelibs
 
 Current Status
----------------
+==============
 
 Very Alpha, expect changes.
 
+
+Recent Breaking Changes
+=======================
+
+2015-02-10
+----------
+
+* Keg() signature chagned to more closely match Flask, 'config_profile' should still work as a
+  keyword argument, but is no longer positionally the first argument.
+* A Keg instance needs to have .init() called manually after object instantation.  This facilitates
+  being able to grab the Keg instance before all the setup work is done, similiar to how Flask
+  extensions can usually be instantiated and then .init_app(app) called later.
 

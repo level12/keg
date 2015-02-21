@@ -5,24 +5,20 @@ import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 import os
-import os.path as osp
 import warnings
 
-import appdirs
 import flask
 from flask.config import ConfigAttribute
-from werkzeug.utils import ImportStringError
 
 from keg.blueprints import keg as kegbp
 import keg.cli
 import keg.config
-import keg.compat as compat
 import keg.signals as signals
 from keg.utils import ensure_dirs, classproperty
 import keg.web
 
 
-class KegError(Exception):
+class KegAppError(Exception):
     pass
 
 
@@ -35,19 +31,27 @@ class Keg(flask.Flask):
     keyring_manager_class = None
     sqlalchemy_enabled = False
 
-    def __init__(self, config_profile=None, *args, **kwargs):
-        if self.import_name is None:
-            raise KegError('please set the import_name attribute on your app')
+    _init_ran = False
+
+    def __init__(self, import_name=None, static_path=None, static_url_path=None,
+                 static_folder='static', template_folder='templates', instance_path=None,
+                 instance_relative_config=False, config_profile=None):
+
+        # flask requires an import name, so we should too.
+        if import_name is None and self.import_name is None:
+            raise KegAppError('Please set the "import_name" attribute on your app class or pass it'
+                              ' into the app instance.')
+
+        # passed in value takes precedence
+        import_name = import_name or self.import_name
 
         self.keyring_manager = None
         self.config_profile = config_profile
 
-        flask.Flask.__init__(self, self.import_name, *args, **kwargs)
-        self.init()
-
-    def environ_get(self, key):
-        environ_key = '{}_{}'.format(self.import_name.upper(), key.upper())
-        return os.environ.get(environ_key)
+        flask.Flask.__init__(self, import_name, static_path=static_path,
+                             static_url_path=static_url_path, static_folder=static_folder,
+                             template_folder=template_folder, instance_path=instance_path,
+                             instance_relative_config=instance_relative_config)
 
     def make_config(self, instance_relative=False):
         """
@@ -60,7 +64,8 @@ class Keg(flask.Flask):
         return self.config_class(root_path, self.default_config)
 
     def init(self):
-        self.dirs = appdirs.AppDirs(self.import_name, appauthor=False, multipath=True)
+        if self._init_ran:
+            raise KegAppError('init() already called on this instance')
         self.init_config()
         if not self.testing:
             self.init_logging()
@@ -72,53 +77,14 @@ class Keg(flask.Flask):
         self.init_filters()
 
         signals.app_ready.send(self)
+        self._init_ran = True
 
-    def _config_from_obj_location(self, obj_location):
-        try:
-            self.config.from_object(obj_location)
-            self.configs_found.append(obj_location)
-        except ImportStringError as e:
-            if obj_location not in str(e):
-                raise
+        # return self for easy chaining, i.e. app = Keg().init()
+        return self
 
     def init_config(self):
-        profile = self.config_profile
-
-        if profile is None:
-            profile = self.config.find_default_profile(self)
-            if profile is None:
-                raise KegError('The configuration profile was not passed into this Keg app and'
-                               ' could not be determined from the environment or configuration'
-                               ' files.')
-
-        self.configs_found = []
-
-        self.config['KEG_LOG_INFO_FPATH'] = osp.join(self.dirs.user_log_dir,
-                                                     '{}-info.log'.format(self.import_name))
-        self.config['KEG_LOG_DEBUG_FPATH'] = osp.join(self.dirs.user_log_dir,
-                                                      '{}-debug.log'.format(self.import_name))
-
-        self.default_config_objs = [
-            # Keg's defaults
-            'keg.config:Default',
-            # Keg's defaults for the selected profile
-            'keg.config:{}'.format(profile),
-            # App defaults for all profiles
-            '{}.config:Default'.format(self.import_name),
-            # apply the profile defaults that are in the app's config file
-            '{}.config:{}'.format(self.import_name, profile),
-        ]
-        for obj_location in self.default_config_objs:
-            self._config_from_obj_location(obj_location)
-
-        # apply settings from any of this app's configuration files
-        self.possible_config_files = self.config.config_files(self)
-        for fpath in self.possible_config_files:
-            if osp.isfile(fpath):
-                configobj = compat.object_from_source(fpath, profile)
-                if configobj:
-                    self.configs_found.append('{}:{}'.format(fpath, profile))
-                    self.config.from_object(configobj)
+        self.config.init_app(self.config_profile, self.import_name, self.root_path)
+        signals.config_ready.send(self)
 
     def init_keyring(self):
         # do keyring substitution
@@ -151,29 +117,29 @@ class Keg(flask.Flask):
         # adjust Flask's default logging for the application logger to not include debugging
         self.logger.handlers[0].setLevel(logging.INFO)
 
-        dirs_mode = self.config['KEG_DIRS_MODE']
-        ensure_dirs(Path(self.config['KEG_LOG_INFO_FPATH']).parent, dirs_mode)
-        ensure_dirs(Path(self.config['KEG_LOG_DEBUG_FPATH']).parent, dirs_mode)
-
-        loggers = (self.logger, logging.getLogger(self.import_name))
-        file_formatter = logging.Formatter(
-            '%(asctime)s %(levelname)s [%(name)s:%(lineno)d]: %(message)s'
-        )
-        # 10 MB
-        log_max = 1024*1024*10
-
-        info_file_handler = RotatingFileHandler(self.config['KEG_LOG_INFO_FPATH'], log_max, 5)
-        info_file_handler.setFormatter(file_formatter)
-        info_file_handler.setLevel(logging.INFO)
-
-        debug_file_handler = RotatingFileHandler(self.config['KEG_LOG_DEBUG_FPATH'], log_max, 5)
-        debug_file_handler.setFormatter(file_formatter)
-        debug_file_handler.setLevel(logging.DEBUG)
-
-        for logger in loggers:
-            logger.setLevel(logging.DEBUG)
-            logger.addHandler(info_file_handler)
-            logger.addHandler(debug_file_handler)
+        #dirs_mode = self.config['KEG_DIRS_MODE']
+        #ensure_dirs(Path(self.config['KEG_LOG_INFO_FPATH']).parent, dirs_mode)
+        #ensure_dirs(Path(self.config['KEG_LOG_DEBUG_FPATH']).parent, dirs_mode)
+        #
+        #loggers = (self.logger, logging.getLogger(self.import_name))
+        #file_formatter = logging.Formatter(
+        #    '%(asctime)s %(levelname)s [%(name)s:%(lineno)d]: %(message)s'
+        #)
+        ## 10 MB
+        #log_max = 1024*1024*10
+        #
+        #info_file_handler = RotatingFileHandler(self.config['KEG_LOG_INFO_FPATH'], log_max, 5)
+        #info_file_handler.setFormatter(file_formatter)
+        #info_file_handler.setLevel(logging.INFO)
+        #
+        #debug_file_handler = RotatingFileHandler(self.config['KEG_LOG_DEBUG_FPATH'], log_max, 5)
+        #debug_file_handler.setFormatter(file_formatter)
+        #debug_file_handler.setLevel(logging.DEBUG)
+        #
+        #for logger in loggers:
+        #    logger.setLevel(logging.DEBUG)
+        #    logger.addHandler(info_file_handler)
+        #    logger.addHandler(debug_file_handler)
 
     def init_error_handling(self):
         # handle status codes
@@ -213,4 +179,8 @@ class Keg(flask.Flask):
 
     @classmethod
     def cli_run(cls):
+        """
+            Convience function intended to be an entry point for an app's command.  Sets up the
+            app and kicks off the cli command processing.
+        """
         cls.cli_group()

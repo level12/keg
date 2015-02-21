@@ -8,6 +8,7 @@ VERSION = open(osp.join(cdir, 'keg', 'version.txt')).read().strip()
 
 # libraries needed to develop & test on Keg itself
 develop_requires = [
+    'mock',
     'pytest'
 ]
 

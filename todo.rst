@@ -13,6 +13,7 @@ Configuration
 -------------
 
 * if a config file has a runtime error, it will be silently ignored
+* KEG_DIRS_MODE - should not be set by default.  Let current umask apply unless explicit override.
 
 Logging
 --------
@@ -36,3 +37,6 @@ CLI
   * put all web commands under a group?  Optionally allow disabling this group from being listed
     for when the app is a CLI only app.
 
+* right now, we hard-code the test profile in conftest.pytest_configure()...verify this can be
+  overriden with an environment variable.  Also, integrate with py.test command line to give a
+  "--appname-profile = Foo" option so we can run tests against a different test profile if needed.

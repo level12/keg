@@ -304,13 +304,20 @@ class FlaskGroup(AppGroup):
         if rv is not None:
             return rv
 
-        info = ctx.ensure_object(ScriptInfo)
-        try:
-            rv = info.load_app().cli.get_command(ctx, name)
-            if rv is not None:
-                return rv
-        except NoAppException:
-            pass
+        ## this code caused an exception because our app doesn't have a .cli.  Not exactly sure
+        ## how this was intended to be used, may be related to Flask's ability to invoke a command
+        ## like `flask --app=hello shell` but it doesn't seem to apply to how we do scripts in
+        ## Keg.
+
+        #info = ctx.ensure_object(ScriptInfo)
+        #try:
+        #    app = info.load_app()
+        #    print app
+        #    rv = app.cli.get_command(ctx, name)
+        #    if rv is not None:
+        #        return rv
+        #except NoAppException:
+        #    pass
 
     def list_commands(self, ctx):
         # The commands available is the list of both the application (if

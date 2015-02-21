@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
 import sys
 
 import flask
@@ -46,3 +47,24 @@ class classproperty(property):
 
     def __get__(desc, self, cls):
         return desc.fget(cls)
+
+
+def pymodule_fpaths_to_objects(fpaths):
+    """
+        Takes an iterable of file paths reprenting possible python modules and will return an
+        iterable of tuples with the file path along with the contents of that file if the file
+        exists.
+    """
+    retval = []
+    for fpath in fpaths:
+        path = pathlib.Path(fpath)
+        if path.exists():
+            pymodule_globals = {}
+            execfile(fpath, pymodule_globals)
+            retval.append((fpath, pymodule_globals))
+    return retval
+
+
+def app_environ_get(app_import_name, key, default=None):
+    environ_key = '{}_{}'.format(app_import_name.upper(), key.upper())
+    return os.environ.get(environ_key, default)
