@@ -16,10 +16,14 @@ class CLIBase(object):
 
     def invoke(self, *args, **kwargs):
         exit_code = kwargs.pop('exit_code', 0)
+        cmd_name = kwargs.pop('cmd_name', self.cmd_name)
+
         result = self.runner.invoke(
             self.app_cls.cli_group,
-            [self.cmd_name] + list(args),
+            [cmd_name] + list(args),
             catch_exceptions=False
         )
-        assert result.exit_code == exit_code, result.output
+        error_message = 'Command exit code {}, expected {}.  Result output follows:\n{}'
+        assert result.exit_code == exit_code, error_message.format(result.exit_code, exit_code,
+                                                                   result.output)
         return result
