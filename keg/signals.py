@@ -6,3 +6,4 @@ _signals = Namespace()
 # Sender will be the application instance.
 app_ready = _signals.signal('app-ready')
 config_ready = _signals.signal('config-ready')
+testing_start = _signals.signal('testing-start')

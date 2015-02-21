@@ -1,8 +1,11 @@
 import sqlite3
 
+from blinker import ANY
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
+
+from keg.signals import testing_start
 
 
 class KegSQLAlchemy(SQLAlchemy):
@@ -23,6 +26,10 @@ class KegSQLAlchemy(SQLAlchemy):
         def on_connect(dbapi_connection, connection_record):
             self.set_sqlite_pragma(dbapi_connection, connection_record)
 
+        @testing_start.connect_via(ANY, weak=False)
+        def on_testing_start(app):
+            self.on_testing_start(app)
+
     def testing_scoped_session(self):
         # don't want to have to import this if we are in production, so put import
         # inside of the method
@@ -31,6 +38,10 @@ class KegSQLAlchemy(SQLAlchemy):
         # flask-sqlalchemy creates the session when the class is initialized.  We have to re-create
         # with different session options and override the session attribute with the new session
         db.session = db.create_scoped_session(options={'scopefunc': get_scopefunc()})
+
+    def on_testing_start(self, app):
+        db.create_all()
+
 
 db = KegSQLAlchemy()
 

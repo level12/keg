@@ -22,11 +22,11 @@ class Config(flask.Config):
         # Keg's defaults
         'keg.config.DefaultProfile',
         # Keg's defaults for the selected profile
-        'keg.config.{profile}'
+        'keg.config.{profile}',
         # App defaults for all profiles
-        '{app_import_name}.config.DefaultProfile'
+        '{app_import_name}.config.DefaultProfile',
         # apply the profile specific defaults that are in the app's config file
-        '{app_import_name}.config.{profile}'
+        '{app_import_name}.config.{profile}',
     ]
 
     def from_obj_if_exists(self, obj_location):
@@ -37,22 +37,35 @@ class Config(flask.Config):
             if obj_location not in str(e):
                 raise
 
+    def default_config_locations_parsed(self):
+        retval = []
+        for location in self.default_config_locations:
+            # if no profile is given, the location want's one, that location isn't valid
+            if '{profile}' in location and self.profile is None:
+                continue
+
+            retval.append(location.format(app_import_name=self.app_import_name,
+                                          profile=self.profile))
+        return retval
+
     def init_app(self, app_config_profile, app_import_name, app_root_path, config_file_objs=None):
         self.profile = app_config_profile
         self.dirs = appdirs.AppDirs(app_import_name, appauthor=False, multipath=True)
+        self.app_import_name = app_import_name
+        self.app_root_path = app_root_path
 
         if config_file_objs:
             self.config_file_objs = config_file_objs
         else:
-            possible_config_fpaths = self.config_file_paths(app_import_name, app_root_path)
+            possible_config_fpaths = self.config_file_paths()
             self.config_file_objs = pymodule_fpaths_to_objects(possible_config_fpaths)
 
         if self.profile is None:
-            self.profile = self.determine_selected_profile(app_import_name)
+            self.profile = self.determine_selected_profile()
 
         self.configs_found = []
 
-        for dotted_location in self.default_config_locations:
+        for dotted_location in self.default_config_locations_parsed():
             dotted_location = dotted_location.format(app_import_name=app_import_name,
                                                      profile=self.profile)
             self.from_obj_if_exists(dotted_location)
@@ -63,26 +76,26 @@ class Config(flask.Config):
                 self.from_object(objects[self.profile])
                 self.configs_found.append('{}:{}'.format(fpath, self.profile))
 
-    def config_file_paths(self, app_import_name, app_root_path):
+    def config_file_paths(self):
         dirs = self.dirs
 
-        config_fname = '{}-config.py'.format(app_import_name)
+        config_fname = '{}-config.py'.format(self.app_import_name)
 
         dpaths = []
         if appdirs.system != 'win32':
             dpaths.extend(dirs.site_config_dir.split(':'))
-            dpaths.append('/etc/{}'.format(app_import_name))
+            dpaths.append('/etc/{}'.format(self.app_import_name))
             dpaths.append('/etc')
         else:
             system_drive = PurePath(dirs.site_config_dir).drive
             system_etc_dir = PurePath(system_drive, '/', 'etc')
             dpaths.extend((
                 dirs.site_config_dir,
-                system_etc_dir.joinpath(app_import_name).__str__(),
+                system_etc_dir.joinpath(self.app_import_name).__str__(),
                 system_etc_dir.__str__()
             ))
         dpaths.append(dirs.user_config_dir)
-        dpaths.append(osp.dirname(app_root_path))
+        dpaths.append(osp.dirname(self.app_root_path))
 
         fpaths = map(lambda dpath: osp.join(dpath, config_fname), dpaths)
 
@@ -95,9 +108,9 @@ class Config(flask.Config):
             return tolist(override_to)
         return tolist(error_to)
 
-    def determine_selected_profile(self, app_import_name):
+    def determine_selected_profile(self):
         # if we find the value in the environment, use it
-        profile = app_environ_get(app_import_name, 'CONFIG_PROFILE')
+        profile = app_environ_get(self.app_import_name, 'CONFIG_PROFILE')
         if profile is not None:
             return profile
 

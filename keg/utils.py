@@ -7,6 +7,7 @@ import sys
 import flask
 from flask._compat import reraise
 import pathlib
+from werkzeug.utils import import_string
 
 
 # sentinal object
@@ -68,3 +69,10 @@ def pymodule_fpaths_to_objects(fpaths):
 def app_environ_get(app_import_name, key, default=None):
     environ_key = '{}_{}'.format(app_import_name.upper(), key.upper())
     return os.environ.get(environ_key, default)
+
+
+def visit_modules(dotted_paths, base_path=None):
+    for path in dotted_paths:
+        if path.startswith('.') and base_path is not None:
+            path = base_path + path
+        import_string(path)

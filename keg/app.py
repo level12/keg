@@ -14,7 +14,7 @@ from keg.blueprints import keg as kegbp
 import keg.cli
 import keg.config
 import keg.signals as signals
-from keg.utils import ensure_dirs, classproperty
+from keg.utils import ensure_dirs, classproperty, visit_modules
 import keg.web
 
 
@@ -30,6 +30,7 @@ class Keg(flask.Flask):
     config_class = keg.config.Config
     keyring_manager_class = None
     sqlalchemy_enabled = False
+    sqlalchemy_modules = ['.model.entities']
 
     _init_ran = False
 
@@ -107,6 +108,7 @@ class Keg(flask.Flask):
         if self.sqlalchemy_enabled:
             from keg.sqlalchemy import db
             db.init_app(self)
+            visit_modules(self.sqlalchemy_modules, self.import_name)
 
     def init_blueprints(self):
         self.register_blueprint(kegbp)
@@ -184,3 +186,9 @@ class Keg(flask.Flask):
             app and kicks off the cli command processing.
         """
         cls.cli_group()
+
+    @classmethod
+    def testing_create(cls):
+        app = cls(config_profile='TestProfile').init()
+        app.test_request_context().push()
+        signals.testing_start.send(app)

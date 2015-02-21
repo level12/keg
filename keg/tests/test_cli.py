@@ -37,3 +37,16 @@ class TestCLI(CLIBase):
 
     def test_missing_command(self):
         result = self.invoke(cmd_name='baz', exit_code=2)
+        assert 'No such command "baz"' in result.output
+
+
+class TestConfigCommand(CLIBase):
+    app_cls = TempApp
+    cmd_name = 'config'
+
+    def test_output(self):
+        result = self.invoke()
+        # use a value that should be towards the end of the output as a reasonble indicator the
+        # command worked as expected.
+        assert 'USE_X_SENDFILE = False' in result.output
+
