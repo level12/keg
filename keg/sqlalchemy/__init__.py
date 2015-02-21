@@ -6,9 +6,6 @@ from sqlalchemy import event
 
 
 class KegSQLAlchemy(SQLAlchemy):
-    @event.listens_for(Engine, "connect")
-    def on_connect(self, dbapi_connection, connection_record):
-        self.set_sqlite_pragma()
 
     def set_sqlite_pragma(self, dbapi_connection, connection_record):
         """ Need SQLite to use foreign keys """
@@ -21,6 +18,10 @@ class KegSQLAlchemy(SQLAlchemy):
         SQLAlchemy.init_app(self, app)
         if app.testing:
             self.testing_scoped_session()
+
+        @event.listens_for(Engine, "connect")
+        def on_connect(dbapi_connection, connection_record):
+            self.set_sqlite_pragma(dbapi_connection, connection_record)
 
     def testing_scoped_session(self):
         # don't want to have to import this if we are in production, so put import
