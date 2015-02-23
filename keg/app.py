@@ -192,3 +192,6 @@ class Keg(flask.Flask):
         app = cls(config_profile='TestProfile').init()
         app.test_request_context().push()
         signals.testing_start.send(app)
+
+    def make_shell_context(self):
+        return {}
