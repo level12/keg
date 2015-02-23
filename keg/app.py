@@ -31,6 +31,7 @@ class Keg(flask.Flask):
     keyring_manager_class = None
     sqlalchemy_enabled = False
     sqlalchemy_modules = ['.model.entities']
+    jinja_filters = {}
 
     _init_ran = False
 
@@ -163,7 +164,7 @@ class Keg(flask.Flask):
         manager.register_providers(self.oauth_providers)
 
     def init_filters(self):
-        pass
+        self.jinja_env.filters.update(self.jinja_filters)
 
     def handle_server_error(self, error):
         #send_exception_email()
