@@ -14,6 +14,8 @@ Configuration
 
 * if a config file has a runtime error, it will be silently ignored
 * KEG_DIRS_MODE - should not be set by default.  Let current umask apply unless explicit override.
+* default to Development profile so all errors show up?  Makes sense that a dev will be struggling
+  locally first and showing errors by default will help.
 
 Logging
 --------
@@ -40,3 +42,12 @@ CLI
 * right now, we hard-code the test profile in conftest.pytest_configure()...verify this can be
   overriden with an environment variable.  Also, integrate with py.test command line to give a
   "--appname-profile = Foo" option so we can run tests against a different test profile if needed.
+
+  * use TESTING_PROFILE = like DEFAULT_PROFILE =
+
+
+Testing
+-----------
+
+* which testing profile is used when CLIBase is being used to test commands?
+  Which one should be ran?

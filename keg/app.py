@@ -1,10 +1,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import logging
-from logging.handlers import RotatingFileHandler
-from pathlib import Path
-import os
 import warnings
 
 import flask
@@ -13,8 +9,9 @@ from flask.config import ConfigAttribute
 from keg.blueprints import keg as kegbp
 import keg.cli
 import keg.config
+import keg.logging
 import keg.signals as signals
-from keg.utils import ensure_dirs, classproperty, visit_modules
+from keg.utils import classproperty, visit_modules
 import keg.web
 
 
@@ -28,6 +25,7 @@ class Keg(flask.Flask):
     oauth_providers = []
     keyring_enabled = ConfigAttribute('KEG_KEYRING_ENABLE')
     config_class = keg.config.Config
+    logging_class = keg.logging.Logging
     keyring_manager_class = None
     sqlalchemy_enabled = False
     sqlalchemy_modules = ['.model.entities']
@@ -117,32 +115,8 @@ class Keg(flask.Flask):
             self.register_blueprint(blueprint)
 
     def init_logging(self):
-        # adjust Flask's default logging for the application logger to not include debugging
-        self.logger.handlers[0].setLevel(logging.INFO)
-
-        #dirs_mode = self.config['KEG_DIRS_MODE']
-        #ensure_dirs(Path(self.config['KEG_LOG_INFO_FPATH']).parent, dirs_mode)
-        #ensure_dirs(Path(self.config['KEG_LOG_DEBUG_FPATH']).parent, dirs_mode)
-        #
-        #loggers = (self.logger, logging.getLogger(self.import_name))
-        #file_formatter = logging.Formatter(
-        #    '%(asctime)s %(levelname)s [%(name)s:%(lineno)d]: %(message)s'
-        #)
-        ## 10 MB
-        #log_max = 1024*1024*10
-        #
-        #info_file_handler = RotatingFileHandler(self.config['KEG_LOG_INFO_FPATH'], log_max, 5)
-        #info_file_handler.setFormatter(file_formatter)
-        #info_file_handler.setLevel(logging.INFO)
-        #
-        #debug_file_handler = RotatingFileHandler(self.config['KEG_LOG_DEBUG_FPATH'], log_max, 5)
-        #debug_file_handler.setFormatter(file_formatter)
-        #debug_file_handler.setLevel(logging.DEBUG)
-        #
-        #for logger in loggers:
-        #    logger.setLevel(logging.DEBUG)
-        #    logger.addHandler(info_file_handler)
-        #    logger.addHandler(debug_file_handler)
+        self.logging = self.logging_class(self.config)
+        self.logging.init_app()
 
     def init_error_handling(self):
         # handle status codes
@@ -193,6 +167,7 @@ class Keg(flask.Flask):
         app = cls(config_profile='TestProfile').init()
         app.test_request_context().push()
         signals.testing_start.send(app)
-
+        return app
+	
     def make_shell_context(self):
         return {}

@@ -56,3 +56,8 @@ class TestConfigDefaults(object):
         ]
         assert config.default_config_locations_parsed() == expected
 
+    def test_config_substitutions(self):
+        config = Config('', {})
+        config.init_app(None, 'fakeapp', '')
+        assert config['KEG_LOG_DPATH'] == config.dirs.user_log_dir
+        assert config['KEG_LOG_FNAME'] == 'fakeapp.log'

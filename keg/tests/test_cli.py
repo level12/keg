@@ -1,26 +1,9 @@
-import click
-
-from keg.app import Keg
+from keg_apps.cli import CLIApp
 from keg.testing import CLIBase
 
 
-class TempApp(Keg):
-    import_name = 'testapp'
-
-
-@TempApp.command()
-def hello():
-    print('hello keg test')
-
-
-@TempApp.command()
-@click.argument('name', default='foo')
-def foo2(name):
-    print('hello {}'.format(name))
-
-
 class TestCLI(CLIBase):
-    app_cls = TempApp
+    app_cls = CLIApp
     cmd_name = 'hello'
 
     def test_class_command(self):
@@ -41,7 +24,7 @@ class TestCLI(CLIBase):
 
 
 class TestConfigCommand(CLIBase):
-    app_cls = TempApp
+    app_cls = CLIApp
     cmd_name = 'config'
 
     def test_output(self):
