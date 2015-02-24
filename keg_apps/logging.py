@@ -10,7 +10,6 @@ log = logging.getLogger(__name__)
 
 class LoggingApp(Keg):
     import_name = __name__
-    config_profile = 'TestingProfile'
 
 
 @LoggingApp.command()
