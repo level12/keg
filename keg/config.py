@@ -76,6 +76,9 @@ class Config(flask.Config):
                 self.from_object(objects[self.profile])
                 self.configs_found.append('{}:{}'.format(fpath, self.profile))
 
+        sub_values = self.substitution_values()
+        self.substitution_apply(sub_values)
+
     def config_file_paths(self):
         dirs = self.dirs
 
@@ -121,20 +124,39 @@ class Config(flask.Config):
 
         return profile
 
+    def substitution_values(self):
+        return dict(
+            user_log_dir=self.dirs.user_log_dir,
+            app_import_name=self.app_import_name,
+        )
+
+    def substitution_apply(self, sub_values):
+        for config_key, config_value in self.iteritems():
+            if not isinstance(config_value, basestring):
+                continue
+            new_value = config_value.format(**sub_values)
+            if config_value != new_value:
+                self[config_key] = new_value
+
 
 # The following three classes are default configuration profiles
 class DefaultProfile(object):
-    # lock it down by default
-    KEG_DIRS_MODE = 0o700
+    KEG_DIR_MODE = 0777
     KEG_ENDPOINTS = dict(
         home='public.home',
         login='public.home',
         after_login='public.home',
         after_logout='public.home',
     )
+
     KEG_KEYRING_ENABLE = True
 
     KEG_SMTP_HOST = 'localhost'
+
+    KEG_LOG_DPATH = '{user_log_dir}'
+    KEG_LOG_FNAME = '{app_import_name}.log'
+    KEG_LOG_MAX_BACKUPS = 5
+    KEG_LOG_MAX_BYTES = 1024 * 1024 * 10  # 10MB
 
 
 class DevProfile(object):
