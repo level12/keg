@@ -168,6 +168,6 @@ class Keg(flask.Flask):
         app.test_request_context().push()
         signals.testing_start.send(app)
         return app
-	
+
     def make_shell_context(self):
         return {}
