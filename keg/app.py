@@ -32,6 +32,7 @@ class Keg(flask.Flask):
     jinja_filters = {}
 
     _init_ran = False
+    _app_instance = None
 
     def __init__(self, import_name=None, static_path=None, static_url_path=None,
                  static_folder='static', template_folder='templates', instance_path=None,
@@ -67,17 +68,17 @@ class Keg(flask.Flask):
         if self._init_ran:
             raise KegAppError('init() already called on this instance')
         self.init_config()
-        if not self.testing:
-            self.init_logging()
+        self.init_logging()
         self.init_keyring()
         self.init_oath()
+        self.init_error_handling()
         self.init_extensions()
         self.init_blueprints()
-        self.init_error_handling()
         self.init_filters()
 
         signals.app_ready.send(self)
         self._init_ran = True
+        self._app_instance = self
 
         # return self for easy chaining, i.e. app = Keg().init()
         return self
@@ -112,6 +113,9 @@ class Keg(flask.Flask):
     def init_blueprints(self):
         self.register_blueprint(kegbp)
         for blueprint in self.use_blueprints:
+            if hasattr(blueprint, '_keg_views'):
+                for viewcls in blueprint._keg_views:
+                    viewcls.init_blueprint(blueprint)
             self.register_blueprint(blueprint)
 
     def init_logging(self):
@@ -163,11 +167,28 @@ class Keg(flask.Flask):
         cls.cli_group()
 
     @classmethod
-    def testing_create(cls):
-        app = cls(config_profile='TestProfile').init()
-        app.test_request_context().push()
-        signals.testing_start.send(app)
-        return app
+    def testing_prep(cls):
+        # For now, do the import here so we don't have a hard dependency on WebTest
+        from keg.testing import ContextManager
+        cm = ContextManager.get_for(cls)
+        trigger_signal = cm.is_ready()
+        cm.ensure_current()
+
+        if trigger_signal:
+            signals.testing_start.send(cm.app)
+
+        return cm.app
+
+    @classmethod
+    def testing_cleanup(cls):
+        # For now, do the import here so we don't have a hard dependency on WebTest
+        from keg.testing import ContextManager
+        cm = ContextManager.get_for(cls)
+        cm.cleanup()
 
     def make_shell_context(self):
         return {}
+
+    @property
+    def logger(self):
+        return self.logging.logger

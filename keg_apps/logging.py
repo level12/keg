@@ -12,7 +12,3 @@ class LoggingApp(Keg):
     import_name = __name__
 
 
-@LoggingApp.command()
-def warn():
-    log.info('warning log entry')
-

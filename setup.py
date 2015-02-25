@@ -11,6 +11,8 @@ develop_requires = [
     'mock',
     'pytest',
     'blinker',
+    'Flask-WebTest',
+    'keyring',
 ]
 
 # Libraries needed to support assumptions Keg makes about how Keg apps will be tested.

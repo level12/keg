@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import pathlib
 
 from keg_apps.logging import LoggingApp, log
