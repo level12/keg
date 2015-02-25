@@ -93,7 +93,6 @@ class KegSQLAlchemy(SQLAlchemy):
         return True
 
     def on_testing_start(self, app):
-        print 'on testing start'
         self.clear_db()
         db.create_all()
 
