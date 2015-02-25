@@ -5,9 +5,13 @@ from keg.testing import WebBase
 class TestPublicView(WebBase):
     appcls = WebApp
 
-    def test_automatic_route(self):
+    def test_implicit_route(self):
         resp = self.testapp.get('/some-view')
         assert resp.body == 'hi from SomeView'
+
+    def test_explicit_route(self):
+        resp = self.testapp.get('/')
+        assert resp.body == 'home'
 
     def test_urls_routes(self):
         resp = self.testapp.get('/hello')
