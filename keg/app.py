@@ -171,11 +171,16 @@ class Keg(flask.Flask):
         # For now, do the import here so we don't have a hard dependency on WebTest
         from keg.testing import ContextManager
         cm = ContextManager.get_for(cls)
-        trigger_signal = cm.is_ready()
+        # if the context manager's app isn't ready, that means this will be the first time the app
+        # is instantiated.  That seems like a good indicator that tests are just beginning, so it's
+        # safe to trigger the signal.  We don't want the signal to fire every time b/c
+        # testing_prep() can be called more than once per test run.
+
+        trigger_signal = not cm.is_ready()
         cm.ensure_current()
 
         if trigger_signal:
-            signals.testing_start.send(cm.app)
+            signals.testing_run_start.send(cm.app)
 
         return cm.app
 
