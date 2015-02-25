@@ -67,6 +67,8 @@ class Keg(flask.Flask):
     def init(self):
         if self._init_ran:
             raise KegAppError('init() already called on this instance')
+        self._init_ran = True
+
         self.init_config()
         self.init_logging()
         self.init_keyring()
@@ -77,7 +79,6 @@ class Keg(flask.Flask):
         self.init_filters()
 
         signals.app_ready.send(self)
-        self._init_ran = True
         self._app_instance = self
 
         # return self for easy chaining, i.e. app = Keg().init()
@@ -113,9 +114,6 @@ class Keg(flask.Flask):
     def init_blueprints(self):
         self.register_blueprint(kegbp)
         for blueprint in self.use_blueprints:
-            if hasattr(blueprint, '_keg_views'):
-                for viewcls in blueprint._keg_views:
-                    viewcls.init_blueprint(blueprint)
             self.register_blueprint(blueprint)
 
     def init_logging(self):
