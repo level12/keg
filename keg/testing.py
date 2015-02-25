@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import sys
+
 import click
 import click.testing
 import flask
@@ -57,8 +59,15 @@ class CLIBase(object):
         result = self.runner.invoke(
             self.app_cls.cli_group,
             [cmd_name] + list(args),
-            catch_exceptions=False
+            catch_exceptions=False,
         )
+
+        # if an exception was raised, make sure you output the output to make debugging easier
+        # -1 as an exit code indicates a non SystemExit exception.
+        if result.exit_code == -1:
+            print result.output
+            raise result.exc_info[1], None, result.exc_info[2]
+
         error_message = 'Command exit code {}, expected {}.  Result output follows:\n{}'
         assert result.exit_code == exit_code, error_message.format(result.exit_code, exit_code,
                                                                    result.output)
