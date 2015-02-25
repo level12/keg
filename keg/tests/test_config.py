@@ -58,6 +58,8 @@ class TestConfigDefaults(object):
 
     def test_config_substitutions(self):
         config = Config('', {})
+        config['testvalue'] = '{not there}'
         config.init_app(None, 'fakeapp', '')
         assert config['KEG_LOG_DPATH'] == config.dirs.user_log_dir
         assert config['KEG_LOG_FNAME'] == 'fakeapp.log'
+        assert config['testvalue'] == '{not there}'
