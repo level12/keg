@@ -85,9 +85,7 @@ class _ViewMeta(MethodViewType):
     def __new__(cls, clsname, bases, attr):
         viewcls = super(_ViewMeta, cls).__new__(cls, clsname, bases, attr)
         if viewcls.blueprint is not None:
-            if not hasattr(viewcls.blueprint, '_keg_views'):
-                viewcls.blueprint._keg_views = []
-            viewcls.blueprint._keg_views.append(viewcls)
+            viewcls.init_blueprint()
         return viewcls
 
 
@@ -196,10 +194,11 @@ class PublicView(MethodView):
         return case_cw2dash(cls.__name__)
 
     @classmethod
-    def init_blueprint(cls, blueprint):
-        view_func = cls.as_view(cls.calc_endpoint())
+    def init_blueprint(cls):
+        endpoint = cls.calc_endpoint()
+        view_func = cls.as_view(endpoint)
         if not cls.urls:
-            blueprint.add_url_rule(cls.calc_url(), view_func=view_func)
+            cls.blueprint.add_url_rule(cls.calc_url(), endpoint=endpoint, view_func=view_func)
         else:
             for url in cls.urls:
-                blueprint.add_url_rule(url, view_func=view_func)
+                cls.blueprint.add_url_rule(url, endpoint=endpoint, view_func=view_func)
