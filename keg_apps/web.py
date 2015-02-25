@@ -20,6 +20,13 @@ class SomeView(WebView):
         return 'hi from SomeView'
 
 
+class Home(WebView):
+    url = '/'
+
+    def get(self):
+        return 'home'
+
+
 class Hello(WebView):
     urls = ['/hello', '/hello/<name>']
 

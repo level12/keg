@@ -96,6 +96,7 @@ class PublicView(MethodView):
 
     automatic_route = True
     blueprint = None
+    url = None
     urls = []
 
     require_authentication = False
@@ -186,6 +187,8 @@ class PublicView(MethodView):
 
     @classmethod
     def calc_url(cls):
+        if cls.url is not None:
+            return cls.url
         return '/' + case_cw2dash(cls.__name__)
 
     @classmethod
