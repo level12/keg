@@ -3,6 +3,42 @@ from __future__ import unicode_literals
 
 import click
 import click.testing
+import flask
+from flask.ext.webtest import TestApp
+
+from keg import current_app
+
+
+class ContextManager(object):
+    apps = {}
+
+    def __init__(self, appcls):
+        self.appcls = appcls
+        self.app = None
+        self.ctx = None
+
+    def ensure_current(self):
+        if not self.app:
+            app = self.appcls(config_profile='TestProfile').init()
+            self.ctx = app.app_context()
+            self.ctx.push()
+
+        if current_app is not self.app:
+            self.ctx.push()
+
+        return app
+
+    def cleanup(self):
+        self.ctx.pop()
+
+    def is_ready(self):
+        return self.app is not None
+
+    @classmethod
+    def get_for(cls, appcls):
+        if appcls not in cls.apps:
+            cls.apps[appcls] = cls(appcls)
+        return cls.apps[appcls]
 
 
 class CLIBase(object):
@@ -27,3 +63,17 @@ class CLIBase(object):
         assert result.exit_code == exit_code, error_message.format(result.exit_code, exit_code,
                                                                    result.output)
         return result
+
+
+class WebBase(object):
+    db = None
+    appcls = None
+
+    @classmethod
+    def setup_class(cls):
+        cls.appcls.testing_prep()
+        cls.testapp = TestApp(flask.current_app)
+
+    @classmethod
+    def teardown_class(cls):
+        cls.appcls.testing_cleanup()

@@ -17,6 +17,7 @@ class Logging(object):
         self.config = config
         self.log_dpath = self.config['KEG_LOG_DPATH']
         self.log_fname = self.config['KEG_LOG_FNAME']
+        self.logger = None
 
     def log_fpath(self):
         return osp.join(self.log_dpath, self.log_fname)
@@ -37,6 +38,8 @@ class Logging(object):
         logger = logging.getLogger(self.config.app_import_name)
         logger.addHandler(file_handler)
         logger.setLevel(logging.WARN)
+
+        self.logger = logger
 
     def init_app(self):
         self.init_main_log()
