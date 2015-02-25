@@ -5,7 +5,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 
-from keg.signals import testing_start
+from keg.signals import testing_run_start
 
 
 class KegSQLAlchemy(SQLAlchemy):
@@ -26,7 +26,7 @@ class KegSQLAlchemy(SQLAlchemy):
         def on_connect(dbapi_connection, connection_record):
             self.set_sqlite_pragma(dbapi_connection, connection_record)
 
-        @testing_start.connect_via(ANY, weak=False)
+        @testing_run_start.connect_via(ANY, weak=False)
         def on_testing_start(app):
             self.on_testing_start(app)
 
@@ -93,6 +93,7 @@ class KegSQLAlchemy(SQLAlchemy):
         return True
 
     def on_testing_start(self, app):
+        print 'on testing start'
         self.clear_db()
         db.create_all()
 
