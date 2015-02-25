@@ -9,12 +9,17 @@ import flask
 from pathlib import PurePath
 from werkzeug.utils import ImportStringError
 
-import keg.compat as compat
 from keg.utils import app_environ_get, pymodule_fpaths_to_objects
 
 
 class ConfigurationError(Exception):
     pass
+
+
+class SubstituteValue(object):
+    def __init__(self, value):
+        self.value = value
+substitute = SubstituteValue
 
 
 class Config(flask.Config):
@@ -132,11 +137,10 @@ class Config(flask.Config):
 
     def substitution_apply(self, sub_values):
         for config_key, config_value in self.iteritems():
-            if not isinstance(config_value, basestring):
+            if not isinstance(config_value, SubstituteValue):
                 continue
-            new_value = config_value.format(**sub_values)
-            if config_value != new_value:
-                self[config_key] = new_value
+            new_value = config_value.value.format(**sub_values)
+            self[config_key] = new_value
 
 
 # The following three classes are default configuration profiles
@@ -153,8 +157,8 @@ class DefaultProfile(object):
 
     KEG_SMTP_HOST = 'localhost'
 
-    KEG_LOG_DPATH = '{user_log_dir}'
-    KEG_LOG_FNAME = '{app_import_name}.log'
+    KEG_LOG_DPATH = substitute('{user_log_dir}')
+    KEG_LOG_FNAME = substitute('{app_import_name}.log')
     KEG_LOG_MAX_BACKUPS = 5
     KEG_LOG_MAX_BYTES = 1024 * 1024 * 10  # 10MB
 
