@@ -51,3 +51,10 @@ Testing
 
 * which testing profile is used when CLIBase is being used to test commands?
   Which one should be ran?
+
+
+Web & Views
+------------
+
+* Probably want a way to remove auto-generation of a URL for things like the Base views.  See how
+  keg_apps.web.views:PublicView gets a route and endpoint added.
