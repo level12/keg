@@ -1,4 +1,4 @@
-from keg_apps.web import WebApp
+from keg_apps.web.app import WebApp
 from keg.testing import WebBase
 
 
@@ -26,3 +26,11 @@ class TestPublicView(WebBase):
         WebApp(config_profile='TestingProfile').init()
         resp = self.testapp.get('/')
         assert resp.body == 'home'
+
+    def test_templating(self):
+        resp = self.testapp.get('/template1')
+        assert resp.body == 'Hello world!'
+
+    def test_custom_name(self):
+        resp = self.testapp.get('/template2')
+        assert resp.body == 'template-too'
