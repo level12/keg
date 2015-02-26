@@ -89,13 +89,14 @@ class _ViewMeta(MethodViewType):
         return viewcls
 
 
-class PublicView(MethodView):
+class BaseView(MethodView):
     __metaclass__ = _ViewMeta
 
     automatic_route = True
     blueprint = None
     url = None
     urls = []
+    template_name = None
 
     require_authentication = False
     auto_assign = tuple()
@@ -170,7 +171,9 @@ class PublicView(MethodView):
         for key in self.auto_assign:
             self.assign(key, getattr(self, key))
 
-    def template_name(self):
+    def calc_template_name(self):
+        if self.template_name is not None:
+            return self.template_name
         template_path = '{}.html'.format(case_cw2us(self.__class__.__name__))
         blueprint_name = request.blueprint
         if blueprint_name:
@@ -181,7 +184,7 @@ class PublicView(MethodView):
         self.template_args[key] = value
 
     def render(self):
-        return render_template(self.template_name(), **self.template_args)
+        return flask.render_template(self.calc_template_name(), **self.template_args)
 
     @classmethod
     def calc_url(cls):
