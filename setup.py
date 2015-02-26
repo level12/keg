@@ -4,7 +4,9 @@ from setuptools import setup, find_packages
 cdir = osp.abspath(osp.dirname(__file__))
 README = open(osp.join(cdir, 'readme.rst')).read()
 CHANGELOG = open(osp.join(cdir, 'changelog.rst')).read()
-VERSION = open(osp.join(cdir, 'keg', 'version.txt')).read().strip()
+
+version_globals = {}
+execfile(osp.join(cdir, 'keg', 'version.py'), version_globals)
 
 # libraries needed to develop & test on Keg itself
 develop_requires = [
@@ -23,7 +25,7 @@ testing_requires = [
 
 setup(
     name="Keg",
-    version=VERSION,
+    version=version_globals['VERSION'],
     description=("A web framework built on Flask & SQLAlchemy."
                  "  Somewhere North of Flask but South of Django."),
     long_description='\n\n'.join((README, CHANGELOG)),
