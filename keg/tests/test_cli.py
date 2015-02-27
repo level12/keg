@@ -25,7 +25,7 @@ class TestCLI(CLIBase):
 
 class TestConfigCommand(CLIBase):
     app_cls = CLIApp
-    cmd_name = 'config'
+    cmd_name = 'develop config'
 
     def test_output(self):
         result = self.invoke()
