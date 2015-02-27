@@ -49,8 +49,9 @@ Keg Development
 - Checkout the source code
 - pip install -e .
 - pip install -e .[development]
-- cd keg
 - py.test
+- flake8
+- or, optionally: tox
 
 Questions & Comments
 ====================

@@ -39,16 +39,17 @@ def reraise_lastexc():
     reraise(exc_type, exc_value, tb)
 
 
-class classproperty(property):
+class ClassProperty(property):
     """A decorator that behaves like @property except that operates
     on classes rather than instances.
     """
     def __init__(self, fget, *arg, **kw):
-        super(classproperty, self).__init__(fget, *arg, **kw)
+        super(ClassProperty, self).__init__(fget, *arg, **kw)
         self.__doc__ = fget.__doc__
 
-    def __get__(desc, self, cls):
+    def __get__(desc, self, cls):  # noqa
         return desc.fget(cls)
+classproperty = ClassProperty
 
 
 def pymodule_fpaths_to_objects(fpaths):

@@ -424,9 +424,9 @@ def run_command(info, host, port, reload, debugger, eager_loading,
         # import path because the app was loaded through a callback then
         # we won't print anything.
         if info.app_import_path is not None:
-            print(' * Serving Flask app "%s"' % info.app_import_path)
+            click.echo(' * Serving Flask app "%s"' % info.app_import_path)
         if info.debug is not None:
-            print(' * Forcing debug %s' % (info.debug and 'on' or 'off'))
+            click.echo(' * Forcing debug %s' % (info.debug and 'on' or 'off'))
 
     run_simple(host, port, app, use_reloader=reload,
                use_debugger=debugger, threaded=with_threads)

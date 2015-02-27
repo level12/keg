@@ -148,7 +148,7 @@ class Keg(flask.Flask):
         return '500 SERVER ERROR<br/><br/>administrators notified'
 
     @classproperty
-    def cli_group(cls):
+    def cli_group(cls):  # noqa
         if not hasattr(cls, '_cli_group'):
             cls._cli_group = keg.cli.init_app_cli(cls)
         return cls._cli_group
