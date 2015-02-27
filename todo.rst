@@ -58,3 +58,15 @@ Web & Views
 
 * Probably want a way to remove auto-generation of a URL for things like the Base views.  See how
   keg_apps.web.views:PublicView gets a route and endpoint added.
+
+
+Flask Extensions
+----------------
+
+* Flask-Admin
+* Flask-Assets
+* Flask-Classy: might get some ideas for our BaseView
+* Flask-DebugToolbar
+* Flask-Mail
+* Flask-SeaSurf: CSRF protection
+* Flask-WTF
