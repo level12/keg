@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import warnings
 
+from blazeutils.strings import randchars
 import flask
 from flask.config import ConfigAttribute
 
@@ -176,6 +177,9 @@ class Keg(flask.Flask):
 
         trigger_signal = not cm.is_ready()
         cm.ensure_current()
+
+        # set a random secret key so that sessions work in tests.
+        cm.app.config['SECRET_KEY'] = randchars(25)
 
         if trigger_signal:
             signals.testing_run_start.send(cm.app)
