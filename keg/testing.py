@@ -21,7 +21,7 @@ class ContextManager(object):
 
     def ensure_current(self):
         if not self.app:
-            app = self.appcls(config_profile='TestProfile').init()
+            self.app = app = self.appcls(config_profile='TestProfile').init()
             self.ctx = app.app_context()
             self.ctx.push()
 
@@ -81,8 +81,10 @@ class WebBase(object):
     @classmethod
     def setup_class(cls):
         cls.appcls.testing_prep()
+        cls.app = flask.current_app
         cls.testapp = TestApp(flask.current_app)
 
     @classmethod
     def teardown_class(cls):
+        cls.app = None
         cls.appcls.testing_cleanup()

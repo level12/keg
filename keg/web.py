@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 
 import inspect
 
-from blazeutils.strings import case_cw2us, case_cw2dash
+from blazeutils.strings import case_cw2us, case_cw2dash, simplify_string
 import flask
 from flask import request
-from flask.views import MethodView, MethodViewType
+from flask.views import MethodView, MethodViewType, http_method_funcs
 from werkzeug.datastructures import MultiDict
 from werkzeug.utils import validate_arguments, ArgumentValidationError
 
@@ -84,6 +84,7 @@ class _ViewMeta(MethodViewType):
 
     def __new__(cls, clsname, bases, attr):
         viewcls = super(_ViewMeta, cls).__new__(cls, clsname, bases, attr)
+        viewcls.init_routes()
         if viewcls.blueprint is not None:
             viewcls.init_blueprint()
         return viewcls
@@ -95,13 +96,38 @@ class BaseView(MethodView):
     automatic_route = True
     blueprint = None
     url = None
-    urls = []
+    url_rules = None
     template_name = None
+    _index_method = None
 
     require_authentication = False
     auto_assign = tuple()
     # names of qs arguments that should be merged w/ URL arguments and passed to view methods
     expected_qs_args = []
+
+    def __init__(self, responding_method=None):
+        self.responding_method = responding_method
+
+    def calc_responding_method(self):
+        if self.responding_method:
+            method_name = self.responding_method
+        elif request.is_xhr:
+            method_name = 'xhr'
+        else:
+            method_name = request.method.lower()
+            if method_name == 'get' and self._index_method is not None:
+                    method_name = self._index_method
+
+        method_obj = getattr(self, method_name, None)
+
+        # If the request method is HEAD and we don't have a handler for it
+        # retry with GET.
+        if method_obj is None and request.method == 'HEAD':
+            method_obj = getattr(self, 'get', None)
+
+        assert method_obj is not None, 'Unimplemented method %s' % method_name
+
+        return method_obj
 
     def dispatch_request(self, **kwargs):
         self.template_args = {}
@@ -113,20 +139,9 @@ class BaseView(MethodView):
         self.call_loaders(calling_args)
         _call_with_expected_args(self, calling_args, 'pre_method')
 
-        if request.is_xhr:
-            method_name = 'xhr'
-        else:
-            method_name = request.method.lower()
+        method_obj = self.calc_responding_method()
+        response = _call_with_expected_args(self, calling_args, method_obj)
 
-        meth = getattr(self, method_name, None)
-
-        # If the request method is HEAD and we don't have a handler for it
-        # retry with GET.
-        if meth is None and request.method == 'HEAD':
-            meth = getattr(self, 'get', None)
-        assert meth is not None, 'Unimplemented method %s' % method_name
-
-        response = _call_with_expected_args(self, calling_args, meth)
         if not response:
             self.process_auto_assign()
             _call_with_expected_args(self, calling_args, 'pre_render')
@@ -197,11 +212,61 @@ class BaseView(MethodView):
         return case_cw2dash(cls.__name__)
 
     @classmethod
+    def init_routes(cls):
+        if cls.url_rules is None:
+            cls.url_rules = []
+        method_with_rules = lambda obj: inspect.ismethod(obj) and hasattr(obj, '_rule_options')
+        for name, method_obj in inspect.getmembers(cls, predicate=method_with_rules):
+            options = method_obj._rule_options
+            dashed_name = case_cw2dash(name)
+            class_url = cls.calc_url()
+            default_rule = '{}/{}'.format(class_url, dashed_name)
+
+            # if this method is named after an http method, then we assume the method is routing
+            # for the class and is not an additional route for the class
+            if name in http_method_funcs:
+                default_rule = class_url
+
+            if options.pop('index', None):
+                assert cls._index_method is None, 'More than one route method has been specified' \
+                    ' as the index.'
+                cls._index_method = name
+                # if this is the index method, than it responds to the class' URL
+                default_rule = class_url
+            rule = options.pop('rule')
+            if not rule:
+                rule = default_rule
+            elif not rule.startswith('/'):
+                # since there is no slash, it is a relative URL
+                rule = '{}/{}'.format(default_rule, rule)
+            class_endpoint = cls.calc_endpoint()
+            method_endpoint = '{}:{}'.format(class_endpoint, dashed_name)
+            method_endpoint = options.setdefault('endpoint', method_endpoint)
+            view_func_name = simplify_string(method_endpoint.replace(':', '_'), replace_with='_')
+            options['view_func'] = cls.as_view(view_func_name.encode('ascii'), name)
+            cls.url_rules.append((rule, options))
+
+    @classmethod
     def init_blueprint(cls):
         endpoint = cls.calc_endpoint()
         view_func = cls.as_view(endpoint)
-        if not cls.urls:
+        if cls.methods:
             cls.blueprint.add_url_rule(cls.calc_url(), endpoint=endpoint, view_func=view_func)
-        else:
-            for url in cls.urls:
-                cls.blueprint.add_url_rule(url, endpoint=endpoint, view_func=view_func)
+        for rule, options in cls.url_rules:
+            cls.blueprint.add_url_rule(rule, **options)
+
+
+def route(rule=None, get=True, post=False, methods=[], **options):
+    if get and 'GET' not in methods:
+        methods.append('GET')
+    if post and 'POST' not in methods:
+        methods.append('POST')
+
+    options['methods'] = methods
+    options['rule'] = rule
+
+    def wrapper(func):
+        func._rule_options = options
+        return func
+
+    return wrapper
