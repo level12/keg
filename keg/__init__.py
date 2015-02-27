@@ -1,3 +1,3 @@
-from flask import current_app
+from flask import current_app  # noqa
 
-from keg.app import Keg
+from keg.app import Keg  # noqa

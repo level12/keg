@@ -144,7 +144,7 @@ class Keg(flask.Flask):
         self.jinja_env.filters.update(self.jinja_filters)
 
     def handle_server_error(self, error):
-        #send_exception_email()
+        # send_exception_email()
         return '500 SERVER ERROR<br/><br/>administrators notified'
 
     @classproperty

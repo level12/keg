@@ -217,12 +217,14 @@ def set_app_value(ctx, param, value):
     ctx.ensure_object(ScriptInfo).app_import_path = value
 
 
-debug_option = click.Option(['--debug/--no-debug'],
+debug_option = click.Option(
+    ['--debug/--no-debug'],
     help='Enable or disable debug mode.',
     default=None, callback=set_debug_value)
 
 
-app_option = click.Option(['-a', '--app'],
+app_option = click.Option(
+    ['-a', '--app'],
     help='The application to run',
     callback=set_app_value, is_eager=True)
 
@@ -241,6 +243,7 @@ class AppGroup(click.Group):
         unless it's disabled by passing ``with_appcontext=False``.
         """
         wrap_for_ctx = kwargs.pop('with_appcontext', True)
+
         def decorator(f):
             if wrap_for_ctx:
                 f = with_appcontext(f)
@@ -304,19 +307,19 @@ class FlaskGroup(AppGroup):
         if rv is not None:
             return rv
 
-        ## this code caused an exception because our app doesn't have a .cli.  Not exactly sure
-        ## how this was intended to be used, may be related to Flask's ability to invoke a command
-        ## like `flask --app=hello shell` but it doesn't seem to apply to how we do scripts in
-        ## Keg.
+        # The code below caused an exception because our app doesn't have a .cli.  Not exactly sure
+        # how this was intended to be used, may be related to Flask's ability to invoke a command
+        # like `flask --app=hello shell` but it doesn't seem to apply to how we do scripts in
+        # Keg.
 
-        #info = ctx.ensure_object(ScriptInfo)
-        #try:
+        # info = ctx.ensure_object(ScriptInfo)
+        # try:
         #    app = info.load_app()
         #    print app
         #    rv = app.cli.get_command(ctx, name)
         #    if rv is not None:
         #        return rv
-        #except NoAppException:
+        # except NoAppException:
         #    pass
 
     def list_commands(self, ctx):
@@ -359,6 +362,7 @@ def script_info_option(*args, **kwargs):
         raise TypeError('script_info_key not provided.')
 
     real_callback = kwargs.get('callback')
+
     def callback(ctx, param, value):
         if real_callback is not None:
             value = real_callback(ctx, value)

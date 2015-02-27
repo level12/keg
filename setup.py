@@ -12,9 +12,9 @@ execfile(osp.join(cdir, 'keg', 'version.py'), version_globals)
 develop_requires = [
     'mock',
     'pytest',
-    'blinker',
     'Flask-WebTest',
     'keyring',
+    'flake8',
 ]
 
 # Libraries needed to support assumptions Keg makes about how Keg apps will be tested.
@@ -46,6 +46,7 @@ setup(
     install_requires=[
         'appdirs',
         'blazeutils',
+        'blinker',
         'Click>=3.0',
         'Flask>=0.10.1',
         'Flask-SQLAlchemy',

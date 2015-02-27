@@ -26,4 +26,3 @@ class TestLogging(object):
 
         assert 'test warn log' in contents
         assert 'test info log' not in contents
-

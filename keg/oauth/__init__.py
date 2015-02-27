@@ -4,10 +4,14 @@ from __future__ import unicode_literals
 from flask import url_for, session, request, jsonify, Blueprint, flash, current_app
 from flask_oauthlib.client import OAuth
 
+from keg.web import redirect
+
 oauthlib = OAuth()
+
 
 class OAuthError(Exception):
     pass
+
 
 class Provider(object):
     def authorize(self, **kwargs):
@@ -102,8 +106,6 @@ class Manager(object):
         return session[self.session_key('token')]
 
 manager = Manager()
-
-from keg.web import redirect
 
 bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 

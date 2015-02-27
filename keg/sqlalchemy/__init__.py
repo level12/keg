@@ -68,7 +68,7 @@ class KegSQLAlchemy(SQLAlchemy):
                 try:
                     table.drop(db.engine)
                 except Exception, e:
-                    if not 'no such table' in str(e):
+                    if 'no such table' not in str(e):
                         raise
         elif db.engine.dialect.name == 'mssql':
             mapping = {
