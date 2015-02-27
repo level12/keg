@@ -6,7 +6,8 @@ README = open(osp.join(cdir, 'readme.rst')).read()
 CHANGELOG = open(osp.join(cdir, 'changelog.rst')).read()
 
 version_globals = {}
-execfile(osp.join(cdir, 'keg', 'version.py'), version_globals)
+with open(osp.join(cdir, 'keg', 'version.py')) as fo:
+    exec(fo.read(), version_globals)
 
 # libraries needed to develop & test on Keg itself
 develop_requires = [
@@ -15,6 +16,8 @@ develop_requires = [
     'Flask-WebTest',
     'keyring',
     'flake8',
+    'pep8-naming',
+    'flake8-print',
 ]
 
 # Libraries needed to support assumptions Keg makes about how Keg apps will be tested.
