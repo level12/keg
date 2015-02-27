@@ -179,8 +179,9 @@ class BaseView(MethodView):
             self._calling_args[arg_key] = retval
 
     def check_auth(self):
-        if self.require_authentication and not current_user.is_authenticated():
-            flask.abort(401)
+        pass
+        # if self.require_authentication and not current_user.is_authenticated():
+        #    flask.abort(401)
 
     def process_auto_assign(self):
         for key in self.auto_assign:
@@ -215,7 +216,10 @@ class BaseView(MethodView):
     def init_routes(cls):
         if cls.url_rules is None:
             cls.url_rules = []
-        method_with_rules = lambda obj: inspect.ismethod(obj) and hasattr(obj, '_rule_options')
+
+        def method_with_rules(obj):
+            return inspect.ismethod(obj) and hasattr(obj, '_rule_options')
+
         for name, method_obj in inspect.getmembers(cls, predicate=method_with_rules):
             options = method_obj._rule_options
             dashed_name = case_cw2dash(name)

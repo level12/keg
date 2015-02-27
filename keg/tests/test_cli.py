@@ -32,4 +32,3 @@ class TestConfigCommand(CLIBase):
         # use a value that should be towards the end of the output as a reasonble indicator the
         # command worked as expected.
         assert 'USE_X_SENDFILE = False' in result.output
-

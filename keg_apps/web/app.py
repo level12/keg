@@ -8,5 +8,3 @@ from .views import public_blueprint
 class WebApp(Keg):
     import_name = __name__
     use_blueprints = [public_blueprint]
-
-

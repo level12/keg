@@ -10,4 +10,3 @@ class TestInit(object):
         app = Keg(__name__)
         app.init()
         app.init()
-
