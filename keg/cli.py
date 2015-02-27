@@ -1,35 +1,46 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from collections import defaultdict
+
 import click
 import flask
 import urllib
 
-from keg._flask_cli import FlaskGroup, script_info_option, with_appcontext
+from keg._flask_cli import FlaskGroup, script_info_option, with_appcontext, run_command, \
+    shell_command
 from keg.keyring import keyring as keg_keyring
 
 
 class KegGroup(FlaskGroup):
     def __init__(self, add_default_commands=True, *args, **kwargs):
-        FlaskGroup.__init__(self, add_default_commands, *args, **kwargs)
+        FlaskGroup.__init__(self, add_default_commands=False, *args, **kwargs)
         if add_default_commands:
-            self.add_command(routes_command)
-            self.add_command(config_command)
-            self.add_command(keyring_group)
+            self.add_command(dev_command)
 
 
-@click.command('routes', short_help='List the routes defined for this app.')
+@click.group('develop', help='Developer info and utils.')
+def dev_command():
+    pass
+
+dev_command.add_command(run_command)
+dev_command.add_command(shell_command)
+
+
+@dev_command.command('routes', short_help='List the routes defined for this app.')
 @with_appcontext
 def routes_command():
     output = []
     endpoint_len = 0
     methods_len = 0
 
+    # calculate how wide the output columns need to be
     for rule in flask.current_app.url_map.iter_rules():
         methods = ','.join(rule.methods)
         endpoint_len = max(endpoint_len, len(rule.endpoint))
         methods_len = max(methods_len, len(methods))
 
+    # generate the output
     for rule in flask.current_app.url_map.iter_rules():
         methods = ','.join(rule.methods)
         line = urllib.unquote("{}   {}   {}".format(
@@ -40,8 +51,24 @@ def routes_command():
         click.echo(line)
 
 
-@click.command('config', short_help='List diagnostic info related to config files, profiles, and'
-                                    ' values.')
+@dev_command.command('templates', short_help='Show paths searched for a template.')
+@with_appcontext
+def templates_command():
+    jinja_loader = flask.current_app.jinja_env.loader
+    paths = defaultdict(list)
+    for template in jinja_loader.list_templates():
+        for loader, template in jinja_loader._iter_loaders(template):
+            for dpath in loader.searchpath:
+                paths[dpath].append(template)
+    for dpath in sorted(paths.keys()):
+        template_paths = sorted(paths[dpath])
+        click.echo(dpath)
+        for tpath in template_paths:
+            click.echo('    {}'.format(tpath))
+
+
+@dev_command.command('config', short_help='List info related to config files, profiles, and'
+                     ' values.')
 @with_appcontext
 def config_command():
     app = flask.current_app
@@ -91,8 +118,8 @@ def keyring_notify_no_module():
                ' `pip install keyring`.')
 
 
-@click.command('keyring', cls=KeyringGroup, invoke_without_command=True,
-               help='Lists keyring related sub-commands.')
+@dev_command.command('keyring', cls=KeyringGroup, invoke_without_command=True,
+                     help='Lists keyring related sub-commands.')
 @click.pass_context
 def keyring_group(ctx):
     # only take action if no subcommand is involved.
