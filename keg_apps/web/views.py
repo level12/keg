@@ -67,3 +67,6 @@ class Routing(PublicView):
     @route('<int:ident>')
     def delete(self, ident):
         pass
+
+class RoutingSubclass(Routing):
+    pass

@@ -56,3 +56,7 @@ class TestBaseView(WebBase):
 
         resp = self.testapp.post('/routing/update/7')
         assert resp.body == 'post update 7'
+
+    def test_subclassing(self):
+        resp = self.testapp.get('/routing-subclass')
+        assert resp.body == 'read'
