@@ -220,8 +220,9 @@ class BaseView(MethodView):
         def method_with_rules(obj):
             return inspect.ismethod(obj) and hasattr(obj, '_rule_options')
 
+        index_method = None
         for name, method_obj in inspect.getmembers(cls, predicate=method_with_rules):
-            options = method_obj._rule_options
+            options = method_obj._rule_options.copy()
             dashed_name = case_cw2dash(name)
             class_url = cls.calc_url()
             default_rule = '{}/{}'.format(class_url, dashed_name)
@@ -232,9 +233,9 @@ class BaseView(MethodView):
                 default_rule = class_url
 
             if options.pop('index', None):
-                assert cls._index_method is None, 'More than one route method has been specified' \
+                assert index_method is None, 'More than one route method has been specified' \
                     ' as the index.'
-                cls._index_method = name
+                index_method = name
                 # if this is the index method, than it responds to the class' URL
                 default_rule = class_url
             rule = options.pop('rule')
@@ -249,6 +250,7 @@ class BaseView(MethodView):
             view_func_name = simplify_string(method_endpoint.replace(':', '_'), replace_with='_')
             options['view_func'] = cls.as_view(view_func_name.encode('ascii'), name)
             cls.url_rules.append((rule, options))
+        cls._index_method = index_method
 
     @classmethod
     def init_blueprint(cls):
