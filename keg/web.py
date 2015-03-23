@@ -262,7 +262,9 @@ class BaseView(MethodView):
             cls.blueprint.add_url_rule(rule, **options)
 
 
-def route(rule=None, get=True, post=False, methods=[], **options):
+def route(rule=None, get=True, post=False, methods=None, **options):
+    if methods is None:
+        methods = []
     if get and 'GET' not in methods:
         methods.append('GET')
     if post and 'POST' not in methods:
