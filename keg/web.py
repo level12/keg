@@ -229,7 +229,7 @@ class BaseView(MethodView):
 
             # if this method is named after an http method, then we assume the method is routing
             # for the class and is not an additional route for the class
-            if name in http_method_funcs:
+            if  options.pop('http_verb', True) and name in http_method_funcs:
                 default_rule = class_url
 
             if options.pop('index', None):
@@ -262,7 +262,7 @@ class BaseView(MethodView):
             cls.blueprint.add_url_rule(rule, **options)
 
 
-def route(rule=None, get=True, post=False, methods=None, **options):
+def route(rule=None, get=True, post=False, methods=None, http_verb=None, **options):
     if methods is None:
         methods = []
     if get and 'GET' not in methods:
@@ -272,6 +272,9 @@ def route(rule=None, get=True, post=False, methods=None, **options):
 
     options['methods'] = methods
     options['rule'] = rule
+
+    if http_verb is not None:
+        options['http_verb'] = http_verb
 
     def wrapper(func):
         func._rule_options = options
