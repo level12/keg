@@ -64,9 +64,13 @@ class Routing(PublicView):
         else:
             return 'post update {!r}'.format(ident)
 
-    @route('<int:ident>')
+    @route('<int:ident>', http_verb=True, methods=['delete'])
     def delete(self, ident):
-        pass
+        return 'delete {}'.format(ident)
+
+    @route(get=True, http_verb=False)
+    def head(self):
+        return 'head'
 
 class RoutingSubclass(Routing):
     pass
