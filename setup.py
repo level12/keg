@@ -5,8 +5,9 @@ cdir = osp.abspath(osp.dirname(__file__))
 README = open(osp.join(cdir, 'readme.rst')).read()
 CHANGELOG = open(osp.join(cdir, 'changelog.rst')).read()
 
+version_fpath = osp.join(cdir, 'keg', 'version.py')
 version_globals = {}
-with open(osp.join(cdir, 'keg', 'version.py')) as fo:
+with open(version_fpath) as fo:
     exec(fo.read(), version_globals)
 
 # libraries needed to develop & test on Keg itself
