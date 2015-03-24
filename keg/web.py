@@ -255,7 +255,10 @@ class BaseView(MethodView):
     @classmethod
     def init_blueprint(cls):
         endpoint = cls.calc_endpoint()
-        view_func = cls.as_view(endpoint)
+        # Flask assigns the endpoint to the __name__ atribute of the function it creates, so we need
+        # to make sure it's a byte string or Python will throw an exception.
+        bytes_endpoint = endpoint.encode('utf-8')
+        view_func = cls.as_view(bytes_endpoint)
         if cls.methods:
             cls.blueprint.add_url_rule(cls.calc_url(), endpoint=endpoint, view_func=view_func)
         for rule, options in cls.url_rules:
