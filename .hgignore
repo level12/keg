@@ -5,3 +5,5 @@ syntax: glob
 .noseids
 build/*
 .tox/*
+.coverage
+htmlcov
