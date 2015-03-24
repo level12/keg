@@ -19,6 +19,7 @@ develop_requires = [
     'flake8',
     'pep8-naming',
     'flake8-print',
+    'pytest-cov',
 ]
 
 # Libraries needed to support assumptions Keg makes about how Keg apps will be tested.
