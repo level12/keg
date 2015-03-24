@@ -61,10 +61,14 @@ class TestBaseView(WebBase):
         resp = self.testapp.get('/routing-subclass')
         assert resp.body == 'read'
 
-    def test_delete(self):
+    def test_delete_verb(self):
         resp = self.testapp.delete('/routing/123')
         assert resp.body == 'delete 123'
 
-    def test_head(self):
+    def test_delete_get(self):
+        resp = self.testapp.get('/routing/delete/123')
+        assert resp.body == 'delete 123'
+
+    def test_head_route(self):
         resp = self.testapp.get('/routing/head')
         assert resp.body == 'head'

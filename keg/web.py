@@ -213,6 +213,23 @@ class BaseView(MethodView):
         return case_cw2dash(cls.__name__)
 
     @classmethod
+    def add_url_rule(cls, method_name, options, use_class_url):
+        class_url = cls.calc_url()
+        dashed_method_name = case_cw2dash(method_name)
+        method_url = '{}/{}'.format(class_url, dashed_method_name)
+
+        default_rule = class_url if use_class_url else method_url
+
+        rule = options.pop('rule')
+        if not rule:
+            rule = default_rule
+        elif not rule.startswith('/'):
+            # since there is no slash, it is a relative URL
+            rule = '{}/{}'.format(default_rule, rule)
+
+        cls.url_rules.append((rule, options))
+
+    @classmethod
     def init_routes(cls):
         if cls.url_rules is None:
             cls.url_rules = []
@@ -221,35 +238,38 @@ class BaseView(MethodView):
             return inspect.ismethod(obj) and hasattr(obj, '_rule_options')
 
         index_method = None
-        for name, method_obj in inspect.getmembers(cls, predicate=method_with_rules):
+        for method_name, method_obj in inspect.getmembers(cls, predicate=method_with_rules):
+            # Since we are popping from and adding to the options, make a copy of them.  This
+            # prevents problems when subclassing.
             options = method_obj._rule_options.copy()
-            dashed_name = case_cw2dash(name)
-            class_url = cls.calc_url()
-            default_rule = '{}/{}'.format(class_url, dashed_name)
 
-            # if this method is named after an http method, then we assume the method is routing
-            # for the class and is not an additional route for the class
-            if  options.pop('http_verb', True) and name in http_method_funcs:
-                default_rule = class_url
-
-            if options.pop('index', None):
-                assert index_method is None, 'More than one route method has been specified' \
-                    ' as the index.'
-                index_method = name
-                # if this is the index method, than it responds to the class' URL
-                default_rule = class_url
-            rule = options.pop('rule')
-            if not rule:
-                rule = default_rule
-            elif not rule.startswith('/'):
-                # since there is no slash, it is a relative URL
-                rule = '{}/{}'.format(default_rule, rule)
+            dashed_method_name = case_cw2dash(method_name)
             class_endpoint = cls.calc_endpoint()
-            method_endpoint = '{}:{}'.format(class_endpoint, dashed_name)
+            method_endpoint = '{}:{}'.format(class_endpoint, dashed_method_name)
             method_endpoint = options.setdefault('endpoint', method_endpoint)
+
             view_func_name = simplify_string(method_endpoint.replace(':', '_'), replace_with='_')
-            options['view_func'] = cls.as_view(view_func_name.encode('ascii'), name)
-            cls.url_rules.append((rule, options))
+            options['view_func'] = cls.as_view(view_func_name.encode('ascii'), method_name)
+
+            # If this method is named after an http method, then we we have special handling.
+            if method_name in http_method_funcs:
+                # First, we create the verb related rule.  This responds to a request like:
+                # DELETE /blog/1234
+                verb_options = options.copy()
+                verb_options['methods'].add(method_name.upper())
+                cls.add_url_rule(method_name, options.copy(), use_class_url=True)
+
+                # Now, create a GET related rule with a URL segment that matches the method.  This
+                # responds to a request like: GET /blog/delete/1234
+                if 'GET' in options['methods'] and method_name != 'get':
+                    cls.add_url_rule(method_name, options, use_class_url=False)
+            elif options.pop('index', None):
+                    assert index_method is None, 'More than one route method has been specified' \
+                        ' as the index.'
+                    index_method = method_name
+                    cls.add_url_rule(method_name, options, use_class_url=True)
+            else:
+                cls.add_url_rule(method_name, options, use_class_url=False)
         cls._index_method = index_method
 
     @classmethod
@@ -265,19 +285,18 @@ class BaseView(MethodView):
             cls.blueprint.add_url_rule(rule, **options)
 
 
-def route(rule=None, get=True, post=False, methods=None, http_verb=None, **options):
+def route(rule=None, get=True, post=False, methods=None, **options):
     if methods is None:
-        methods = []
+        methods = set()
+    else:
+        methods = set(methods)
     if get and 'GET' not in methods:
-        methods.append('GET')
+        methods.add('GET')
     if post and 'POST' not in methods:
-        methods.append('POST')
+        methods.add('POST')
 
     options['methods'] = methods
     options['rule'] = rule
-
-    if http_verb is not None:
-        options['http_verb'] = http_verb
 
     def wrapper(func):
         func._rule_options = options
