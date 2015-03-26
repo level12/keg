@@ -112,17 +112,24 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
     def calc_responding_method(self):
         if self.responding_method:
             method_name = self.responding_method
+
+            # sometimes the real method name is based on the name of the method combined with the
+            # HTTP method/verb.
+            method_name_verb = '{}_{}'.format(method_name, request.method.lower())
+            if not hasattr(self, method_name) and hasattr(self, method_name_verb):
+                method_name = method_name_verb
+
         elif request.is_xhr:
             method_name = 'xhr'
         else:
             method_name = request.method.lower()
 
-        method_obj = getattr(self, method_name, None)
+            # If the request method is HEAD and we don't have a handler for it
+            # retry with GET.
+            if request.method == 'HEAD' and not hasattr(self, 'head'):
+                method_name = 'get'
 
-        # If the request method is HEAD and we don't have a handler for it
-        # retry with GET.
-        if method_obj is None and request.method == 'HEAD':
-            method_obj = getattr(self, 'get', None)
+        method_obj = getattr(self, method_name, None)
 
         assert method_obj is not None, 'Unimplemented method %s' % method_name
 
@@ -212,70 +219,30 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
         return case_cw2dash(cls.__name__)
 
     @classmethod
-    def add_url_rule(cls, method_name, options, use_class_url, method_endpoint=None):
-        class_url = cls.calc_url()
-        dashed_method_name = case_cw2dash(method_name)
-        method_url = '{}/{}'.format(class_url, dashed_method_name)
-
-        default_rule = class_url if use_class_url else method_url
-        if use_class_url:
-            default_rule = class_url
-            options.setdefault('endpoint', cls.calc_endpoint())
-        else:
-            default_rule = method_url
-            options.setdefault('endpoint', method_endpoint)
-
-        rule = options.pop('rule')
-        if not rule:
-            rule = default_rule
-        elif not rule.startswith('/'):
-            # since there is no slash, it is a relative URL
-            rule = '{}/{}'.format(default_rule, rule)
-
-        # Methods was a set for easier adds w/out duplicates, but convert back to list now.
-        cls.url_rules.append((rule, options))
-
-    @classmethod
     def init_routes(cls):
         cls.url_rules = []
+        cls.view_funcs = {}
 
         def method_with_rules(obj):
             # isroutine() matches functions (PY3) and unbound methods (PY2).
-            return inspect.isroutine(obj) and hasattr(obj, '_rule_options')
+            return inspect.isroutine(obj) and hasattr(obj, '_keg_rules')
 
-        default_method = None
         for method_name, method_obj in inspect.getmembers(cls, predicate=method_with_rules):
-            # Since we are popping from and adding to the options, make a copy of them.  This
-            # prevents problems when subclassing.
-            options = method_obj._rule_options.copy()
-
-            dashed_method_name = case_cw2dash(method_name)
-            class_endpoint = cls.calc_endpoint()
-            method_endpoint = '{}:{}'.format(class_endpoint, dashed_method_name)
-
-            view_func_name = simplify_string('{}_{}'.format(class_endpoint, method_name),
-                                             replace_with='_')
-            options['view_func'] = cls.as_view(str(view_func_name), method_name)
-
-            # If this method is named after an http method, then we we have special handling.
+            for rule, options in method_obj._keg_rules:
+                method_route = MethodRoute(method_name, rule, options, cls.calc_url(),
+                                           cls.calc_endpoint())
+                mr_options = method_route.options()
+                if method_route.endpoint not in cls.view_funcs:
+                    view_func = cls.as_view(method_route.view_func_name,
+                                            method_route.sanitized_method_name('_'))
+                    cls.view_funcs[method_route.endpoint] = view_func
+                mr_options['view_func'] = cls.view_funcs[method_route.endpoint]
+                cls.blueprint.add_url_rule(method_route.rule(), **mr_options)
             if method_name in http_method_funcs:
-                # First, we create the verb related rule.  This responds to a request like:
-                # DELETE /blog/1234
-                verb_options = options.copy()
-                verb_options['methods'].add(method_name.upper())
-                cls.add_url_rule(method_name, options.copy(), True)
-
-                # Now, create a GET related rule with a URL segment that matches the method.  This
-                # responds to a request like: GET /blog/delete/1234
-                if 'GET' in options['methods'] and method_name != 'get':
-                    cls.add_url_rule(method_name, options, False, method_endpoint)
-            elif options.pop('to_class', False):
-                    assert default_method is None, 'More than one route method has been specified' \
-                        ' to be routed at the class level using `to_class`.'
-                    default_method = method_name
-                    cls.add_url_rule(method_name, options, True)
-            else:
-                cls.add_url_rule(method_name, options, False, method_endpoint)
+                # A @route() is being used on a method with the same name as an HTTP verb.
+                # Since this method is being explicitly routed, the automatic rule that would
+                # be created due to MethodView logic should not apply.
+                cls.methods.remove(method_name.upper())
 
     @classmethod
     def init_blueprint(cls, rules):
@@ -299,36 +266,88 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
 
             if not absolute_found:
                 cls.blueprint.add_url_rule(class_url, endpoint=endpoint, view_func=view_func)
+
         for rule, options in cls.url_rules:
             cls.blueprint.add_url_rule(rule, **options)
 
 
-def route(rule=None, get=True, post=False, methods=None, **options):
+class MethodRoute(object):
+
+    def __init__(self, method_name, rule, options, parent_url, parent_endpoint):
+        self.method_name = method_name
+        self._rule = rule
+        # We use destructive operations on options, so make a copy.
+        self._options = options.copy()
+        self.parent_url = parent_url
+        self.parent_endpoint = parent_endpoint
+
+    def sanitized_method_name(self, separator='-'):
+        method_identifier = self.method_name.replace('_', separator)
+
+        # method names can be given like foo_get() and foo_post() which indicate the HTTP verb
+        # used but shouldn't affect the URL.
+        parts = method_identifier.split(separator)
+        method_name_suffix = parts[-1]
+        if len(parts) > 1 and method_name_suffix in http_method_funcs:
+            last_position = (len(method_name_suffix) + 1) * -1
+            return method_identifier[:last_position]
+
+        return method_identifier
+
+    @property
+    def endpoint(self):
+        return '{}:{}'.format(self.parent_endpoint, self.sanitized_method_name())
+
+    @property
+    def view_func_name(self):
+        return str('{}_{}'.format(self.parent_endpoint, self.sanitized_method_name('_')))
+
+    def rule(self):
+        method_url = '{}/{}'.format(self.parent_url, self.sanitized_method_name())
+
+        # Handle no rule given by @route().
+        if not self._rule:
+            return method_url
+
+        # Handle a relative rule given by @route().
+        if not self._rule.startswith('/'):
+            return '{}/{}'.format(method_url, self._rule)
+
+        return self._rule
+
+    def options(self):
+        self._options['endpoint'] = self.endpoint
+        return self._options
+
+
+def _methods_calc(get, post, post_only, methods):
     if methods is None:
         methods = set()
     else:
         methods = set(methods)
-    if get and 'GET' not in methods:
+
+    if get and not post_only:
         methods.add('GET')
-    if post and 'POST' not in methods:
+    if post or post_only:
         methods.add('POST')
 
-    options['methods'] = methods
-    options['rule'] = rule
+    return methods
+
+
+def route(rule=None, get=True, post=False, post_only=False, methods=None, **options):
+    options['methods'] = _methods_calc(get, post, post_only, methods)
 
     def wrapper(func):
-        func._rule_options = options
+        if not hasattr(func, '_keg_rules'):
+            func._keg_rules = []
+        func._keg_rules.append((rule, options))
         return func
 
     return wrapper
 
 
-class ViewRule(object):
-    def __init__(self, rule, kwargs):
-        self.arg_pair = (rule, kwargs)
-
-
-def rule(rule=None, **kwargs):
+def rule(rule=None, get=True, post=False, post_only=False, methods=None, **options):
     parent_locals = sys._getframe(1).f_locals
     rules = parent_locals.setdefault('_rules', [])
-    rules.append((rule, kwargs))
+    options['methods'] = _methods_calc(get, post, post_only, methods)
+    rules.append((rule, options))
