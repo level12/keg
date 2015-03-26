@@ -1,7 +1,6 @@
 ToDo
 #####
 
-* change the way VERSION is handled
 * it would be nice if you could setup a custom sqlalchemy manager instead of having to use
   KegSQLAlchemy.  maybe having a register_manager_class() method that replaced the global variable?
 * I removed the create_app() classmethod and decided to just do all that work on init.  However,
@@ -27,7 +26,6 @@ Logging
 CLI
 -----------
 
-* Running an unknown command results in "AttributeError: <app> object has no attribute 'cli'" exception
 * run vs serve command for http server
 * standardize help for commands to have either a period or not at the end of the description
 * there are problems with CLI tests if commands don't get added to the app.  This can happen if
