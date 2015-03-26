@@ -26,7 +26,7 @@ class ContextManager(object):
         if current_app is not self.app:
             self.ctx.push()
 
-        return app
+        return self.app
 
     def cleanup(self):
         self.ctx.pop()
