@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import inspect
 import sys
 
-from blazeutils.strings import case_cw2us, case_cw2dash, simplify_string
+from blazeutils.strings import case_cw2us, case_cw2dash
 import flask
 from flask import request
 from flask.views import MethodView, MethodViewType, http_method_funcs

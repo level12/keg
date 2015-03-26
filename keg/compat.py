@@ -28,7 +28,7 @@ def with_metaclass(meta, *bases):
     # introduce dummy classes into the final MRO.
     #
     # copied from Flask._compat
-    class metaclass(meta):
+    class _MetaClass(meta):
         __call__ = type.__call__
         __init__ = type.__init__
 
@@ -36,4 +36,4 @@ def with_metaclass(meta, *bases):
             if this_bases is None:
                 return type.__new__(cls, name, (), d)
             return meta(name, bases, d)
-    return metaclass(str('temporary_class'), None, {})
+    return _MetaClass(str('temporary_class'), None, {})
