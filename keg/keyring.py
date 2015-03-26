@@ -7,6 +7,7 @@ from pathlib import Path
 import platform
 import re
 import sys
+import six
 
 try:
     import keyring
@@ -94,7 +95,7 @@ class Manager(object):
 
         for key in data.keys():
             value = data[key]
-            if not isinstance(value, basestring):
+            if not isinstance(value, six.string_types):
                 continue
             matches = self.sub_re.finditer(value)
             for match in matches:

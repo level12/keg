@@ -105,7 +105,7 @@ class Config(flask.Config):
         dpaths.append(dirs.user_config_dir)
         dpaths.append(osp.dirname(self.app_root_path))
 
-        fpaths = map(lambda dpath: osp.join(dpath, config_fname), dpaths)
+        fpaths = [osp.join(dpath, config_fname) for dpath in dpaths]
 
         return fpaths
 
@@ -136,7 +136,7 @@ class Config(flask.Config):
         )
 
     def substitution_apply(self, sub_values):
-        for config_key, config_value in self.iteritems():
+        for config_key, config_value in self.items():
             if not isinstance(config_value, SubstituteValue):
                 continue
             new_value = config_value.value.format(**sub_values)
@@ -145,7 +145,7 @@ class Config(flask.Config):
 
 # The following three classes are default configuration profiles
 class DefaultProfile(object):
-    KEG_DIR_MODE = 0777
+    KEG_DIR_MODE = 0o777
     KEG_ENDPOINTS = dict(
         home='public.home',
         login='public.home',

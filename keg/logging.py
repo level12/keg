@@ -31,7 +31,8 @@ class Logging(object):
         log_max = self.config['KEG_LOG_MAX_BYTES']
         log_backups = self.config['KEG_LOG_MAX_BACKUPS']
 
-        file_handler = RotatingFileHandler(log_fpath, log_max, log_backups)
+        file_handler = RotatingFileHandler(log_fpath, maxBytes=log_max, backupCount=log_backups,
+                                           encoding='utf-8')
         file_handler.setFormatter(self.file_formatter)
         file_handler.setLevel(logging.WARN)
 
