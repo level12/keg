@@ -1,0 +1,8 @@
+mock
+pytest
+Flask-WebTest
+keyring
+flake8
+pep8-naming
+flake8-print
+pytest-cov
