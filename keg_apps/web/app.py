@@ -2,9 +2,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from keg.app import Keg
-from .views import public_blueprint
+import keg_apps.web.views.routing as routing
+import keg_apps.web.views.templating as templating
 
 
 class WebApp(Keg):
     import_name = __name__
-    use_blueprints = [public_blueprint]
+    use_blueprints = [routing.blueprint, templating.blueprint]
