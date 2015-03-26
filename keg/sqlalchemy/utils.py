@@ -1,6 +1,10 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import logging
 
 from ..sqlalchemy import db
+import six
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +21,7 @@ def clear_db():
         for exstr in sql:
             try:
                 db.engine.execute(exstr)
-            except Exception, e:
+            except Exception as e:
                 log.warn(str(e))
     elif dialect_name == 'sqlite':
         # drop the views
@@ -34,7 +38,7 @@ def clear_db():
         for table in reversed(db.metadata.sorted_tables):
             try:
                 table.drop(db.engine)
-            except Exception, e:
+            except Exception as e:
                 if 'no such table' not in str(e):
                     raise
     elif dialect_name == 'mssql':
@@ -47,7 +51,7 @@ def clear_db():
             'U': 'drop table [{name}]',
         }
         delete_sql = []
-        for type, drop_sql in mapping.iteritems():
+        for type, drop_sql in six.iteritems(mapping):
             sql = 'select name, object_name( parent_object_id ) as parent_name '\
                 'from sys.objects where type in (\'{0}\')'.format("', '".join(type))
             rows = db.engine.execute(sql)

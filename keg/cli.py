@@ -5,7 +5,8 @@ from collections import defaultdict
 
 import click
 import flask
-import urllib
+
+from six.moves import urllib
 
 from keg._flask_cli import FlaskGroup, script_info_option, with_appcontext, run_command, \
     shell_command
@@ -43,7 +44,7 @@ def routes_command():
     # generate the output
     for rule in flask.current_app.url_map.iter_rules():
         methods = ','.join(rule.methods)
-        line = urllib.unquote("{}   {}   {}".format(
+        line = urllib.parse.unquote("{}   {}   {}".format(
             rule.endpoint.ljust(endpoint_len), methods.ljust(methods_len), rule))
         output.append(line)
 
@@ -73,7 +74,7 @@ def templates_command():
 def config_command():
     app = flask.current_app
     config = app.config
-    keys = config.keys()
+    keys = list(config.keys())
     keys.sort()
 
     click.echo('Default config objects:')

@@ -17,11 +17,11 @@ class TestLogging(object):
             app.config['KEG_LOG_DPATH'] = tmpdir
 
         app = LoggingApp().init()
-        log.warn('test warn log')
+        log.warning('test warn log')
         log.info('test info log')
 
         log_fpath = pathlib.Path(app.logging.log_fpath())
-        with log_fpath.open('rb') as fh:
+        with log_fpath.open('r', encoding='utf-8') as fh:
             contents = fh.read()
 
         assert 'test warn log' in contents

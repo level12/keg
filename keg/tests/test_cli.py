@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 from keg_apps.cli import CLIApp
 from keg.testing import CLIBase
 

@@ -63,7 +63,7 @@ def pymodule_fpaths_to_objects(fpaths):
         path = pathlib.Path(fpath)
         if path.exists():
             pymodule_globals = {}
-            execfile(fpath, pymodule_globals)
+            exec(compile(open(fpath).read(), fpath, 'exec'), pymodule_globals)
             retval.append((fpath, pymodule_globals))
     return retval
 

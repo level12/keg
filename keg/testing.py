@@ -5,6 +5,7 @@ import click
 import click.testing
 import flask
 from flask.ext.webtest import TestApp
+import six
 
 from keg import current_app
 
@@ -64,7 +65,7 @@ class CLIBase(object):
         # -1 as an exit code indicates a non SystemExit exception.
         if result.exit_code == -1:
             click.echo(result.output)
-            raise result.exc_info[1], None, result.exc_info[2]
+            six.reraise(result.exc_info[1], None, result.exc_info[2])
 
         error_message = 'Command exit code {}, expected {}.  Result output follows:\n{}'
         assert result.exit_code == exit_code, error_message.format(result.exit_code, exit_code,

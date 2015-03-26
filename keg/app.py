@@ -6,6 +6,7 @@ import warnings
 from blazeutils.strings import randchars
 import flask
 from flask.config import ConfigAttribute
+from six.moves import range
 
 from keg.blueprints import keg as kegbp
 import keg.cli
@@ -113,6 +114,7 @@ class Keg(flask.Flask):
             visit_modules(self.sqlalchemy_modules, self.import_name)
 
     def init_blueprints(self):
+        # TODO: probably want to be selective about adding our blueprint
         self.register_blueprint(kegbp)
         for blueprint in self.use_blueprints:
             self.register_blueprint(blueprint)

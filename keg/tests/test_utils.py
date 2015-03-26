@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import tempfile
 
 from keg.utils import pymodule_fpaths_to_objects
@@ -8,11 +11,11 @@ class TestUtils(object):
     def test_pymodule_fpaths_to_objects(self):
         with tempfile.NamedTemporaryFile(delete=False) as fh:
             fpath1 = fh.name
-            fh.write('foo1="bar"')
+            fh.write(b'foo1="bar"')
 
         with tempfile.NamedTemporaryFile(delete=False) as fh:
             fpath2 = fh.name
-            fh.write('foo2="bar"')
+            fh.write(b'foo2="bar"')
 
         with tempfile.NamedTemporaryFile() as fh:
             fpath3 = fh.name
