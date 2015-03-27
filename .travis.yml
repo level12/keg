@@ -1,13 +1,5 @@
 language: python
-env:
-  - TOXENV=py27
-  - TOXENV=py34
-  - TOXENV=flake8
 install:
   - pip install tox
-before_script:
-  - tox -e coverage-init
 script:
   - tox
-after_success:
-  - tox -e coverage-report
