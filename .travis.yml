@@ -1,0 +1,11 @@
+language: python
+env:
+  - TOXENV=coverage-init
+  - TOXENV=py27
+  - TOXENV=py34
+  - TOXENV=coverage-report
+  - TOXENV=flake8
+install:
+  - travis_retry pip install tox
+script:
+  - travis_retry tox
