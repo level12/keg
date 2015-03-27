@@ -18,7 +18,7 @@ setup(
     long_description='\n\n'.join((README, CHANGELOG)),
     author="Randy Syring",
     author_email="randy.syring@level12.io",
-    url='http://bitbucket.org/level12/keg/',
+    url='https://github.com/level12/keg',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

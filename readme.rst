@@ -35,17 +35,18 @@ Installation
 Keg Development
 ===============
 
-- Checkout the source code
+- git clone https://github.com/level12/keg keg-src
+- cd keg-src
 - pip install -e .
-- pip install -e .[development]
-- py.test
+- pip install -e requirements/testing.txt
+- py.test keg
 - flake8
 - or, optionally: tox
 
-Questions & Comments
+Issues & Discussion
 ====================
 
-For now, please visit: http://groups.google.com/group/blazelibs
+Please direct questions, comments, bugs, feature requests, etc. to: https://github.com/level12/keg/issues
 
 Current Status
 ==============
