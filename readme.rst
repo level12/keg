@@ -46,7 +46,8 @@ Keg Development
 Issues & Discussion
 ====================
 
-Please direct questions, comments, bugs, feature requests, etc. to: https://github.com/level12/keg/issues
+Please direct questions, comments, bugs, feature requests, etc. to:
+https://github.com/level12/keg/issues
 
 Current Status
 ==============
