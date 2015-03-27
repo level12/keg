@@ -1,3 +1,5 @@
+.. default-role:: code
+
 Keg: more than Flask
 ####################
 
@@ -35,7 +37,7 @@ Installation
 Keg Development
 ===============
 
-To develop on keg, begin by::
+To develop on keg, begin by running our tests::
 
     git clone https://github.com/level12/keg keg-src
     cd keg-src
@@ -43,10 +45,10 @@ To develop on keg, begin by::
 
 You can then examine tox.ini for insights into our development process.  In particular, we:
 
-* use py.test for testing (and coverage analysis)
-* use flake8 for linting
-* store pip requirements files in :file:`requirements/`
-* cache wheels in :file:`requirements/wheelhouse` for faster & more reliable CI builds
+* use `py.test` for testing (and coverage analysis)
+* use `flake8` for linting
+* store `pip` requirements files in `requirements/`
+* cache wheels in `requirements/wheelhouse` for faster & more reliable CI builds
 
 Issues & Discussion
 ====================
