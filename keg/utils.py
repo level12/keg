@@ -63,7 +63,8 @@ def pymodule_fpaths_to_objects(fpaths):
         path = pathlib.Path(fpath)
         if path.exists():
             pymodule_globals = {}
-            exec(compile(open(fpath).read(), fpath, 'exec'), pymodule_globals)
+            with open(fpath) as fo:
+                exec(compile(fo.read(), fpath, 'exec'), pymodule_globals)
             retval.append((fpath, pymodule_globals))
     return retval
 
@@ -78,3 +79,7 @@ def visit_modules(dotted_paths, base_path=None):
         if path.startswith('.') and base_path is not None:
             path = base_path + path
         import_string(path)
+
+
+
+
