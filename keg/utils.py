@@ -79,7 +79,3 @@ def visit_modules(dotted_paths, base_path=None):
         if path.startswith('.') and base_path is not None:
             path = base_path + path
         import_string(path)
-
-
-
-
