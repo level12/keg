@@ -2,11 +2,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import getpass
-import os
-from pathlib import Path
-import platform
 import re
-import sys
+
 import six
 
 try:
@@ -25,14 +22,6 @@ class Manager(object):
     # that isn't "}"
     # see: http://www.catonmat.net/blog/my-favorite-regex/
     sub_pattern = '(\$\{([ -|~]+?)\}\$)'
-
-    secretstorage_link_paths = [
-        '/usr/lib/python2.7/dist-packages/dbus',
-        '/usr/lib/python2.7/dist-packages/_dbus_bindings.so',
-        '/usr/lib/python2.7/dist-packages/_dbus_glib_bindings.so',
-        '/usr/lib/python2.7/dist-packages/secretstorage',
-        '/usr/lib/python2.7/dist-packages/Crypto',
-    ]
 
     backend_min_priority = 1
 
@@ -53,41 +42,6 @@ class Manager(object):
         if backend.priority < self.backend_min_priority:
             return False
         return True
-
-    def venv_link_backend(self):
-        if platform.system() != 'Linux':
-            self.log.info('Keyring virtualenv setup only supports Linux for now.')
-            return False
-
-        venv_dpath = os.environ.get('VIRTUAL_ENV')
-        if venv_dpath is None:
-            self.log.warning('Trying to enable a keyring backend, but not not in a virtualenv.')
-            return False
-
-        venv_site_packages = os.path.join(venv_dpath, 'lib', 'python%s' % sys.version[:3],
-                                          'site-packages')
-
-        return self.venv_link_secretstorage(venv_site_packages)
-
-    def venv_link_secretstorage(self, target_dir):
-        for dbus_fpath in self.secretstorage_link_paths:
-            dbus_fpath = Path(dbus_fpath)
-            if not dbus_fpath.exists():
-                return False
-            target_dbus_fpath = Path(target_dir, dbus_fpath.name)
-            if not target_dbus_fpath.exists():
-                target_dbus_fpath.symlink_to(dbus_fpath)
-
-        try:
-            # this will throw an exception of all the dependencies didn't get setup correctly
-            import secretstorage
-            bus = secretstorage.dbus_init()
-            list(secretstorage.get_all_collections(bus))
-            self.log.info('Succesfully linked files and the SecretService keyring is now setup.')
-        except Exception:
-            self.log.exception('')
-            self.log.error('failed setting up secretstorage for the SecretService keyring')
-            return False
 
     def substitute(self, data):
         if not self.verify_backend():

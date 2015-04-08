@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from collections import defaultdict
+import platform
 
 import click
 import flask
@@ -107,8 +108,6 @@ class KeyringGroup(click.MultiCommand):
             return keyring_status
         if name == 'list-keys':
             return keyring_list_keys
-        if name == 'setup':
-            return keyring_setup
         if name == 'delete':
             return keyring_delete
 
@@ -173,17 +172,12 @@ def keyring_status(unavailable):
         click.echo('\nKeyring functionality for this app has been DISABLED through the config'
                    ' setting KEG_KEYRING_ENABLE.')
     elif not flask.current_app.keyring_manager.verify_backend():
-        click.echo('\nWARNING: the current backend is not recommended,'
+        click.echo('\nWARNING: the current backend is insecure,'
                    ' keyring substitution unavailable.')
-        click.echo('\n---> You can try this app\'s `keyring setup` command to fix this. <---')
-
-
-@click.command('setup', short_help='Attempt to setup your virtualenv for keyring support.')
-@with_appcontext
-def keyring_setup():
-    flask.current_app.keyring_manager.venv_link_backend()
-    click.echo('Keyring setup attempted, check log messages and the output from the keyring'
-               ' status command to verify.')
+        if platform.system() == 'Linux':
+            click.echo('\nTRY THIS: use the SecretStorage Setup utility to get a more secure'
+                       ' keyring backend.')
+            click.echo('https://pypi.python.org/pypi/SecretStorage-Setup\n')
 
 
 @click.command('list-keys', short_help='Show all keys used in config value substitution.')
