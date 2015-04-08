@@ -161,6 +161,8 @@ class DefaultProfile(object):
     KEG_LOG_FNAME = substitute('{app_import_name}.log')
     KEG_LOG_MAX_BACKUPS = 5
     KEG_LOG_MAX_BYTES = 1024 * 1024 * 10  # 10MB
+    KEG_LOG_FILE_FORMAT_STR = '%(asctime)s %(levelname)s [%(name)s:%(lineno)d]: %(message)s'
+    KEG_LOG_STDOUT_FORMAT_STR = '%(levelname)s - %(name)s - %(message)s'
 
 
 class DevProfile(object):

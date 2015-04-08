@@ -9,6 +9,8 @@ from keg.app import Keg
 
 class CLIApp(Keg):
     import_name = __name__
+    # Silence the keyring warning messages or CLI output tests get confused b/c of the warning.
+    keyring_enabled = False
 
 
 @CLIApp.command()

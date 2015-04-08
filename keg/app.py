@@ -200,4 +200,4 @@ class Keg(flask.Flask):
 
     @property
     def logger(self):
-        return self.logging.logger
+        return self.logging.app_logger
