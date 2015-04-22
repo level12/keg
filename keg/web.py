@@ -237,8 +237,10 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
                                             method_route.sanitized_method_name('_'))
                     cls.view_funcs[method_route.endpoint] = view_func
                 mr_options['view_func'] = cls.view_funcs[method_route.endpoint]
-                cls.blueprint.add_url_rule(method_route.rule(), **mr_options)
-            if method_name in http_method_funcs:
+
+                if cls.blueprint:
+                    cls.blueprint.add_url_rule(method_route.rule(), **mr_options)
+            if method_name in http_method_funcs and method_name.upper() in cls.methods:
                 # A @route() is being used on a method with the same name as an HTTP verb.
                 # Since this method is being explicitly routed, the automatic rule that would
                 # be created due to MethodView logic should not apply.
