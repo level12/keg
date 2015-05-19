@@ -23,7 +23,9 @@ class TestViewRouting(WebBase):
             'routing.misc',
             'routing.misc:an-abs-url',
             'routing.misc:two-routes',
+            'routing.planes:list',
             'routing.tickets',
+            'routing.trucks:list',
             'routing.verb-routing',
             'routing.verb-routing-sub',
         ]
@@ -247,3 +249,10 @@ class TestViewRouting(WebBase):
         assert resp.text == '17'
         resp = self.testapp.get('/misc/two-routes/9')
         assert resp.text == '17'
+
+    def test_abstract_class_usage(self):
+        resp = self.testapp.get('/trucks/list')
+        assert resp.text == 'listing Trucks'
+
+        resp = self.testapp.get('/planes/list')
+        assert resp.text == 'listing Planes'

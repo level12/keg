@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 import flask
 
 from flask import request
-from keg.web import BaseView, route, rule
+from keg.web import BaseView as KegBaseView, route, rule
 
 blueprint = flask.Blueprint('routing', __name__)
 
 
-class BaseView(BaseView):
+class BaseView(KegBaseView):
     blueprint = blueprint
 
 
@@ -174,3 +174,43 @@ class Misc(BaseView):
     @route('9')
     def two_routes(self):
         return '17'
+
+
+class CrudBase(KegBaseView):
+    """
+        Testing a view that is intended to be used as an abstract class: it should be inherited
+        but will never be instantiated itself.
+
+        This is similiar to BaseView, except that this class is intended to represent a class that
+        isn't confined to a certain blueprint, but intended to give similar functionality in a way
+        that can be used in/with different blueprints.
+
+        Pain points that this identifies:
+
+            - This class itself should be created without throwing an exception due to not having
+              a blueprint.
+            - The creation of this class should not cause any application routes to be defined.
+            - The creation of a subclass of this class should result in routes for the subclass
+              being created.
+    """
+    @route()
+    def list(self):
+        return 'listing {}'.format(self.__class__.__name__)
+
+
+class Trucks(CrudBase):
+    """
+        CRUD for a model/entity
+
+        GET /trucks/list
+    """
+    blueprint = blueprint
+
+
+class Planes(CrudBase):
+    """
+        CRUD for a model/entity
+
+        GET /planes/list
+    """
+    blueprint = blueprint

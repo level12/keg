@@ -89,8 +89,11 @@ class _ViewMeta(MethodViewType):
     def __new__(cls, clsname, bases, attr):
         rules = attr.pop('_rules', [])
         viewcls = super(_ViewMeta, cls).__new__(cls, clsname, bases, attr)
-        viewcls.init_routes()
+
+        # Assuming child views will always have a blueprint OR they are intended to be used like
+        # abstract classes and will never be routed to directly.
         if viewcls.blueprint is not None:
+            viewcls.init_routes()
             viewcls.init_blueprint(rules)
         return viewcls
 
