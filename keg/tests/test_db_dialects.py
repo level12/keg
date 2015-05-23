@@ -99,6 +99,12 @@ class DialectExam(object):
         self.dialect().drop_all()
         assert len(self.obj_names()) == 0
 
+    def test_create_all(self):
+        self.dialect().drop_all()
+        self.dialect().prep_empty()
+        self.dialect().create_all()
+        assert len(self.obj_names()) == self.entity_count
+
 
 class TestSQLite(DialectExam):
     bind_name = 'sqlite2'
