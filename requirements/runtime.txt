@@ -1,5 +1,6 @@
-# runtime
-# mostly here so we can easily build the wheelhouse
+# Runtime dependencies: should match install_requires in setup.py.  Specifying them here in a
+# requirements file makes it easier to build the wheelhouse.
+
 appdirs
 BlazeUtils
 blinker

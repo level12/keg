@@ -1,3 +1,5 @@
+# packages needed for testing keg
+
 mock
 pytest
 Flask-WebTest
@@ -8,3 +10,4 @@ flake8-print
 pytest-cov
 tox
 coveralls
+psycopg2
