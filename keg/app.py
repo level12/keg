@@ -13,7 +13,7 @@ import keg.cli
 import keg.config
 import keg.logging
 import keg.signals as signals
-from keg.utils import classproperty, visit_modules
+from keg.utils import classproperty
 import keg.web
 
 
@@ -29,8 +29,11 @@ class Keg(flask.Flask):
     config_class = keg.config.Config
     logging_class = keg.logging.Logging
     keyring_manager_class = None
-    sqlalchemy_enabled = False
-    sqlalchemy_modules = ['.model.entities']
+
+    db_enabled = False
+    db_visit_modules = ['.model.entities']
+    db_manager = None
+
     jinja_filters = {}
 
     _init_ran = False
@@ -105,13 +108,16 @@ class Keg(flask.Flask):
             self.keyring_manager.substitute(self.config)
 
     def init_extensions(self):
-        self.init_sqlalchemy()
+        self.init_db()
 
-    def init_sqlalchemy(self):
-        if self.sqlalchemy_enabled:
-            from keg.sqlalchemy import db
-            db.init_app(self)
-            visit_modules(self.sqlalchemy_modules, self.import_name)
+    def db_manager_cls(self):
+        from keg.sqlalchemy import DatabaseManager
+        return DatabaseManager
+
+    def init_db(self):
+        if self.db_enabled:
+            cls = self.db_manager_cls()
+            self.db_manager = cls(self)
 
     def init_blueprints(self):
         # TODO: probably want to be selective about adding our blueprint
@@ -172,11 +178,11 @@ class Keg(flask.Flask):
         # For now, do the import here so we don't have a hard dependency on WebTest
         from keg.testing import ContextManager
         cm = ContextManager.get_for(cls)
+
         # if the context manager's app isn't ready, that means this will be the first time the app
         # is instantiated.  That seems like a good indicator that tests are just beginning, so it's
         # safe to trigger the signal.  We don't want the signal to fire every time b/c
         # testing_prep() can be called more than once per test run.
-
         trigger_signal = not cm.is_ready()
         cm.ensure_current()
 

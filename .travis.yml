@@ -6,3 +6,7 @@ install:
   - pip install --use-wheel --no-index --find-links=requirements/wheelhouse tox
 script:
   - tox
+addons:
+  postgresql: "9.3"
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres

@@ -164,6 +164,8 @@ class DefaultProfile(object):
     KEG_LOG_FILE_FORMAT_STR = '%(asctime)s %(levelname)s [%(name)s:%(lineno)d]: %(message)s'
     KEG_LOG_STDOUT_FORMAT_STR = '%(levelname)s - %(name)s - %(message)s'
 
+    KEG_DB_DIALECT_OPTIONS = {}
+
 
 class DevProfile(object):
     DEBUG = True

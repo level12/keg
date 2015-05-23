@@ -50,6 +50,20 @@ You can then examine tox.ini for insights into our development process.  In part
 * store `pip` requirements files in `requirements/`
 * cache wheels in `requirements/wheelhouse` for faster & more reliable CI builds
 
+Dependency Management
+---------------------
+
+Adding a dependency involves:
+
+#. Adding the dependency to one of the requirements files in `requirements/`.
+#. Running `requirements/build-wheelhouse.py`.
+
+Preview Readme
+--------------
+
+When updating the readme, use `restview --long-description` to preview changes.
+
+
 Issues & Discussion
 ====================
 
