@@ -14,14 +14,6 @@ class KegSQLAlchemy(SQLAlchemy):
         if app.testing:
             self.testing_scoped_session()
 
-        #@event.listens_for(Engine, "connect")
-        #def on_connect(dbapi_connection, connection_record):
-        #    self.dialect_util.on_connect(dbapi_connection, connection_record)
-
-        #@testing_run_start.connect_via(ANY, weak=False)
-        #def on_testing_start(app):
-        #    self.dialect_util.on_testing_start(app)
-
     def testing_scoped_session(self):
         # don't want to have to import this if we are in production, so put import
         # inside of the method
@@ -93,4 +85,3 @@ class DatabaseManager(object):
     def drop_all(self):
         for dialect in self.all_bind_dialects():
             dialect.drop_all()
-

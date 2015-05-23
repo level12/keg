@@ -1,58 +1,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from mock import call, Mock
-
-#from keg.sqlalchemy.utils import PostgreSQL
-
-
-#class TestPostgreSQLUtil(object):
-#
-#    def test_drop_all_default(self):
-#        m_db = Mock()
-#        m_execute = m_db.engine.execute
-#        util = PostgreSQL(m_db)
-#        util.drop_all()
-#        assert m_execute.call_args_list == [
-#            call('DROP SCHEMA IF EXISTS public CASCADE;')
-#        ]
-#
-#    def test_drop_all_multi_schema(self):
-#        m_db = Mock()
-#        m_execute = m_db.engine.execute
-#        options = {'postgresql.schemas': ('public', 'foo')}
-#        util = PostgreSQL(m_db, options)
-#        util.drop_all()
-#        assert m_execute.call_args_list == [
-#            call('DROP SCHEMA IF EXISTS public CASCADE;'),
-#            call('DROP SCHEMA IF EXISTS foo CASCADE;')
-#        ]
-#
-#    def test_prep_empty_default(self):
-#        m_db = Mock()
-#        m_db.engine.url.username = 'foo_user'
-#        m_execute = m_db.engine.execute
-#        util = PostgreSQL(m_db)
-#        util.prep_empty()
-#        assert m_execute.call_args_list == [
-#            call('CREATE SCHEMA public AUTHORIZATION foo_user;'),
-#            call('GRANT ALL ON SCHEMA public TO foo_user;')
-#        ]
-#
-#    def test_prep_empty_multi_schema(self):
-#        m_db = Mock()
-#        m_db.engine.url.username = 'foo_user'
-#        m_execute = m_db.engine.execute
-#        options = {'postgresql.schemas': ('public', 'foo')}
-#        util = PostgreSQL(m_db, options)
-#        util.prep_empty()
-#        assert m_execute.call_args_list == [
-#            call('CREATE SCHEMA public AUTHORIZATION foo_user;'),
-#            call('GRANT ALL ON SCHEMA public TO foo_user;'),
-#            call('CREATE SCHEMA foo AUTHORIZATION foo_user;'),
-#            call('GRANT ALL ON SCHEMA foo TO foo_user;')
-#        ]
-
 from keg import current_app
 from keg.db import db
 

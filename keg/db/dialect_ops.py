@@ -120,7 +120,7 @@ class SQLiteOps(DialectOperations):
 DialectOperations.dialect_map['sqlite'] = SQLiteOps
 
 
-#class MicrosoftSQL(DialectOperations):
+# class MicrosoftSQL(DialectOperations):
 #    """
 #        This hasn't been tested yet.  Code copied from old clear_db() method.  Uncomment & test
 #        when needed.
