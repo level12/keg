@@ -54,7 +54,7 @@ from mock import call, Mock
 #        ]
 
 from keg import current_app
-from keg.sqlalchemy import db
+from keg.db import db
 
 from keg_apps.db.app import DBApp
 

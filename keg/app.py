@@ -111,7 +111,7 @@ class Keg(flask.Flask):
         self.init_db()
 
     def db_manager_cls(self):
-        from keg.sqlalchemy import DatabaseManager
+        from keg.db import DatabaseManager
         return DatabaseManager
 
     def init_db(self):

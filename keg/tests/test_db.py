@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from keg.sqlalchemy import db
+from keg.db import db
 
 import keg_apps.db.model.entities as ents
 from keg_apps.db.app import DBApp

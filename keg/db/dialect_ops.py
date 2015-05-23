@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from sqlalchemy import MetaData
 
-from ..sqlalchemy import db
+from ..db import db
 
 
 class DialectOperations(object):

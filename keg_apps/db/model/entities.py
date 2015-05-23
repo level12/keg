@@ -1,4 +1,4 @@
-from keg.sqlalchemy import db
+from keg.db import db
 
 
 class Blog(db.Model):
