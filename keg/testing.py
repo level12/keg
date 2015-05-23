@@ -24,7 +24,7 @@ class ContextManager(object):
             self.ctx = app.app_context()
             self.ctx.push()
 
-        if current_app is not self.app:
+        if current_app._get_current_object is not self.app:
             self.ctx.push()
 
         return self.app
