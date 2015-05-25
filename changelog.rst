@@ -6,6 +6,8 @@ development version: 2015-05-25
 -------------------------------
 
 - Remove Keg.testing_cleanup(): wasn't really needed
+- Fix db init when SQLALCHEMY_BINDS config option not present but DB feature enabled
+
 
 development version: 2015-05-23
 -------------------------------

@@ -24,10 +24,16 @@ class KegSQLAlchemy(SQLAlchemy):
         db.session = db.create_scoped_session(options={'scopefunc': get_scopefunc()})
 
     def get_engines(self, app):
-        bind_names = app.config.get('SQLALCHEMY_BINDS', {}).keys()
+        # the default engine doesn't have a bind
         retval = [(None, self.get_engine(app))]
-        for bind_name in bind_names:
-            retval.append((bind_name, self.get_engine(app, bind=bind_name)))
+
+        bind_names = app.config['SQLALCHEMY_BINDS']
+        # The default value of SQLALCHEMY_BINDS is None and the key is present b/c of
+        # Flask-SQLAlchemy defaults.  So, only process the binds if they are not None.
+        if bind_names is not None:
+            for bind_name in bind_names:
+                retval.append((bind_name, self.get_engine(app, bind=bind_name)))
+
         return retval
 
 db = KegSQLAlchemy()
