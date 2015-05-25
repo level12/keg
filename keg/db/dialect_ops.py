@@ -43,24 +43,11 @@ class DialectOperations(object):
             raise Exception('DialectOperations does not yet support the "{}" database.'
                             .format(dialect_name))
 
-    def cleanup_session(self):
-        """
-            This makes sure the session doesn't have an open transaction which helps avoid DB
-            hangs.
-        """
-        db.session.remove()
-
     def prep_empty(self):
         pass
 
     def on_connect(self, dbapi_connection, connection_record):
         pass
-
-    def on_testing_start(self):
-        self.cleanup_session()
-        self.drop_all()
-        self.prep_empty()
-        self.create_all()
 
 
 class PostgreSQLOps(DialectOperations):

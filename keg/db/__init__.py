@@ -85,8 +85,14 @@ class DatabaseManager(object):
             yield DialectOperations.create_for(engine, bind_name, self.dialect_opts)
 
     def on_testing_start(self, app):
+        db.session.remove()
         for dialect in self.all_bind_dialects():
-            dialect.on_testing_start()
+            dialect.drop_all()
+            dialect.prep_empty()
+
+        # Could call dialect.create_all(), but db.create_all() will work on all binds anyway, which
+        # is what we want.
+        db.create_all()
 
     def drop_all(self):
         for dialect in self.all_bind_dialects():
