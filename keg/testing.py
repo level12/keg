@@ -82,4 +82,3 @@ class WebBase(object):
         cls.appcls.testing_prep()
         cls.app = flask.current_app
         cls.testapp = TestApp(flask.current_app)
-
