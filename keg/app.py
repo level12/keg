@@ -6,6 +6,7 @@ import warnings
 from blazeutils.strings import randchars
 import flask
 from flask.config import ConfigAttribute
+import six
 from six.moves import range
 
 from keg.blueprints import keg as kegbp
@@ -34,7 +35,8 @@ class Keg(flask.Flask):
     db_visit_modules = ['.model.entities']
     db_manager = None
 
-    jinja_filters = {}
+    template_filters = {}
+    template_globals = []
 
     _init_ran = False
     _app_instance = None
@@ -81,7 +83,7 @@ class Keg(flask.Flask):
         self.init_error_handling()
         self.init_extensions()
         self.init_blueprints()
-        self.init_filters()
+        self.init_jinja()
 
         signals.app_ready.send(self)
         self._app_instance = self
@@ -148,8 +150,15 @@ class Keg(flask.Flask):
         oauthlib.init_app(self)
         manager.register_providers(self.oauth_providers)
 
-    def init_filters(self):
-        self.jinja_env.filters.update(self.jinja_filters)
+    def init_jinja(self):
+        self.jinja_env.filters.update(self.template_filters)
+
+        # Template_context_processors is supposed to be functions that return dictionaries.  But,
+        # we skip that extra nesting and allow a Keg app to specify the name of the context item
+        # in template_globals.  Therefore, use a lambda to set things up the way
+        # template_context_processors expects.
+        for global_name, global_obj in six.iteritems(self.template_globals):
+            self.template_context_processors[None].append(lambda: {global_name: global_obj})
 
     def handle_server_error(self, error):
         # send_exception_email()

@@ -5,9 +5,16 @@ Changelog
 development version: 2015-05-25
 -------------------------------
 
-- Remove Keg.testing_cleanup(): wasn't really needed
+- Remove `Keg.testing_cleanup()`: wasn't really needed
 - Fix db init when SQLALCHEMY_BINDS config option not present but DB feature enabled
+- Adjust the way jinja filters and globals are handled.  Keg will now process `.template_filters` and
+  `.template_globals` (both should be dicts) if defined on an app.
 
+
+BC changes required:
+
+- if you were using `Keg.testing_cleanup()` explicitly, remove it.
+- If using `.jinja_filters` on your app, rename to `.template_filters`
 
 development version: 2015-05-23
 -------------------------------

@@ -21,3 +21,9 @@ class Template2(BaseView):
 
     def get(self):
         pass
+
+
+class Jinja(BaseView):
+
+    def get(self):
+        pass

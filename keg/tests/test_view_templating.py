@@ -15,3 +15,11 @@ class TestViewTemplating(WebBase):
     def test_custom_name(self):
         resp = self.testapp.get('/template2')
         assert resp.text == 'template-too'
+
+
+class TestJinjaInit(WebBase):
+    appcls = WebApp
+
+    def test_jinja_filter(self):
+        resp = self.testapp.get('/jinja')
+        assert resp.text == 'hello Keg foo'
