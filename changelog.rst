@@ -1,6 +1,12 @@
 Changelog
 =========
 
+
+development version: 2015-05-25
+-------------------------------
+
+- Remove Keg.testing_cleanup(): wasn't really needed
+
 development version: 2015-05-23
 -------------------------------
 

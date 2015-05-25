@@ -11,10 +11,6 @@ def setup_module(module):
     DBApp.testing_prep()
 
 
-def teardown_module(module):
-    DBApp.testing_cleanup()
-
-
 class TestDB(object):
 
     def test_primary_db_entity(self):

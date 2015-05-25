@@ -11,10 +11,6 @@ def setup_module(module):
     DBApp.testing_prep()
 
 
-def teardown_module(module):
-    DBApp.testing_cleanup()
-
-
 class DialectExam(object):
     bind_name = None
     obj_names_sql = None

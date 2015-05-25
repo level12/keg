@@ -194,13 +194,6 @@ class Keg(flask.Flask):
 
         return cm.app
 
-    @classmethod
-    def testing_cleanup(cls):
-        # For now, do the import here so we don't have a hard dependency on WebTest
-        from keg.testing import ContextManager
-        cm = ContextManager.get_for(cls)
-        cm.cleanup()
-
     def make_shell_context(self):
         return {}
 
