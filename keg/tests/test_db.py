@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import pytest
+
 from keg.db import db
 
 import keg_apps.db.model.entities as ents
@@ -10,6 +12,14 @@ from keg_apps.db2 import DB2App
 
 def setup_module(module):
     DBApp.testing_prep()
+
+
+@pytest.fixture(autouse=True)
+def db_session_prep():
+    """
+        Rollback the session after every test.
+    """
+    db.session.rollback()
 
 
 class TestDB(object):
