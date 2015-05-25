@@ -9,7 +9,7 @@ development version: 2015-05-25
 - Fix db init when SQLALCHEMY_BINDS config option not present but DB feature enabled
 - Adjust the way jinja filters and globals are handled.  Keg will now process `.template_filters` and
   `.template_globals` (both should be dicts) if defined on an app.
-
+- add signals and commands for database init and clearing
 
 BC changes required:
 

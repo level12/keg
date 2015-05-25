@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from keg.signals import testing_run_start
+from keg.signals import testing_run_start, db_init_pre, db_init_post, db_clear_pre, db_clear_post
 from keg.utils import visit_modules
 
 
@@ -85,15 +85,30 @@ class DatabaseManager(object):
             yield DialectOperations.create_for(engine, bind_name, self.dialect_opts)
 
     def on_testing_start(self, app):
+        self.db_init_with_clear()
+
+    def drop_all(self):
         db.session.remove()
         for dialect in self.all_bind_dialects():
             dialect.drop_all()
+
+    def prep_empty(self):
+        for dialect in self.all_bind_dialects():
             dialect.prep_empty()
 
-        # Could call dialect.create_all(), but db.create_all() will work on all binds anyway, which
-        # is what we want.
-        db.create_all()
+    # The methods that follow will trigger application events.
+    def db_init_with_clear(self):
+        self.db_clear()
+        # todo: prep_empty should probably be an event
+        self.prep_empty()
+        self.db_init()
 
-    def drop_all(self):
-        for dialect in self.all_bind_dialects():
-            dialect.drop_all()
+    def db_init(self):
+        db_init_pre.send(self.app)
+        db.create_all()
+        db_init_post.send(self.app)
+
+    def db_clear(self):
+        db_clear_pre.send(self.app)
+        self.drop_all()
+        db_clear_post.send(self.app)

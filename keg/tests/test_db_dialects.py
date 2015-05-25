@@ -27,7 +27,8 @@ class DialectExam(object):
 
     @classmethod
     def setup_class(cls):
-        cls.dialect().on_testing_start()
+        # passing None as the app just because on_testing_start() doesn't use it
+        current_app.db_manager.on_testing_start(None)
 
     @classmethod
     def dialect(cls):

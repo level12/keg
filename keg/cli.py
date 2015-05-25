@@ -6,9 +6,9 @@ import platform
 
 import click
 import flask
-
 from six.moves import urllib
 
+from keg import current_app
 from keg._flask_cli import FlaskGroup, script_info_option, with_appcontext, run_command, \
     shell_command
 from keg.keyring import keyring as keg_keyring
@@ -93,6 +93,55 @@ def config_command():
     click.echo('Resulting app config (including Flask defaults):')
     for key in keys:
         click.echo('    {} = {}'.format(key, config[key]))
+
+
+class DatabaseGroup(click.MultiCommand):
+
+    def list_commands(self, ctx):
+        return ['clear', 'init']
+
+    def get_command(self, ctx, name):
+        if name == 'init':
+            return database_init
+        if name == 'clear':
+            return database_clear
+
+
+@dev_command.command('db', cls=DatabaseGroup, invoke_without_command=True,
+                     help='Lists database related sub-commands.')
+@with_appcontext
+@click.pass_context
+def database_group(ctx):
+    # only take action if no subcommand is involved.
+    if ctx.invoked_subcommand is None:
+        if not current_app.db_enabled:
+            click.echo('Database not enabled for this app.  No subcommands available.')
+        else:
+            # Database enabled, but no subcommand was given, therefore we want to just show
+            # the help message, which would be the default behavior if we had not used the
+            # invoke_Without_command option.
+            click.echo(ctx.get_help())
+            ctx.exit()
+
+
+@click.command('init', short_help='Create all db objects, send related events.')
+@click.option('--clear-first', default=False, is_flag=True,
+              help='Clear DB of all data and drop all objects before init.')
+@with_appcontext
+def database_init(clear_first):
+    if clear_first:
+        current_app.db_manager.db_init_with_clear()
+        click.echo('Database cleared and initialized')
+    else:
+        current_app.db_manager.db_init()
+        click.echo('Database initialzed')
+
+
+@click.command('clear', short_help='Clear DB of all data and drop all objects.')
+@with_appcontext
+def database_clear():
+    current_app.db_manager.db_clear()
+    click.echo('Database cleared')
 
 
 class KeyringGroup(click.MultiCommand):
