@@ -10,6 +10,8 @@ development version: 2015-05-25
 - Adjust the way jinja filters and globals are handled.  Keg will now process `.template_filters` and
   `.template_globals` (both should be dicts) if defined on an app.
 - add signals and commands for database init and clearing
+- new `Keg.visit_modules` attribute & related functionality to have Keg load Python modules after
+  the app has been setup.
 
 BC changes required:
 

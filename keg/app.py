@@ -14,7 +14,7 @@ import keg.cli
 import keg.config
 import keg.logging
 import keg.signals as signals
-from keg.utils import classproperty
+from keg.utils import classproperty, visit_modules
 import keg.web
 
 
@@ -37,6 +37,8 @@ class Keg(flask.Flask):
 
     template_filters = {}
     template_globals = {}
+
+    visit_modules = False
 
     _init_ran = False
     _app_instance = None
@@ -84,6 +86,7 @@ class Keg(flask.Flask):
         self.init_extensions()
         self.init_blueprints()
         self.init_jinja()
+        self.init_visit_modules()
 
         signals.app_ready.send(self)
         self._app_instance = self
@@ -159,6 +162,10 @@ class Keg(flask.Flask):
         # template_context_processors expects.
         for global_name, global_obj in six.iteritems(self.template_globals):
             self.template_context_processors[None].append(lambda: {global_name: global_obj})
+
+    def init_visit_modules(self):
+        if self.visit_modules:
+            visit_modules(self.visit_modules, self.import_name)
 
     def handle_server_error(self, error):
         # send_exception_email()
