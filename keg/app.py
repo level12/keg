@@ -36,7 +36,7 @@ class Keg(flask.Flask):
     db_manager = None
 
     template_filters = {}
-    template_globals = []
+    template_globals = {}
 
     _init_ran = False
     _app_instance = None
