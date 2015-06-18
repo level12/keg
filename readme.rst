@@ -59,7 +59,7 @@ Dependency Management
 Adding a dependency involves:
 
 #. Adding the dependency to one of the requirements files in `requirements/`.
-#. Running `requirements/build-wheelhouse.py`.
+#. Running `wheelhouse build`
 
 Preview Readme
 --------------
