@@ -19,5 +19,12 @@ class AutoAssign(BaseView):
         self.bar = 'bar'
         self.baz = 'baz'
         self.foo = 'foo'
-        pass
 
+
+class AutoAssignWithResponse(BaseView):
+    auto_assign = ('bar',)
+    template_name = 'other/auto_assign.html'
+
+    def get(self):
+        self.bar = 'bar'
+        return self.render()
