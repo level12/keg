@@ -36,3 +36,10 @@ class TestAssets(object):
             am = AssetManager(keg.current_app)
             am.load_related('_not_there.html')
             assert six.text_type(e) == 'Could not find related assets for template: _not_there.html'
+
+    def test_load_single_asset(self):
+        am = AssetManager(keg.current_app)
+        am.load_related('assets_include_single.html')
+
+        assert len(am.content['js']) == 1
+        assert len(am.content['css']) == 0

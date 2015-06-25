@@ -35,7 +35,7 @@ class AssetManager(object):
         js_found = self.load_asset(js_asset_name)
         css_asset_name = six.text_type(pathlib.Path(template_name).with_suffix('.css'))
         css_found = self.load_asset(css_asset_name)
-        if not (js_found and css_found):
+        if not js_found and not css_found:
             raise AssetException('Could not find related assets for template: {}'
                                  .format(template_name))
 
