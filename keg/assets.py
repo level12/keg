@@ -38,3 +38,11 @@ class AssetManager(object):
         if not (js_found and css_found):
             raise AssetException('Could not find related assets for template: {}'
                                  .format(template_name))
+
+    def combine_content(self, asset_type):
+        output = []
+        for asset_name, filename, contents in self.content[asset_type]:
+            comment = '/********************* asset: {} *********************/'.format(asset_name)
+            output.append(comment)
+            output.append(contents)
+        return '\n\n'.join(output)

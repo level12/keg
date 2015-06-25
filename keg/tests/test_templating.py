@@ -46,3 +46,15 @@ class TestAssetsInclude(object):
         with pytest.raises(TemplateSyntaxError) as e:
             self.render('assets_with_params.html')
             assert six.text_type(e) == 'asset_include does not yet support parameters'
+
+    def test_assets_content(self):
+        self.ctx.assets.content['css'].append(('fake-file.css', 'foo', '//fake-file.css content'))
+        self.ctx.assets.content['js'].append(('fake-file.js', 'foo', '//fake-file.js content'))
+        resp = self.render('assets_content.html')
+        lines = resp.splitlines()
+        assert lines[0] == '/********************* asset: fake-file.css *********************/'
+        # skip newline that combine_content() adds
+        assert lines[2] == '//fake-file.css content'
+        assert lines[3] == '/********************* asset: fake-file.js *********************/'
+        # skip newline that combine_content() adds
+        assert lines[5] == '//fake-file.js content'
