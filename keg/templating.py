@@ -1,6 +1,4 @@
-
-import pathlib
-import six
+from __future__ import absolute_import, unicode_literals
 
 from flask.globals import _request_ctx_stack
 
@@ -25,12 +23,6 @@ class AssetsExtension(Extension):
     def __init__(self, environment):
         super(AssetsExtension, self).__init__(environment)
 
-        # add the defaults to the environment
-        #environment.extend(
-        #    fragment_cache_prefix='',
-        #    fragment_cache=None
-        #)
-
     def parse(self, parser):
         # the first token is the token that started the tag.  In our case
         # we only listen to ``'assets_include'`` so this will be a name token with
@@ -43,11 +35,11 @@ class AssetsExtension(Extension):
         if stream.look().type == 'block_end':
             args = [nodes.Const(parser.name, lineno=lineno)]
         else:
-            #print parser.parse_expression()
+            # print parser.parse_expression()
             parser.fail('asset_include does not yet support parameters')
 
         # parse the closing bracket for this asset_include call
-        stream.next()
+        next(stream)
         assert stream.current.type == 'block_end'
 
         # now return a `CallBlock` node that calls our _import_support
@@ -62,6 +54,3 @@ class AssetsExtension(Extension):
 
         # have to return empty string to avoid exception about None not being iterable.
         return ''
-
-
-
