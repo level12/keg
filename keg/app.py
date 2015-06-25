@@ -6,14 +6,16 @@ import warnings
 from blazeutils.strings import randchars
 import flask
 from flask.config import ConfigAttribute
-import six
 from six.moves import range
+from werkzeug.datastructures import ImmutableDict
 
 from keg.blueprints import keg as kegbp
 import keg.cli
 import keg.config
+from keg.ctx import KegRequestContext
 import keg.logging
 import keg.signals as signals
+from keg.templating import _keg_default_template_ctx_processor, AssetsExtension
 from keg.utils import classproperty, visit_modules
 import keg.web
 
@@ -34,6 +36,10 @@ class Keg(flask.Flask):
     db_enabled = False
     db_visit_modules = ['.model.entities']
     db_manager = None
+
+    jinja_options = ImmutableDict(
+        extensions=['jinja2.ext.autoescape', 'jinja2.ext.with_', AssetsExtension]
+    )
 
     template_filters = {}
     template_globals = {}
@@ -156,12 +162,11 @@ class Keg(flask.Flask):
     def init_jinja(self):
         self.jinja_env.filters.update(self.template_filters)
 
-        # Template_context_processors is supposed to be functions that return dictionaries.  But,
-        # we skip that extra nesting and allow a Keg app to specify the name of the context item
-        # in template_globals.  Therefore, use a lambda to set things up the way
-        # template_context_processors expects.
-        for global_name, global_obj in six.iteritems(self.template_globals):
-            self.template_context_processors[None].append(lambda: {global_name: global_obj})
+        # template_context_processors is supposed to be functions that return dictionaries where
+        # the key is the name of the template variable and the value is the value.
+        # First, add Keg defaults
+        self.template_context_processors[None].append(_keg_default_template_ctx_processor)
+        self.template_context_processors[None].append(lambda: self.template_globals)
 
     def init_visit_modules(self):
         if self.visit_modules:
@@ -170,6 +175,9 @@ class Keg(flask.Flask):
     def handle_server_error(self, error):
         # send_exception_email()
         return '500 SERVER ERROR<br/><br/>administrators notified'
+
+    def request_context(self, environ):
+        return KegRequestContext(self, environ)
 
     @classproperty
     def cli_group(cls):  # noqa
