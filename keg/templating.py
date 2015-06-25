@@ -39,39 +39,28 @@ class AssetsExtension(Extension):
         lineno = parser.stream.current.lineno
         stream = parser.stream
 
-        # now we parse a single expression that is used as cache key.
+        # did asset_include have parameters?
         if stream.look().type == 'block_end':
             args = [nodes.Const(parser.name, lineno=lineno)]
         else:
             #print parser.parse_expression()
-            self.fail('asset_include does not yet support parameters')
+            parser.fail('asset_include does not yet support parameters')
 
         # parse the closing bracket for this asset_include call
         stream.next()
         assert stream.current.type == 'block_end'
 
-        # if there is a comma, the user provided a timeout.  If not use
-        # None as second parameter.
-        #if parser.stream.skip_if('comma'):
-        #    args.append(parser.parse_expression())
-        #else:
-        #    args.append(nodes.Const(None))
-
-        # now we parse the body of the cache block up to `endcache` and
-        # drop the needle (which would always be `endcache` in that case)
-        #body = parser.parse_statements(['name:endcache'], drop_needle=True)
-
-        # now return a `CallBlock` node that calls our _cache_support
+        # now return a `CallBlock` node that calls our _import_support
         # helper method on this extension.
         return nodes.CallBlock(self.call_method('_import_support', args),
                                [], [], []).set_lineno(lineno)
-
-        #return nodes.Include('foo', False, False)
 
     def _import_support(self, template_name, caller):
         """Helper callback."""
         ctx = _request_ctx_stack.top
         ctx.assets.load_related(template_name)
+
+        # have to return empty string to avoid exception about None not being iterable.
         return ''
 
 

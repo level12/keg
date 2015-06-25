@@ -1,6 +1,10 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from jinja2 import TemplateSyntaxError
+import pytest
+import six
+
 from keg import current_app
 from keg_apps.templating.app import TemplatingApp
 
@@ -22,7 +26,7 @@ class TestAssetsInclude(object):
     def teardown_method(self, method):
         self.ctx.pop()
 
-    def test_assets_include(self):
+    def test_include(self):
         resp = self.render('assets_in_template.html')
         assert resp.strip() == ''
 
@@ -37,3 +41,8 @@ class TestAssetsInclude(object):
         assert asset_name == 'assets_in_template.css'
         assert filepath.endswith('keg_apps/templating/templates/assets_in_template.css')
         assert content.strip() == '/* assets_in_template css file */'
+
+    def test_include_with_params(self):
+        with pytest.raises(TemplateSyntaxError) as e:
+            self.render('assets_with_params.html')
+            assert six.text_type(e) == 'asset_include does not yet support parameters'
