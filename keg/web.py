@@ -111,6 +111,7 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
 
     def __init__(self, responding_method=None):
         self.responding_method = responding_method
+        self.template_args = {}
 
     def calc_responding_method(self):
         if self.responding_method:
@@ -139,7 +140,6 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
         return method_obj
 
     def dispatch_request(self, **kwargs):
-        self.template_args = {}
         calling_args = self.process_calling_args(kwargs)
         self._calling_args = calling_args
         _call_with_expected_args(self, calling_args, 'pre_auth')
