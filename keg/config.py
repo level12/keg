@@ -7,7 +7,10 @@ import appdirs
 from blazeutils.helpers import tolist
 import flask
 from pathlib import PurePath
-from werkzeug.utils import ImportStringError
+from werkzeug.utils import (
+    import_string,
+    ImportStringError
+)
 
 from keg.utils import app_environ_get, pymodule_fpaths_to_objects
 
@@ -122,7 +125,14 @@ class Config(flask.Config):
         if profile is not None:
             return profile
 
-        # look for it in all the config files found
+        # look for it in the app's main config file (e.g. myapp.config)
+        app_config = import_string('{}.config'.format(self.app_import_name), silent=True)
+        if app_config and hasattr(app_config, 'DEFAULT_PROFILE'):
+            profile = app_config.DEFAULT_PROFILE
+
+        # Look for it in all the config files found.  This loops from lowest-priority config file
+        # to highest priority, so the last file found with evalue is kept.  Accordingly, any app
+        # specific file has priority over the app's main config file, which could be set just above.
         for fpath, objects in self.config_file_objs:
             if 'DEFAULT_PROFILE' in objects:
                 profile = objects['DEFAULT_PROFILE']
@@ -174,3 +184,6 @@ class DevProfile(object):
 class TestProfile(object):
     DEBUG = True
     TESTING = True
+    KEG_KEYRING_ENABLE = False
+    # set this to allow generation of URLs without a request context
+    SERVER_NAME = b'keg.example.com'

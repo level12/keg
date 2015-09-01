@@ -28,6 +28,9 @@ class TestCLI(CLIBase):
         result = self.invoke(cmd_name='baz', exit_code=2)
         assert 'No such command "baz"' in result.output
 
+    def test_default_exception_handling(self):
+        pass
+
 
 class TestConfigCommand(CLIBase):
     app_cls = CLIApp
@@ -71,3 +74,4 @@ class TestDatabaseCommands(CLIBase):
         result = self.invoke('clear')
         assert 'Database cleared' in result.output
         m_db_clear.assert_called_once_with()
+

@@ -97,7 +97,7 @@ class Keg(flask.Flask):
         signals.app_ready.send(self)
         self._app_instance = self
 
-        # return self for easy chaining, i.e. app = Keg().init()
+        # return self for easy chaining, i.e. app = MyKegApp().init()
         return self
 
     def init_config(self):
