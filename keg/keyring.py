@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import getpass
 import re
+import sys
 
 import six
 
@@ -67,7 +68,11 @@ class Manager(object):
 
                 keyring_value = keyring.get_password(self.app.name, keyring_key)
                 if keyring_value is None:
-                    keyring_value = getpass.getpass('Enter value for "{0}": '.format(keyring_key))
+                    msg = 'Enter value for "{0}": '.format(keyring_key)
+                    # Windows getpass implementation breaks in Python2 when passing it unicode
+                    if sys.version_info < (3,) and sys.platform.startswith('win'):
+                        msg = str(msg)
+                    keyring_value = getpass.getpass(msg)
                     keyring.set_password(self.app.name, keyring_key, keyring_value)
                 data[key] = value.replace(replace_this, keyring_value, 1)
 

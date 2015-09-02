@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
+
 import pytest
 import six
 
@@ -22,13 +24,17 @@ class TestAssets(object):
         assert len(am.content['js']) == 1
         asset_name, filepath, content = am.content['js'].pop()
         assert asset_name == 'assets_in_template.js'
-        assert filepath.endswith('keg_apps/templating/templates/assets_in_template.js')
+        assert filepath.endswith(
+            os.path.join('keg_apps', 'templating', 'templates', 'assets_in_template.js')
+        )
         assert content.strip() == '//assets_in_template js file'
 
         assert len(am.content['css']) == 1
         asset_name, filepath, content = am.content['css'].pop()
         assert asset_name == 'assets_in_template.css'
-        assert filepath.endswith('keg_apps/templating/templates/assets_in_template.css')
+        assert filepath.endswith(
+            os.path.join('keg_apps', 'templating', 'templates', 'assets_in_template.css')
+        )
         assert content.strip() == '/* assets_in_template css file */'
 
     def test_load_related_none_found(self):
