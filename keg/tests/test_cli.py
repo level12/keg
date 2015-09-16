@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import mock
+import pytest
 
 from keg_apps.cli import CLIApp
 from keg_apps.db.app import DBApp
@@ -14,22 +15,26 @@ class TestCLI(CLIBase):
 
     def test_class_command(self):
         result = self.invoke()
-        assert 'hello keg test\n' == result.output
+        assert 'hello keg test' in result.output
 
     def test_arg_command(self):
         result = self.invoke(cmd_name='foo2')
-        assert 'hello foo\n' == result.output
+        assert 'hello foo' in result.output
 
     def test_argument_passing(self):
         result = self.invoke('bar', cmd_name='foo2')
-        assert 'hello bar\n' == result.output
+        assert 'hello bar' in result.output
 
     def test_missing_command(self):
         result = self.invoke(cmd_name='baz', exit_code=2)
         assert 'No such command "baz"' in result.output
 
+    @pytest.mark.skipif(True, reason='reminder')
     def test_default_exception_handling(self):
-        pass
+        """
+            invoke_command() does some stuff to help with exceptions, it should be tested or
+            removed.  So comment in that function for details.
+        """
 
 
 class TestConfigCommand(CLIBase):
