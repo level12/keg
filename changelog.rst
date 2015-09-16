@@ -2,6 +2,22 @@ Changelog
 =========
 
 
+0.3.0 released 2015-09-16
+-------------------------
+
+- better pypi classifiers
+- use `Wheelhouse <https://github.com/level12/wheelhouse>`_ for dependency management
+- Add tests for `BaseView` auto-assign feature.
+- Add an asset manager.
+
+    * Templates can now use the `assets_include` tag in Jinja templates to
+      automatically include the content of a file with the same base name but a 'css' or 'js'
+      suffix. See `keg_apps/templating/templates/assets_in_template.html` for example.
+    * Templates can now use the `assets_content` tag to include content with a specific suffix.  See
+      `keg_apps/templating/templates/assets_content.html` for example.
+
+
+
 development version: 2015-05-25
 -------------------------------
 
