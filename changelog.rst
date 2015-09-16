@@ -18,11 +18,15 @@ Changelog
 
 - Adjust DB clearing so that `prep_empty()` is called after during db_clear() and not
   only `db_init_with_clear().`
+- Fix selection of configuration profile so that the ordering is consitent for app instances
+  created by `testing_prep()` and `invoke_command()`.
 
 Backwards incompatibility notes:
 
 - In the unlikely event you were relying on `keg.db:DatabaseManager.prep_empty()` in a non-default
   way, you may have some adjustments to make.
+- `myapp.config_profile` has been removed.  Use `myapp.config.profile` instead.
+- the signature of `MyApp()` and `myapp.init()` has changed.
 
 
 development version: 2015-05-25

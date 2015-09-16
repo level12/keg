@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import warnings
 
-from blazeutils.strings import randchars
 import flask
 from flask.config import ConfigAttribute
 from six.moves import range
@@ -51,7 +50,7 @@ class Keg(flask.Flask):
 
     def __init__(self, import_name=None, static_path=None, static_url_path=None,
                  static_folder='static', template_folder='templates', instance_path=None,
-                 instance_relative_config=False, config_profile=None):
+                 instance_relative_config=False):
 
         # flask requires an import name, so we should too.
         if import_name is None and self.import_name is None:
@@ -62,7 +61,6 @@ class Keg(flask.Flask):
         import_name = import_name or self.import_name
 
         self.keyring_manager = None
-        self.config_profile = config_profile
 
         flask.Flask.__init__(self, import_name, static_path=static_path,
                              static_url_path=static_url_path, static_folder=static_folder,
@@ -79,12 +77,12 @@ class Keg(flask.Flask):
             root_path = self.instance_path
         return self.config_class(root_path, self.default_config)
 
-    def init(self):
+    def init(self, config_profile=None, use_test_profile=False):
         if self._init_ran:
             raise KegAppError('init() already called on this instance')
         self._init_ran = True
 
-        self.init_config()
+        self.init_config(config_profile, use_test_profile)
         self.init_logging()
         self.init_keyring()
         self.init_oath()
@@ -100,8 +98,8 @@ class Keg(flask.Flask):
         # return self for easy chaining, i.e. app = MyKegApp().init()
         return self
 
-    def init_config(self):
-        self.config.init_app(self.config_profile, self.import_name, self.root_path)
+    def init_config(self, config_profile, use_test_profile):
+        self.config.init_app(config_profile, self.import_name, self.root_path, use_test_profile)
         signals.config_ready.send(self)
 
     def init_keyring(self):
@@ -198,9 +196,20 @@ class Keg(flask.Flask):
         cls.cli_group()
 
     @classmethod
+    def environ_key(cls, key):
+        return '{}_{}'.format(cls.import_name.upper(), key.upper())
+
+    @classmethod
     def testing_prep(cls):
+        """
+            Make sure an instance of this class exists in a state that is ready for testing to
+            commence.
+
+            Trigger `signal.testing_run_start` the first time this method is called for an app.
+        """
         # For now, do the import here so we don't have a hard dependency on WebTest
         from keg.testing import ContextManager
+
         cm = ContextManager.get_for(cls)
 
         # if the context manager's app isn't ready, that means this will be the first time the app
@@ -209,9 +218,6 @@ class Keg(flask.Flask):
         # testing_prep() can be called more than once per test run.
         trigger_signal = not cm.is_ready()
         cm.ensure_current()
-
-        # set a random secret key so that sessions work in tests.
-        cm.app.config['SECRET_KEY'] = randchars(25)
 
         if trigger_signal:
             signals.testing_run_start.send(cm.app)

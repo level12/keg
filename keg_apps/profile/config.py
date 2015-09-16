@@ -16,3 +16,7 @@ class TestProfile(object):
 
 class EnvironmentProfile(object):
     PROFILE_FROM = 'environment'
+
+
+class CLIOption(object):
+    PROFILE_FROM = 'cli-option'

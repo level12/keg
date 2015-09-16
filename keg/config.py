@@ -7,6 +7,7 @@ import appdirs
 from blazeutils.helpers import tolist
 import flask
 from pathlib import PurePath
+import six
 from werkzeug.utils import (
     import_string,
     ImportStringError
@@ -56,7 +57,9 @@ class Config(flask.Config):
                                           profile=self.profile))
         return retval
 
-    def init_app(self, app_config_profile, app_import_name, app_root_path, config_file_objs=None):
+    def init_app(self, app_config_profile, app_import_name, app_root_path, use_test_profile,
+                 config_file_objs=None):
+        self.use_test_profile = use_test_profile
         self.profile = app_config_profile
         self.dirs = appdirs.AppDirs(app_import_name, appauthor=False, multipath=True)
         self.app_import_name = app_import_name
@@ -125,13 +128,17 @@ class Config(flask.Config):
         if profile is not None:
             return profile
 
+        use_test_profile = app_environ_get(self.app_import_name, 'USE_TEST_PROFILE', '')
+        if use_test_profile.strip() or self.use_test_profile:
+            return 'TestProfile'
+
         # look for it in the app's main config file (e.g. myapp.config)
         app_config = import_string('{}.config'.format(self.app_import_name), silent=True)
         if app_config and hasattr(app_config, 'DEFAULT_PROFILE'):
             profile = app_config.DEFAULT_PROFILE
 
         # Look for it in all the config files found.  This loops from lowest-priority config file
-        # to highest priority, so the last file found with evalue is kept.  Accordingly, any app
+        # to highest priority, so the last file found with a value is kept.  Accordingly, any app
         # specific file has priority over the app's main config file, which could be set just above.
         for fpath, objects in self.config_file_objs:
             if 'DEFAULT_PROFILE' in objects:
@@ -185,5 +192,9 @@ class TestProfile(object):
     DEBUG = True
     TESTING = True
     KEG_KEYRING_ENABLE = False
+
     # set this to allow generation of URLs without a request context
-    SERVER_NAME = b'keg.example.com'
+    SERVER_NAME = 'keg.example.com' if six.PY3 else b'keg.example.com'
+
+    # simple value for testing is fine
+    SECRET_KEY = '12345'

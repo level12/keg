@@ -249,8 +249,8 @@ def init_app_cli(appcls):
     # this function will be used to initialize the app along, including the value of config_profile
     # which can be passed on the command line.
     def _create_app(script_info):
-        app = appcls(config_profile=script_info.data['config_profile'])
-        app.init()
+        app = appcls()
+        app.init(config_profile=script_info.data['config_profile'])
         return app
 
     @click.group(cls=KegGroup, create_app=_create_app)
