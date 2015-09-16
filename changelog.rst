@@ -16,6 +16,13 @@ Changelog
     * Templates can now use the `assets_content` tag to include content with a specific suffix.  See
       `keg_apps/templating/templates/assets_content.html` for example.
 
+- Adjust DB clearing so that `prep_empty()` is called after during db_clear() and not
+  only `db_init_with_clear().`
+
+Backwards incompatibility notes:
+
+- In the unlikely event you were relying on `keg.db:DatabaseManager.prep_empty()` in a non-default
+  way, you may have some adjustments to make.
 
 
 development version: 2015-05-25
@@ -23,7 +30,7 @@ development version: 2015-05-25
 
 - Remove `Keg.testing_cleanup()`: wasn't really needed
 - Fix db init when SQLALCHEMY_BINDS config option not present but DB feature enabled
-- Adjust the way jinja filters and globals are handled.  Keg will now process `.template_filters` and
+- Adjust the way Jinja filters and globals are handled.  Keg will now process `.template_filters` and
   `.template_globals` (both should be dicts) if defined on an app.
 - add signals and commands for database init and clearing
 - new `Keg.visit_modules` attribute & related functionality to have Keg load Python modules after
@@ -44,7 +51,7 @@ Making changes to the way database interactions are handled.
 - All database management is being delegated to an application specific instance of
   `keg.db.DatabaseManager`.  The class used to manage the db is selected by
   `keg.Keg.db_manager_cls` so custom db management functionality for an app can be easily
-  implimented by overriding that method on an app and specifying a different DB manager.
+  implemented by overriding that method on an app and specifying a different DB manager.
 - `keg.db.DatabaseManager` is multi-connection aware using the "bind" functionality adopted by
   Flask-SQLAlchemy.
 - Added `keg_apps.db` application and related tests.
@@ -52,7 +59,7 @@ Making changes to the way database interactions are handled.
 - Move `clear_db()` functionality into `keg.db.dialect_ops`
 - Add concept of dialect options to Keg config handling (`KEG_DB_DIALECT_OPTIONS`).  The
   PostgreSQL dialect handles the option `postgresql.schemas` to facilitate the testing setup of
-  multiple schemas in a Postgres database.  See `keg_apps.db.config` for example usage.
+  multiple schemas in a PostgreSQL database.  See `keg_apps.db.config` for example usage.
 
 BC changes required:
 
