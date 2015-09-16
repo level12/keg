@@ -74,4 +74,3 @@ class TestDatabaseCommands(CLIBase):
         result = self.invoke('clear')
         assert 'Database cleared' in result.output
         m_db_clear.assert_called_once_with()
-
