@@ -38,7 +38,7 @@ setup(
         'appdirs',
         'BlazeUtils',
         'blinker',
-        'Click>=3.0',
+        'Click<5.0',
         'Flask>=0.10.1',
         'Flask-SQLAlchemy',
         'pathlib',
