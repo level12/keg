@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.3.1 released 2013-03-17
+-------------------------
+
+- Fixed 0.3.0 build where readme wouldn't install correctly
+- Cleaned up repo which had a coverage report commited
+- Added a new build environment
 
 0.3.0 released 2015-09-16
 -------------------------

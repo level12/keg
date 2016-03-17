@@ -6,3 +6,6 @@
 htmlcov
 /.project
 .pytests.xml
+build
+dist
+.cache
