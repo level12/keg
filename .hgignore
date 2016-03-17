@@ -1,9 +1,0 @@
-syntax: glob
-*.komodo*
-*.pyc
-*.egg-info
-.noseids
-build/*
-.tox/*
-.coverage
-htmlcov

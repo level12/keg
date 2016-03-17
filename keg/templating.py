@@ -12,8 +12,8 @@ def _keg_default_template_ctx_processor():
         rv['assets'] = reqctx.assets
     return rv
 
-from jinja2 import nodes
-from jinja2.ext import Extension
+from jinja2 import nodes  # noqa
+from jinja2.ext import Extension  # noqa
 
 
 class AssetsExtension(Extension):

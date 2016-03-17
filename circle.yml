@@ -1,0 +1,15 @@
+---
+
+machine:
+  services:
+    - postgresql
+
+dependencies:
+  post:
+    - pip install tox-pyenv
+    - pyenv local 2.7.11 3.5.1
+
+test:
+  post:
+    - pip install codecov && codecov
+    - mv *.pytests.xml $CIRCLE_TEST_REPORTS

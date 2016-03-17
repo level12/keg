@@ -5,9 +5,9 @@ from __future__ import print_function
 from keg_apps import fix_sys_path
 fix_sys_path()
 
-import click
+import click  # noqa
 
-from keg.app import Keg
+from keg.app import Keg  # noqa
 
 
 class CLIApp(Keg):
@@ -18,13 +18,13 @@ class CLIApp(Keg):
 
 @CLIApp.command()
 def hello():
-    print('hello keg test')
+    print('hello keg test')  # noqa
 
 
 @CLIApp.command()
 @click.argument('name', default='foo')
 def foo2(name):
-    print(('hello {}'.format(name)))
+    print(('hello {}'.format(name)))  # noqa
 
 
 @CLIApp.command('catch-error')

@@ -9,5 +9,4 @@ pep8-naming
 flake8-print
 pytest-cov
 tox
-coveralls
 psycopg2
