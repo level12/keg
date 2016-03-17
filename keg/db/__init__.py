@@ -39,7 +39,7 @@ class KegSQLAlchemy(SQLAlchemy):
 db = KegSQLAlchemy()
 
 # put this import after the above db assignment to avoid circular reference issues
-from .dialect_ops import DialectOperations
+from .dialect_ops import DialectOperations  # noqa
 
 
 class DatabaseManager(object):

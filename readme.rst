@@ -4,11 +4,26 @@ Keg: more than Flask
 ####################
 
 
-.. image:: https://travis-ci.org/level12/keg.svg?branch=master
-    :target: https://travis-ci.org/level12/keg
-
 .. image:: https://coveralls.io/repos/level12/keg/badge.svg?branch=master
     :target: https://coveralls.io/r/level12/keg?branch=master
+
+.. image:: https://codecov.io/github/level12/keg/coverage.svg?branch=master
+    :target: https://codecov.io/github/level12/keg?branch=master
+
+.. image:: https://img.shields.io/pypi/dm/Keg.svg   
+    :target: https://img.shields.io/pypi/dm/Keg.svg
+
+.. image:: https://img.shields.io/pypi/v/Keg.svg   
+    :target: https://img.shields.io/pypi/v/Keg.svg 
+
+.. image:: https://img.shields.io/pypi/l/keg.svg   
+    :target: https://img.shields.io/pypi/l/keg.svg
+
+.. image:: https://img.shields.io/pypi/pyversions/keg.svg   
+    :target: https://img.shields.io/pypi/pyversions/keg.svg
+
+.. image:: https://img.shields.io/pypi/status/Keg.svg   
+    :target: https://img.shields.io/pypi/status/Keg.svg
 
 Keg is an opinionated but flexible web framework built on Flask and SQLAlchemy.
 
