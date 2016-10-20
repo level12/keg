@@ -103,7 +103,7 @@ To develop on keg, begin by running our tests::
 
     git clone https://github.com/level12/keg keg-src
     cd keg-src
-    cp cp keg_apps/db/user-config-tpl.py ~/.config/keg_apps.db/keg_apps.db-config.py
+    cp keg_apps/db/user-config-tpl.py ~/.config/keg_apps.db/keg_apps.db-config.py
     # edit the DB connection info in this file (you don't have to use vim):
     vim ~/.config/keg_apps.db/keg_apps.db-config.py
     tox
