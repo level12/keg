@@ -10,3 +10,4 @@ flake8-print
 pytest-cov
 tox
 psycopg2
+pymssql

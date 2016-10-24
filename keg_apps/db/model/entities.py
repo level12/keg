@@ -18,7 +18,7 @@ class Blog(db.Model):
 
 
 ####
-# The next three entities exist to facilitate testing of the way Keg handles multiple database
+# The next several entities exist to facilitate testing of the way Keg handles multiple database
 # binds and dialects.
 ####
 
@@ -52,3 +52,27 @@ class SADud(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(50), unique=True, nullable=False)
+
+
+class MSSQLDud(db.Model):
+    __tablename__ = 'mssqldud'
+    __bind_key__ = 'mssql'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Unicode(50), unique=True, nullable=False)
+
+
+class MSSQLDud2(db.Model):
+    __tablename__ = 'mssqldud'
+    __bind_key__ = 'mssql'
+    __table_args__ = {'schema': 'fooschema'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Unicode(50), unique=True, nullable=False)
+
+    @classmethod
+    def testing_create(cls):
+        dud = cls(name=randchars())
+        db.session.add(dud)
+        db.session.commit()
+        return dud

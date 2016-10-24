@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 from sqlalchemy import MetaData
+import six
 
 from ..db import db
 
@@ -106,27 +107,48 @@ class SQLiteOps(DialectOperations):
 DialectOperations.dialect_map['sqlite'] = SQLiteOps
 
 
-# class MicrosoftSQL(DialectOperations):
-#    """
-#        This hasn't been tested yet.  Code copied from old clear_db() method.  Uncomment & test
-#        when needed.
-#    """
-#
-#    def drop_all(self):
-#        mapping = {
-#            'P': 'drop procedure [{name}]',
-#            'C': 'alter table [{parent_name}] drop constraint [{name}]',
-#            ('FN', 'IF', 'TF'): 'drop function [{name}]',
-#            'V': 'drop view [{name}]',
-#            'F': 'alter table [{parent_name}] drop constraint [{name}]',
-#            'U': 'drop table [{name}]',
-#        }
-#        delete_sql = []
-#        for type, drop_sql in six.iteritems(mapping):
-#            sql = 'select name, object_name( parent_object_id ) as parent_name '\
-#                'from sys.objects where type in (\'{0}\')'.format("', '".join(type))
-#            rows = db.engine.execute(sql)
-#            for row in rows:
-#                delete_sql.append(drop_sql.format(**dict(row)))
-#        for sql in delete_sql:
-#            db.engine.execute(sql)
+class MicrosoftSQLOps(DialectOperations):
+    dialect_name = 'mssql'
+    option_defaults = {'schemas': tuple()}
+
+    def drop_all(self):
+        # generate drops for all objects, being careful of the schema the object belongs to
+        mapping = {
+            'P': 'drop procedure [{schema_name}].[{name}]',
+            'C': 'alter table [{schema_name}].[{parent_name}] drop constraint [{name}]',
+            ('FN', 'IF', 'TF'): 'drop function [{schema_name}].[{name}]',
+            'V': 'drop view [{schema_name}].[{name}]',
+            'F': 'alter table [{schema_name}].[{parent_name}] drop constraint [{name}]',
+            'U': 'drop table [{schema_name}].[{name}]',
+        }
+        delete_sql = []
+        for type, drop_sql in six.iteritems(mapping):
+            sql = 'select name, object_name( parent_object_id ) as parent_name '\
+                ', OBJECT_SCHEMA_NAME(object_id) as schema_name '\
+                'from sys.objects where type in (\'{}\')'.format("', '".join(type))
+            rows = self.engine.execute(sql)
+            for row in rows:
+                delete_sql.append(drop_sql.format(**dict(row)))
+        # removing schemas can be tricky. SQL Server 2016+ supports DROP SCHEMA IF EXISTS ...
+        #   syntax, but we need to support earlier versions. Technically, an IF EXISTS(...) DROP
+        #   SCHEMA should work, but testing shows the drop never happens when executed in this
+        #   fashion. So, query sys.schemas directly, and drop any schemas that we are interested
+        #   in (according to the bind opts)
+        schema_sql = 'select name from sys.schemas'
+        rows = self.engine.execute(schema_sql)
+        for row in rows:
+            if row.name in self.opt_schemas:
+                delete_sql.append('drop schema {}'.format(row.name))
+        # all drops should be in order, execute them all
+        self.execute_sql(delete_sql)
+
+    def prep_empty(self):
+        sql = []
+        for schema in self.opt_schemas:
+            sql.extend([
+                'CREATE SCHEMA {}'.format(schema),
+            ])
+        self.execute_sql(sql)
+
+
+DialectOperations.dialect_map['mssql'] = MicrosoftSQLOps
