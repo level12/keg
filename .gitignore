@@ -5,7 +5,8 @@
 .tox
 htmlcov
 /.project
-.pytests.xml
+*.pytests.xml
+coverage.xml
 build
 dist
 .cache

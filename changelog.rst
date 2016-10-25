@@ -1,7 +1,13 @@
 Changelog
 =========
 
-0.3.1 released 2013-03-17
+0.3.2 released <in development>
+-------------------------
+
+- Enabled mssql db code and tests
+- Added AppVeyor config
+
+0.3.1 released 2016-03-17
 -------------------------
 
 - Fixed 0.3.0 build where readme wouldn't install correctly
