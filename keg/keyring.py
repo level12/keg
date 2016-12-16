@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import getpass
 import re
 import sys
+import itertools
 
 import six
 
@@ -18,18 +19,20 @@ class KeyringError(Exception):
 
 class Manager(object):
 
-    # regex that matches "${*}$" where * = any printable ascii character
+    # regex that matches "${*}$" where * = any printable ASCII character
     # that isn't "}"
     # see: http://www.catonmat.net/blog/my-favorite-regex/
     sub_pattern = '(\$\{([ -|~]+?)\}\$)'
 
     backend_min_priority = 1
 
-    def __init__(self, app):
+    def __init__(self, app, service_name=None, secure_entry=getpass.getpass):
         self.sub_re = re.compile(self.sub_pattern)
         self.log = app.logger
         self.app = app
+        self.service_name = service_name or self.app.name
         self.sub_keys_seen = set()
+        self.secure_entry = secure_entry
 
         if not self.verify_backend():
             self.log.warning(
@@ -43,37 +46,89 @@ class Manager(object):
             return False
         return True
 
+    def pattern_to_password(self, value, service_name=None):
+        """
+        Substitutes a configuration value which matches self.sub_pattern with
+        the value from the keyring.
+
+        :param value: the substitutable value '${value}$'
+        :param service_name: a configured keyring service name
+        """
+        if not isinstance(value, (six.binary_type, six.text_type)):
+            return value
+
+        # preserve the original type so that we can convert at the end
+        is_bytes = isinstance(value, six.binary_type)
+        service = service_name or self.service_name
+
+        # Convert to a regular string if it is bytes else use as is
+        value = value.decode() if is_bytes else value
+
+        # Find all the possible keys we need to look up. Some values need
+        # multiple replacements, for example '${user}$:${pass}$'. Therefore
+        # this loop will run once for each match i.e. user and pass
+        for match in self.sub_re.finditer(value):
+            raw = match.group(1)  # '${user}$'
+            clean = match.group(2)  # user
+
+            # TODO (NZ): I am not really wild about this being here, but I don't
+            # have a good way of keeping the data without it.
+            self.sub_keys_seen.add(clean)
+
+            if self.log:
+                msg = 'Keyring Substitute: replacing {} for key {}'
+                self.log.debug(msg.format(raw, clean))
+
+            stored_value = keyring.get_password(service, clean)
+            if not stored_value:
+                raise KeyError(
+                    'Unable to find password for {}'.format(clean))
+
+            value = value.replace(raw, stored_value, 1)
+
+        return value.encode() if is_bytes else value
+
     def substitute(self, data):
         if not self.verify_backend():
             return
 
-        for key in data.keys():
-            value = data[key]
-            if not isinstance(value, six.string_types):
-                continue
-            matches = self.sub_re.finditer(value)
-            for match in matches:
-                replace_this = match.group(1)
-                keyring_key = match.group(2)
+        def key_and_value(key, value):
+            try:
+                password = self.pattern_to_password(value)
+            except KeyError:
+                # Backwards comp... Ask for the value if we can't find it.
+                #
+                # TODO: Remove the need to ask for a password in this method
+                # instead the substitute should work on known values and setting
+                # values should be a different function
+                password = self.ask_and_create(key)
 
-                self.sub_keys_seen.add(keyring_key)
+            return key, password
 
-                self.log.debug('keyring substitute: replacing {0} for data key "{1}"'
-                               .format(replace_this, key))
+        # Rifle through the dictionary, substitute where necessary
+        subbed = {key: value for key, value in
+                  itertools.starmap(key_and_value, six.iteritems(data))}
 
-                # reassign value for cases when there is more than one keyring replacement
-                # needed in a config value
-                value = data[key]
-
-                keyring_value = keyring.get_password(self.app.name, keyring_key)
-                if keyring_value is None:
-                    msg = 'Enter value for "{0}": '.format(keyring_key)
-                    # Windows getpass implementation breaks in Python2 when passing it unicode
-                    if sys.version_info < (3,) and sys.platform.startswith('win'):
-                        msg = str(msg)
-                    keyring_value = getpass.getpass(msg)
-                    keyring.set_password(self.app.name, keyring_key, keyring_value)
-                data[key] = value.replace(replace_this, keyring_value, 1)
+        # Mutate the data passed in for backwards comp.
+        # TODO: Remove this mutation and just return the data allowing the
+        # caller to decide what to do with it.
+        data = subbed
+        return subbed
 
     def delete(self, key):
         keyring.delete_password(self.app.name, key)
+
+    def create(self, key, value, service_name=None):
+        keyring.set_password(service_name or self.service_name, key, value)
+
+    def ask_and_create(self, key, service_name=None):
+        msg = 'Missing secret for "{0}": '.format(key)
+
+        # Windows getpass implementation breaks in Python2 when passing it Unicode
+        if sys.version_info < (3,) and sys.platform.startswith('win'):
+            msg = str(msg)
+
+        value = self.secure_entry(msg)
+        self.create(key, value, service_name)
+
+        return value
