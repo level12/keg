@@ -10,20 +10,25 @@ Keg: more than Flask
 .. image:: https://codecov.io/github/level12/keg/coverage.svg?branch=master
     :target: https://codecov.io/github/level12/keg?branch=master
 
-.. image:: https://img.shields.io/pypi/dm/Keg.svg   
+.. image:: https://img.shields.io/pypi/dm/Keg.svg
     :target: https://img.shields.io/pypi/dm/Keg.svg
 
-.. image:: https://img.shields.io/pypi/v/Keg.svg   
-    :target: https://img.shields.io/pypi/v/Keg.svg 
+.. image:: https://img.shields.io/pypi/v/Keg.svg
+    :target: https://img.shields.io/pypi/v/Keg.svg
 
-.. image:: https://img.shields.io/pypi/l/keg.svg   
+.. image:: https://img.shields.io/pypi/l/keg.svg
     :target: https://img.shields.io/pypi/l/keg.svg
 
-.. image:: https://img.shields.io/pypi/pyversions/keg.svg   
+.. image:: https://img.shields.io/pypi/pyversions/keg.svg
     :target: https://img.shields.io/pypi/pyversions/keg.svg
 
-.. image:: https://img.shields.io/pypi/status/Keg.svg   
+.. image:: https://img.shields.io/pypi/status/Keg.svg
     :target: https://img.shields.io/pypi/status/Keg.svg
+
+.. image:: https://badges.gitter.im/level12/keg.svg
+    :alt: Join the chat at https://gitter.im/level12/keg
+    :target: https://gitter.im/level12/keg?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 
 Keg is an opinionated but flexible web framework built on Flask and SQLAlchemy.
 
