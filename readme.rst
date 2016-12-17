@@ -140,3 +140,8 @@ Current Status
 
 Very Alpha, expect changes.
 
+
+
+.. image:: https://badges.gitter.im/level12/keg.svg
+   :alt: Join the chat at https://gitter.im/level12/keg
+   :target: https://gitter.im/level12/keg?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
