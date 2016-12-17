@@ -29,6 +29,9 @@ Keg: more than Flask
     :alt: Join the chat at https://gitter.im/level12/keg
     :target: https://gitter.im/level12/keg?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
+.. image:: https://ci.appveyor.com/api/projects/status/wm35hheykxs8851r
+    :alt: AppVeyor Build
+    :target: https://ci.appveyor.com/project/level12/keg-6gnlh
 
 Keg is an opinionated but flexible web framework built on Flask and SQLAlchemy.
 
