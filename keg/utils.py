@@ -70,7 +70,11 @@ def pymodule_fpaths_to_objects(fpaths):
 
 
 def app_environ_get(app_import_name, key, default=None):
-    environ_key = '{}_{}'.format(app_import_name.upper(), key.upper())
+    # App names often have periods and it is not possibe to export an
+    # environment variable with a period in it.
+    app_name = app_import_name.replace('.', '_').upper()
+    environ_key = '{}_{}'.format(app_name, key.upper())
+
     return os.environ.get(environ_key, default)
 
 

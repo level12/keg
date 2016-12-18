@@ -197,7 +197,10 @@ class Keg(flask.Flask):
 
     @classmethod
     def environ_key(cls, key):
-        return '{}_{}'.format(cls.import_name.upper(), key.upper())
+        # App names often have periods and it is not possibe to export an
+        # environment variable with a period in it.
+        name = cls.import_name.replace('.', '_').upper()
+        return '{}_{}'.format(name, key.upper())
 
     @classmethod
     def testing_prep(cls):
