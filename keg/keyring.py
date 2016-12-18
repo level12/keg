@@ -27,7 +27,8 @@ class Manager(object):
     backend_min_priority = 1
 
     def __init__(self, app):
-        self.sub_re = re.compile(self.sub_pattern)
+        self.str_sub_re = re.compile(self.sub_pattern)
+        self.bytes_sub_re = re.compile(self.sub_pattern.encode())
         self.log = app.logger
         self.app = app
         self.sub_keys_seen = set()
@@ -50,9 +51,14 @@ class Manager(object):
 
         for key in data.keys():
             value = data[key]
-            if not isinstance(value, six.string_types):
+            if isinstance(value, six.string_types):
+                sub_re = self.str_sub_re
+            elif isinstance(value, six.binary_type):
+                sub_re = self.bytes_sub_re
+            else:
                 continue
-            matches = self.sub_re.finditer(value)
+
+            matches = sub_re.finditer(value)
             for match in matches:
                 replace_this = match.group(1)
                 keyring_key = match.group(2)
