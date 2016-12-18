@@ -24,4 +24,4 @@ python3.5 -m pip install --upgrade --force-reinstall \
     --quiet --use-wheel --no-index --find-links=requirements/wheelhouse tox
 
 # run the tests using our target python version
-python3.5 -m tox -e py27,py35,flake8
+KEG_APPS_DB_CONFIG_PROFILE='CircleCITestProfile' python3.5 -m tox -e py27,py35,flake8

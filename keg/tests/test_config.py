@@ -100,7 +100,7 @@ class TestProfileLoading(object):
         """
             The environment override should work even when in a testing context.
         """
-        kwargs = {'KEG_APPS.PROFILE_CONFIG_PROFILE': 'EnvironmentProfile'}
+        kwargs = {'KEG_APPS_PROFILE_CONFIG_PROFILE': 'EnvironmentProfile'}
         with mock.patch.dict(os.environ, **kwargs):
             app = ProfileApp().init()
             assert app.config['PROFILE_FROM'] == 'environment'
@@ -120,5 +120,5 @@ class TestProfileLoading(object):
             Environement overrides should still take priority for invoke_command() usage.
         """
         resp = invoke_command(ProfileApp, 'show_profile',
-                              env={'KEG_APPS.PROFILE_CONFIG_PROFILE': 'EnvironmentProfile'})
+                              env={'KEG_APPS_PROFILE_CONFIG_PROFILE': 'EnvironmentProfile'})
         assert 'environment' in resp.output
