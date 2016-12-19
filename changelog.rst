@@ -1,11 +1,24 @@
-Changelog
-=========
+0.4.0 - 2016-12-19
+------------------
 
-0.3.2 released <in development>
--------------------------
+* BUG: Properly Update Keyring Config Data (7f1908f_)
+* MSSQL dialect support (df7e89d_)
+* MAINT: Refactor keyring to accept bytes (15bc04b_)
+* MAINT: Remove deprecated flask hooks (4f7e2bf_)
+* Remove unicode_literal futures (dc2fa85_)
+* MAINT: Create windows build environment (983e040_)
+* MAINT: Run CI with Docker (bc7a877_)
+* Remove extra cp in readme (7e94815_)
 
-- Enabled mssql db code and tests
-- Added AppVeyor config
+.. _7f1908f: https://github.com/level12/keg/commit/7f1908f
+.. _df7e89d: https://github.com/level12/keg/commit/df7e89d
+.. _15bc04b: https://github.com/level12/keg/commit/15bc04b
+.. _4f7e2bf: https://github.com/level12/keg/commit/4f7e2bf
+.. _dc2fa85: https://github.com/level12/keg/commit/dc2fa85
+.. _983e040: https://github.com/level12/keg/commit/983e040
+.. _bc7a877: https://github.com/level12/keg/commit/bc7a877
+.. _7e94815: https://github.com/level12/keg/commit/7e94815
+
 
 0.3.1 released 2016-03-17
 -------------------------
