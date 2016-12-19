@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import os
+
 from jinja2 import TemplateSyntaxError
 import pytest
 import six
@@ -32,13 +34,17 @@ class TestAssetsInclude(object):
         assert len(self.assets.content['js']) == 1
         asset_name, filepath, content = self.assets.content['js'].pop()
         assert asset_name == 'assets_in_template.js'
-        assert filepath.endswith('keg_apps/templating/templates/assets_in_template.js')
+        assert filepath.endswith(
+            os.path.join('keg_apps', 'templating', 'templates', 'assets_in_template.js')
+        )
         assert content.strip() == '//assets_in_template js file'
 
         assert len(self.assets.content['css']) == 1
         asset_name, filepath, content = self.assets.content['css'].pop()
         assert asset_name == 'assets_in_template.css'
-        assert filepath.endswith('keg_apps/templating/templates/assets_in_template.css')
+        assert filepath.endswith(
+            os.path.join('keg_apps', 'templating', 'templates', 'assets_in_template.css')
+        )
         assert content.strip() == '/* assets_in_template css file */'
 
     def test_include_with_params(self):

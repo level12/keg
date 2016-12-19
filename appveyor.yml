@@ -1,33 +1,32 @@
-image: Visual Studio 2013 - GCE
-
 environment:
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: http://stackoverflow.com/a/13751649/163740
-    CMD_IN_ENV: "cmd /E:ON /V:ON /C %APPVEYOR_BUILD_FOLDER%\\appveyor\\run_with_env.cmd"
+    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
 
-  PGUSER: postgres
-  PGPASSWORD: Password12!
   matrix:
     # Pre-installed Python versions, which Appveyor may upgrade to
     # a later point release.
+    - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7.12"
+      PYTHON_ARCH: "32"
+      TOXENV: py27
+
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.2"
       PYTHON_ARCH: "32"
       TOXENV: py35
-
-    - PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7.12"
-      PYTHON_ARCH: "32"
-      TOXENV: py27,flake8
+      
+  INSTANCENAME: "SQL2008R2SP2"
+  PGUSER: postgres
+  PGPASSWORD: Password12!
 
 services:
   - postgresql
+  - mssql2008r2sp2
 
 install:
-  - "powershell appveyor\\install.ps1"
-
   # add postgres to path
   - "SET PATH=C:\\Program Files\\PostgreSQL\\9.4\\bin;%PATH%"
 
@@ -36,26 +35,32 @@ install:
   # the parent CMD process).
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%APPVEYOR_BUILD_FOLDER%;%PATH%"
 
-  # add cairo libs to path
-  - "SET PATH=%CD%\\appveyor\\bin;%PATH%"
+  - "powershell cp keg_apps/db/user-config-tpl-appveyor.py keg_apps/keg_apps.db-config.py"
 
   # Check that we have the expected version and architecture for Python
-  - "python --version"
-  - "python -c \"import struct; print(struct.calcsize('P') * 4)\""
+  - python --version
+  - python -c "import struct; print(struct.calcsize('P') * 8)"
+  - pip --version
 
-  - "%CMD_IN_ENV% python -m pip install --upgrade pip"
-  - "powershell get-command pip"
-  - "%CMD_IN_ENV% python -m pip -V"
-  - "%CMD_IN_ENV% pip install --use-wheel --no-index --find-links=requirements\\wheelhouse --upgrade virtualenv"
-  - "%CMD_IN_ENV% pip install --use-wheel --no-index --find-links=requirements\\wheelhouse flake8 tox codecov"
+  # Install tox from the wheelhouse
+  - pip install --use-wheel --no-index --find-links=requirements/wheelhouse tox wheel codecov
 
 build: off
 
 before_test:
-  - "createdb appveyour"
+  - "createdb keg_test"
 
 test_script:
-  - "%CMD_IN_ENV% tox"
+  - tox
+
+after_test:
+  # If tests are successful, create a whl package for the project.
+  - python setup.py bdist_wheel
+  - ps: "ls dist"
 
 on_success:
   - codecov
+
+artifacts:
+  # Archive the generated wheel package in the ci.appveyor.com build report.
+  - path: dist\*

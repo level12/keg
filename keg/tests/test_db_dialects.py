@@ -81,3 +81,24 @@ class TestPostgreSQL(DialectExam):
         self.engine().execute('create table fooschema.bar(label varchar(20))')
         self.engine().execute('create view fooschema.vbar as select * from fooschema.bar')
         return 4
+
+
+class TestMicrosoftSQL(DialectExam):
+    bind_name = 'mssql'
+    # MSSQL supports the INFORMATION_SCHEMA standard
+    obj_names_sql = ("SELECT table_schema + '.' + table_name FROM INFORMATION_SCHEMA.tables"
+                     " WHERE table_type in ('BASE TABLE', 'VIEW')"
+                     " AND table_schema in ('dbo', 'fooschema')")
+    # How many entities exist for this bind in the application?
+    entity_count = 2
+
+    def setup_method(self, method):
+        if 'mssql' not in current_app.config.get('SQLALCHEMY_BINDS', {}):
+            pytest.skip('cannot test missing bind for mssql')
+
+    def create_objs(self):
+        self.engine().execute('create table foo(label varchar(20))')
+        self.engine().execute('create view vfoo as select * from foo')
+        self.engine().execute('create table fooschema.bar(label varchar(20))')
+        self.engine().execute('create view fooschema.vbar as select * from fooschema.bar')
+        return 4
