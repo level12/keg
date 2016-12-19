@@ -57,12 +57,13 @@ class TestKeyringManager:
             'multi_string': '${multi_s_one}$:${multi_s_two}$',
             'multi_byte': b'${multi_b_one}$:${multi_b_two}$',
         }
-        data = self.manager.substitute(data)
+        returned = self.manager.substitute(data)
 
         assert self.manager.sub_keys_seen == {'string', 'bytes', 'multi_s_one',
                                               'multi_s_two', 'multi_b_one',
                                               'multi_b_two'}
-        assert data['multi_byte'] == b'multi_b_one:multi_b_two'
+        assert returned['multi_byte'] == b'multi_b_one:multi_b_two'
+        assert data == returned
 
     def test_ask_and_create(self):
         self.manager.secure_entry = lambda msg: 'password'

@@ -17,6 +17,15 @@ class KeyringError(Exception):
     pass
 
 
+class MissingValueError(Exception):
+
+    def __init__(self, key):
+        self.key = key
+
+        super(Exception, self).__init__("No value for {} found in key "
+                                        "ring".format(key))
+
+
 class Manager(object):
 
     # regex that matches "${*}$" where * = any printable ASCII character
@@ -81,8 +90,7 @@ class Manager(object):
 
             stored_value = keyring.get_password(service, clean)
             if not stored_value:
-                raise KeyError(
-                    'Unable to find password for {}'.format(clean))
+                raise MissingValueError(clean)
 
             value = value.replace(raw, stored_value, 1)
 
@@ -95,13 +103,13 @@ class Manager(object):
         def key_and_value(key, value):
             try:
                 password = self.pattern_to_password(value)
-            except KeyError:
+            except MissingValueError as err:
                 # Backwards comp... Ask for the value if we can't find it.
                 #
                 # TODO: Remove the need to ask for a password in this method
                 # instead the substitute should work on known values and setting
                 # values should be a different function
-                password = self.ask_and_create(key)
+                password = self.ask_and_create(err.key)
 
             return key, password
 
@@ -112,7 +120,7 @@ class Manager(object):
         # Mutate the data passed in for backwards comp.
         # TODO: Remove this mutation and just return the data allowing the
         # caller to decide what to do with it.
-        data = subbed
+        data.update(subbed)
         return subbed
 
     def delete(self, key):
