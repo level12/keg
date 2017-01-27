@@ -58,7 +58,7 @@ class PostgreSQLOps(DialectOperations):
         sql = []
         for schema in self.opt_schemas:
             sql.extend([
-                'DROP SCHEMA IF EXISTS {} CASCADE;'.format(schema),
+                'DROP SCHEMA IF EXISTS "{}" CASCADE;'.format(schema),
             ])
         self.execute_sql(sql)
 
@@ -67,8 +67,8 @@ class PostgreSQLOps(DialectOperations):
         connection_user = self.engine.url.username
         for schema in self.opt_schemas:
             sql.extend([
-                'CREATE SCHEMA {} AUTHORIZATION {};'.format(schema, connection_user),
-                'GRANT ALL ON SCHEMA {} TO {};'.format(schema, connection_user),
+                'CREATE SCHEMA "{}" AUTHORIZATION "{}";'.format(schema, connection_user),
+                'GRANT ALL ON SCHEMA "{}" TO "{}";'.format(schema, connection_user),
             ])
         self.execute_sql(sql)
 
