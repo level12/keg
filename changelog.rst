@@ -1,3 +1,12 @@
+0.4.1 - 2017-02-09
+------------------
+
+* BUG: Properly quote pgsql identifiers during create (86852ad_)
+
+.. _86852ad: https://github.com/level12/keg/commit/86852ad
+
+
+
 0.4.0 - 2016-12-19
 ------------------
 
