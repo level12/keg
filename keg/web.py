@@ -139,6 +139,8 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
 
     def dispatch_request(self, **kwargs):
         self.template_args = {}
+        self.process_auto_assign()
+
         calling_args = self.process_calling_args(kwargs)
         self._calling_args = calling_args
         _call_with_expected_args(self, calling_args, 'pre_auth')
@@ -151,7 +153,6 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
         response = _call_with_expected_args(self, calling_args, method_obj)
 
         if not response:
-            self.process_auto_assign()
             _call_with_expected_args(self, calling_args, 'pre_render')
             response = self.render()
         calling_args['_response'] = response
