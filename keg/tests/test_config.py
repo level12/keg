@@ -20,12 +20,12 @@ class TestConfigDefaults(object):
         assert 'KEG_ENDPOINTS' in app.config
 
     def test_app_params_profile(self):
-        app = Keg(__name__).init(config_profile='Foo')
+        app = Keg(__name__).init(config_profile='Foo', use_test_profile=True)
         assert app.config.profile == 'Foo'
 
     @mock.patch.dict('os.environ', {'TEMPAPP_CONFIG_PROFILE': 'bar'})
     def test_environ_profile(self):
-        app = Keg('tempapp').init()
+        app = Keg('tempapp').init(use_test_profile=True)
         assert app.config.profile == 'bar'
 
     def test_profile_from_config_file(self):
@@ -62,8 +62,6 @@ class TestConfigDefaults(object):
         config = Config('', {})
         config['testvalue'] = '{not there}'
         config.init_app(None, 'fakeapp', '', False)
-        assert config['KEG_LOG_DPATH'] == config.dirs.user_log_dir
-        assert config['KEG_LOG_FNAME'] == 'fakeapp.log'
         assert config['testvalue'] == '{not there}'
 
 
@@ -74,7 +72,7 @@ class TestProfileLoading(object):
         # the direct setting should override the environment
         kwargs = {'KEG_APPS.PROFILE_CONFIG_PROFILE': 'EnvironmentProfile'}
         with mock.patch.dict(os.environ, **kwargs):
-            app = ProfileApp().init(config_profile='AppInitProfile')
+            app = ProfileApp().init(config_profile='AppInitProfile', use_test_profile=True)
         assert app.config['PROFILE_FROM'] == 'app-init'
 
     def test_config_file_default(self):
