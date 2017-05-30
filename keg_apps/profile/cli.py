@@ -14,5 +14,6 @@ def cli_entry():
 def show_profile():
     click.echo(keg.current_app.config['PROFILE_FROM'])
 
+
 if __name__ == '__main__':
     cli_entry()

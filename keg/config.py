@@ -22,6 +22,8 @@ class ConfigurationError(Exception):
 class SubstituteValue(object):
     def __init__(self, value):
         self.value = value
+
+
 substitute = SubstituteValue
 
 

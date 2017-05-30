@@ -24,6 +24,7 @@ class KegGroup(FlaskGroup):
 def dev_command():
     pass
 
+
 dev_command.add_command(run_command)
 dev_command.add_command(shell_command)
 

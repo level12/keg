@@ -104,6 +104,7 @@ class Manager(object):
     def token(self):
         return session[self.session_key('token')]
 
+
 manager = Manager()
 
 bp = Blueprint('oauth', __name__, url_prefix='/oauth')

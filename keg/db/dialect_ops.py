@@ -72,6 +72,7 @@ class PostgreSQLOps(DialectOperations):
             ])
         self.execute_sql(sql)
 
+
 DialectOperations.dialect_map['postgresql'] = PostgreSQLOps
 
 
