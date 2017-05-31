@@ -175,13 +175,6 @@ class DefaultProfile(object):
 
     KEG_SMTP_HOST = 'localhost'
 
-    KEG_LOG_DPATH = substitute('{user_log_dir}')
-    KEG_LOG_FNAME = substitute('{app_import_name}.log')
-    KEG_LOG_MAX_BACKUPS = 5
-    KEG_LOG_MAX_BYTES = 1024 * 1024 * 10  # 10MB
-    KEG_LOG_FILE_FORMAT_STR = '%(asctime)s %(levelname)s [%(name)s:%(lineno)d]: %(message)s'
-    KEG_LOG_STDOUT_FORMAT_STR = '%(levelname)s - %(name)s - %(message)s'
-
     KEG_DB_DIALECT_OPTIONS = {}
 
 
@@ -199,3 +192,7 @@ class TestProfile(object):
 
     # simple value for testing is fine
     SECRET_KEY = '12345'
+
+    # Sane default values for testing to get rid of warnings.
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
