@@ -35,6 +35,7 @@ class KegSQLAlchemy(SQLAlchemy):
 
         return retval
 
+
 db = KegSQLAlchemy()
 
 # put this import after the above db assignment to avoid circular reference issues

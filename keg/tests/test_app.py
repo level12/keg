@@ -10,5 +10,5 @@ class TestInit(object):
     @raises(KegAppError, 'init() already called')
     def test_init_called_twice_error(self):
         app = Keg(__name__)
-        app.init()
-        app.init()
+        app.init(use_test_profile=True)
+        app.init(use_test_profile=True)

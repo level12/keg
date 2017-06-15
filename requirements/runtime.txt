@@ -8,4 +8,5 @@ Click>=3.0
 Flask>=0.10.1
 Flask-SQLAlchemy
 pathlib
+python-json-logger
 six

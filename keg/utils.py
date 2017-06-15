@@ -48,6 +48,8 @@ class ClassProperty(property):
 
     def __get__(desc, self, cls):  # noqa
         return desc.fget(cls)
+
+
 classproperty = ClassProperty
 
 

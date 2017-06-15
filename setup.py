@@ -41,6 +41,7 @@ setup(
         'Flask>=0.10.1',
         'Flask-SQLAlchemy',
         'pathlib',
+        'python-json-logger',
         'six',
     ]
 )
