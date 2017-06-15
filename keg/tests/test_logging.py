@@ -22,14 +22,18 @@ class TestLogging(object):
         assert output[1] == 'INFO - keg_apps.logging - test info log'
 
     def test_disable_handlers(self):
-        @signals.config_ready.connect
+        app = LoggingApp()
+
+        # It's important to use connect_via() here or the signal will apply to all tests, which
+        # produces intermittent test failure, which is hard to troubleshoot, which is bad.
+        @signals.config_ready.connect_via(app)
         def apply_config(app):
             app.config['KEG_LOG_STREAM_ENABLED'] = False
             app.config['KEG_LOG_SYSLOG_ENABLED'] = False
 
         with mock.patch('keg.logging.Logging.init_syslog') as m_init_syslog, \
                 mock.patch('keg.logging.Logging.init_stream') as m_init_stream:
-            LoggingApp().init(use_test_profile=True)
+            app.init(use_test_profile=True)
             m_init_syslog.assert_not_called()
             m_init_stream.assert_not_called()
 
