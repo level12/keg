@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.5.0 released 2017-06-27
+-------------------------
+
+- prep for pyp usage (23424b9_)
+- Merge branch 'logging-improvements' (PR66_)
+
+.. _23424b9: https://github.com/level12/keg/commit/23424b9
+.. _PR66: https://github.com/level12/keg/pull/66
+
+
 
 0.4.1 - 2017-02-09
 ------------------
