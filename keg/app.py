@@ -280,3 +280,25 @@ class Keg(flask.Flask):
             # We follow the same logic here as Flask.route() decorator.
             endpoint = options.pop('endpoint', None)
             self.add_url_rule(rule, endpoint, func, **options)
+
+
+@signals.init_complete.connect
+def flask_wtf_bugfix(app):
+    """ Needed until https://github.com/lepture/flask-wtf/issues/301 is fixed & released. """
+    if not app.config.get('FIX_FLASK_WTF_BUG', True):
+        return
+
+    try:
+        import flask_wtf
+    except ImportError:
+        return
+
+    version = tuple(map(lambda x: int(x), flask_wtf.__version__.split('.')))
+
+    if version < (0, 14, 0):
+        return
+
+    @app.teardown_request
+    def cleanup_csrf_cache(error):
+        if 'csrf_token' in flask.g:
+            del flask.g.csrf_token
