@@ -19,6 +19,18 @@ class TestConfigDefaults(object):
         # this key comes from Keg's DefaultProfile
         assert 'KEG_ENDPOINTS' in app.config
 
+    def test_init_configs(self):
+        app = Keg(__name__, config={'ABC': 123}).init()
+        assert app.config['ABC'] == 123
+
+        app = Keg(__name__).init(config={'ABC': 123})
+        assert app.config['ABC'] == 123
+
+        class TestingPrepConfigApp(Keg):
+            import_name = __name__
+        app = TestingPrepConfigApp.testing_prep(ABC=123)
+        assert app.config['ABC'] == 123
+
     def test_app_params_profile(self):
         app = Keg(__name__).init(config_profile='Foo', use_test_profile=True)
         assert app.config.profile == 'Foo'

@@ -14,7 +14,7 @@ from keg.ctx import KegRequestContext
 import keg.logging
 import keg.signals as signals
 from keg.templating import _keg_default_template_ctx_processor, AssetsExtension
-from keg.utils import classproperty, visit_modules
+from keg.utils import classproperty, visit_modules, hybridmethod
 import keg.web
 
 
@@ -45,11 +45,10 @@ class Keg(flask.Flask):
     visit_modules = False
 
     _init_ran = False
-    _app_instance = None
 
     def __init__(self, import_name=None, static_path=None, static_url_path=None,
                  static_folder='static', template_folder='templates', instance_path=None,
-                 instance_relative_config=False):
+                 instance_relative_config=False, config=None):
 
         # flask requires an import name, so we should too.
         if import_name is None and self.import_name is None:
@@ -60,6 +59,7 @@ class Keg(flask.Flask):
         import_name = import_name or self.import_name
 
         self.keyring_manager = None
+        self._init_config = config or {}
 
         flask.Flask.__init__(self, import_name, static_path=static_path,
                              static_url_path=static_url_path, static_folder=static_folder,
@@ -76,30 +76,48 @@ class Keg(flask.Flask):
             root_path = self.instance_path
         return self.config_class(root_path, self.default_config)
 
-    def init(self, config_profile=None, use_test_profile=False):
+    def init(self, config_profile=None, use_test_profile=False, config=None):
         if self._init_ran:
             raise KegAppError('init() already called on this instance')
         self._init_ran = True
 
-        self.init_config(config_profile, use_test_profile)
+        self.init_config(config_profile, use_test_profile, config)
         self.init_logging()
         self.init_keyring()
         self.init_oath()
         self.init_error_handling()
         self.init_extensions()
+        self.init_routes()
         self.init_blueprints()
         self.init_jinja()
         self.init_visit_modules()
 
+        self.on_init_complete()
         signals.app_ready.send(self)
-        self._app_instance = self
+        signals.init_complete.send(self)
 
         # return self for easy chaining, i.e. app = MyKegApp().init()
         return self
 
-    def init_config(self, config_profile, use_test_profile):
+    def on_init_complete(self):
+        """ For subclasses to override """
+        pass
+
+    def init_config(self, config_profile, use_test_profile, config):
+        init_config = self._init_config.copy()
+        init_config.update(config or {})
+
         self.config.init_app(config_profile, self.import_name, self.root_path, use_test_profile)
+
+        self.config.update(init_config)
+
         signals.config_ready.send(self)
+        signals.config_complete.send(self)
+        self.on_config_complete()
+
+    def on_config_complete(self):
+        """ For subclasses to override """
+        pass
 
     def init_keyring(self):
         # do keyring substitution
@@ -202,7 +220,7 @@ class Keg(flask.Flask):
         return '{}_{}'.format(name, key.upper())
 
     @classmethod
-    def testing_prep(cls):
+    def testing_prep(cls, **config):
         """
             Make sure an instance of this class exists in a state that is ready for testing to
             commence.
@@ -211,7 +229,8 @@ class Keg(flask.Flask):
         """
         # For now, do the import here so we don't have a hard dependency on WebTest
         from keg.testing import ContextManager
-
+        if cls is Keg:
+            raise TypeError('Don\'t use testing_prep() on Keg.  Create a subclass first.')
         cm = ContextManager.get_for(cls)
 
         # if the context manager's app isn't ready, that means this will be the first time the app
@@ -219,7 +238,7 @@ class Keg(flask.Flask):
         # safe to trigger the signal.  We don't want the signal to fire every time b/c
         # testing_prep() can be called more than once per test run.
         trigger_signal = not cm.is_ready()
-        cm.ensure_current()
+        cm.ensure_current(config)
 
         if trigger_signal:
             signals.testing_run_start.send(cm.app)
@@ -232,3 +251,32 @@ class Keg(flask.Flask):
     @property
     def logger(self):
         return self.logging.app_logger
+
+    @hybridmethod
+    def route(self, rule, **options):
+        """ Same as Flask.route() and will be used when in an instance context. """
+        return super(Keg, self).route(rule, **options)
+
+    @route.classmethod
+    def route(cls, rule, **options):  # noqa
+        """
+            Enable .route() to be used in a class context as well.  E.g.:
+
+            KegApp.route('/something'):
+            def view_something():
+                pass
+        """
+        def decorator(f):
+            if not hasattr(cls, '_routes'):
+                cls._routes = []
+            cls._routes.append((f, rule, options))
+            return f
+        return decorator
+
+    def init_routes(self):
+        if not hasattr(self, '_routes'):
+            return
+        for func, rule, options in self._routes:
+            # We follow the same logic here as Flask.route() decorator.
+            endpoint = options.pop('endpoint', None)
+            self.add_url_rule(rule, endpoint, func, **options)

@@ -28,10 +28,10 @@ class ContextManager(object):
         self.app = None
         self.ctx = None
 
-    def ensure_current(self):
+    def ensure_current(self, config):
 
         if not self.app:
-            self.app = self.appcls().init(use_test_profile=True)
+            self.app = self.appcls().init(use_test_profile=True, config=config)
             self.ctx = self.app.app_context()
             self.ctx.push()
 
@@ -103,6 +103,5 @@ class WebBase(object):
 
     @classmethod
     def setup_class(cls):
-        cls.appcls.testing_prep()
-        cls.app = flask.current_app
+        cls.app = cls.appcls.testing_prep()
         cls.testapp = TestApp(flask.current_app)

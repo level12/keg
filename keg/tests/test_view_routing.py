@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 from keg.testing import WebBase
 
 from keg_apps.web.app import WebApp
@@ -255,3 +256,16 @@ class TestViewRouting(WebBase):
 
         resp = self.testapp.get('/planes/list')
         assert resp.text == 'listing Planes'
+
+    def test_routing_decorator_class_context(self):
+        self.testapp.get('/simple', status=200)
+
+        # Make sure options dict gets passed through correctly by making sure we can POST.
+        self.testapp.post('/simple', status=200)
+
+        # make sure the endpoints got set correctly
+        assert self.app.view_functions['simple1']
+        assert self.app.view_functions['simple2']
+
+    def test_routing_decorator_instance_context(self):
+        self.testapp.get('/simple3', status=200)
