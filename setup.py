@@ -43,5 +43,21 @@ setup(
         'pathlib',
         'python-json-logger',
         'six',
-    ]
+    ],
+    extras_require={
+        'dev': ['restview'],
+        'test': [
+            'mock',
+            'pytest',
+            'Flask-WebTest',
+            'keyring',
+            'flake8',
+            'pep8-naming',
+            'flake8-print',
+            'pytest-cov',
+            'tox',
+            'psycopg2',
+            'pymssql',
+        ],
+    }
 )

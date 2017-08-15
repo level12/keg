@@ -17,7 +17,7 @@ environment:
       PYTHON_VERSION: "3.5.2"
       PYTHON_ARCH: "32"
       TOXENV: py35
-      
+
   INSTANCENAME: "SQL2008R2SP2"
   PGUSER: postgres
   PGPASSWORD: Password12!
@@ -43,7 +43,7 @@ install:
   - pip --version
 
   # Install tox from the wheelhouse
-  - pip install --use-wheel --no-index --find-links=requirements/wheelhouse tox wheel codecov
+  - pip install tox wheel codecov
 
 build: off
 

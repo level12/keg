@@ -9,19 +9,14 @@ class TestProfile(object):
         'mssql.schemas': ('fooschema', ),
     }
 
-    # These binds are used to test keg dialect functionality. All other database tests
+    # These binds are used to test keg dialect functionality in CircleCI. All other database tests
     # are done on the primary connection, which defaults to SQLite.
+    #
+    # Appveyor: see user-config-tpl-appveyor.py
+    #
+    # Developers: setup a TestProfile config for these tests in file:
+    # <keg src>/keg_apps.db-config.py
     SQLALCHEMY_BINDS = {
-        'postgres': 'postgresql://postgres:Password12!@localhost/appveyour',
-        'sqlite2': 'sqlite:///'
-    }
-
-
-class CircleCITestProfile(TestProfile):
-    SQLALCHEMY_BINDS = {
-        # The postgres connection defaults to what our travis build needs.  If testing as a
-        # developer, then you should setup a TestProfile config for these tests in
-        # file: ~/.config/keg_apps.db/keg_apps.db-config.py
-        'postgres': 'postgresql://ubuntu:@database/circle_test',
+        'postgres': 'postgresql://postgres:password@localhost/postgres',
         'sqlite2': 'sqlite:///'
     }
