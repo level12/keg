@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.5.1 released 2017-08-15
+-------------------------
+
+- ADD: mitigate CSRF bug in Flask-WTF (42a2e70_)
+- ADD: config, init, and routing enhancements (cdfa901_)
+- MAINT: upgrade to CircleCI 2.0 (60e3bfa_)
+
+.. _42a2e70: https://github.com/level12/keg/commit/42a2e70
+.. _cdfa901: https://github.com/level12/keg/commit/cdfa901
+.. _60e3bfa: https://github.com/level12/keg/commit/60e3bfa
+
+
 0.5.0 released 2017-06-27
 -------------------------
 
