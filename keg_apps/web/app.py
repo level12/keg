@@ -19,3 +19,20 @@ class WebApp(Keg):
 
     template_filters = {'addkeg': addkeg}
     template_globals = {'sayfoo': sayfoo}
+
+    def on_init_complete(self):
+        # Using .route() in an instance context
+        @self.route('/simple3')
+        def simple3():
+            return 'simple3'
+
+
+# Using .route() in a class context
+@WebApp.route('/simple', endpoint='simple1', methods=['GET', 'POST'])
+def simple():
+    return 'simple'
+
+
+@WebApp.route('/simple2', methods=['GET', 'POST'])
+def simple2():
+    return 'simple2'

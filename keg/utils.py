@@ -53,6 +53,45 @@ class ClassProperty(property):
 classproperty = ClassProperty
 
 
+class HybridMethod(object):
+    """
+        A decorator which allows definition of a Python object method with both
+        instance-level and class-level behavior:
+
+            Class Bar:
+
+                @hybridmethod
+                def foo(self, rule, **options):
+                    # this is used in an instance context
+
+                @foo.classmethod
+                def foo(cls, rule, **options):
+                    # this is used in class context
+
+    """
+
+    def __init__(self, func, cm_func=None):
+        self.instance_func = func
+        self.classmethod(cm_func or func)
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self.cm_func.__get__(owner, owner.__class__)
+        else:
+            return self.instance_func.__get__(instance, owner)
+
+    def classmethod(self, cm_func):
+        """Provide a modifying decorator that is used as a classmethod decorator."""
+
+        self.cm_func = cm_func
+        if not self.cm_func.__doc__:
+            self.cm_func.__doc__ = self.instance_func.__doc__
+        return self
+
+
+hybridmethod = HybridMethod
+
+
 def pymodule_fpaths_to_objects(fpaths):
     """
         Takes an iterable of file paths reprenting possible python modules and will return an

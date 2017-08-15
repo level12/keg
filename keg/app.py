@@ -14,7 +14,7 @@ from keg.ctx import KegRequestContext
 import keg.logging
 import keg.signals as signals
 from keg.templating import _keg_default_template_ctx_processor, AssetsExtension
-from keg.utils import classproperty, visit_modules
+from keg.utils import classproperty, visit_modules, hybridmethod
 import keg.web
 
 
@@ -87,6 +87,7 @@ class Keg(flask.Flask):
         self.init_oath()
         self.init_error_handling()
         self.init_extensions()
+        self.init_routes()
         self.init_blueprints()
         self.init_jinja()
         self.init_visit_modules()
@@ -250,3 +251,32 @@ class Keg(flask.Flask):
     @property
     def logger(self):
         return self.logging.app_logger
+
+    @hybridmethod
+    def route(self, rule, **options):
+        """ Same as Flask.route() and will be used when in an instance context. """
+        return super(Keg, self).route(rule, **options)
+
+    @route.classmethod
+    def route(cls, rule, **options):  # noqa
+        """
+            Enable .route() to be used in a class context as well.  E.g.:
+
+            KegApp.route('/something'):
+            def view_something():
+                pass
+        """
+        def decorator(f):
+            if not hasattr(cls, '_routes'):
+                cls._routes = []
+            cls._routes.append((f, rule, options))
+            return f
+        return decorator
+
+    def init_routes(self):
+        if not hasattr(self, '_routes'):
+            return
+        for func, rule, options in self._routes:
+            # We follow the same logic here as Flask.route() decorator.
+            endpoint = options.pop('endpoint', None)
+            self.add_url_rule(rule, endpoint, func, **options)
