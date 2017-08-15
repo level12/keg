@@ -47,17 +47,18 @@ setup(
     extras_require={
         'dev': ['restview'],
         'test': [
-            'mock',
-            'pytest',
-            'Flask-WebTest',
-            'keyring',
             'flake8',
-            'pep8-naming',
             'flake8-print',
-            'pytest-cov',
-            'tox',
+            'Flask-WebTest',
+            'Flask-WTF',
+            'keyring',
+            'mock',
+            'pep8-naming',
             'psycopg2',
             'pymssql',
+            'pytest',
+            'pytest-cov',
+            'tox',
         ],
     }
 )
