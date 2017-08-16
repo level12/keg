@@ -24,8 +24,8 @@ class KegAppError(Exception):
 
 class Keg(flask.Flask):
     import_name = None
-    use_blueprints = []
-    oauth_providers = []
+    use_blueprints = ()
+    oauth_providers = ()
     keyring_enabled = ConfigAttribute('KEG_KEYRING_ENABLE')
     config_class = keg.config.Config
     logging_class = keg.logging.Logging
@@ -39,8 +39,8 @@ class Keg(flask.Flask):
         extensions=['jinja2.ext.autoescape', 'jinja2.ext.with_', AssetsExtension]
     )
 
-    template_filters = {}
-    template_globals = {}
+    template_filters = ImmutableDict()
+    template_globals = ImmutableDict()
 
     visit_modules = False
 
