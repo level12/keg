@@ -31,6 +31,8 @@ class Keg(flask.Flask):
     logging_class = keg.logging.Logging
     keyring_manager_class = None
 
+    cli_loader_class = keg.cli.CLILoader
+
     db_enabled = False
     db_visit_modules = ['.model.entities']
     db_manager = None
@@ -197,7 +199,8 @@ class Keg(flask.Flask):
     @classproperty
     def cli_group(cls):  # noqa
         if not hasattr(cls, '_cli_group'):
-            cls._cli_group = keg.cli.init_app_cli(cls)
+            cal = cls.cli_loader_class(cls)
+            cls._cli_group = cal.create_group()
         return cls._cli_group
 
     @classmethod

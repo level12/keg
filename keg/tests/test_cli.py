@@ -4,6 +4,7 @@ import mock
 import pytest
 
 from keg_apps.cli import CLIApp
+from keg_apps.cli2.app import CLI2App
 from keg_apps.db.app import DBApp
 from keg.testing import CLIBase
 
@@ -34,6 +35,21 @@ class TestCLI(CLIBase):
             invoke_command() does some stuff to help with exceptions, it should be tested or
             removed.  So comment in that function for details.
         """
+
+
+class TestCLI2(CLIBase):
+    app_cls = CLI2App
+
+    def test_invoke(self):
+        result = self.invoke('hello1')
+        assert 'hello1' in result.output
+
+    def test_no_commands_help_message(self):
+        result = self.invoke()
+        assert 'Usage: ' in result.output
+        assert '--profile TEXT  Name of the configuration profile to use.' in result.output
+        assert 'develop  Developer info and utils.'
+        assert 'hello1' in result.output
 
 
 class TestConfigCommand(CLIBase):

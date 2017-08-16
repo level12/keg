@@ -5,19 +5,59 @@ import platform
 
 import click
 import flask
+from flask.cli import AppGroup, with_appcontext, run_command, shell_command, ScriptInfo
 from six.moves import urllib
 
 from keg import current_app
-from keg._flask_cli import FlaskGroup, script_info_option, with_appcontext, run_command, \
-    shell_command
 from keg.keyring import keyring as keg_keyring
 
 
-class KegGroup(FlaskGroup):
-    def __init__(self, add_default_commands=True, *args, **kwargs):
-        FlaskGroup.__init__(self, add_default_commands=False, *args, **kwargs)
+class KegAppGroup(AppGroup):
+    def __init__(self, create_app, add_default_commands=True, *args, **kwargs):
+        self.create_app = create_app
+
+        AppGroup.__init__(self, *args, **kwargs)
         if add_default_commands:
             self.add_command(dev_command)
+
+        self._loaded_plugin_commands = False
+
+    def _load_plugin_commands(self):
+        if self._loaded_plugin_commands:
+            return
+        try:
+            import pkg_resources
+        except ImportError:
+            self._loaded_plugin_commands = True
+            return
+
+        for ep in pkg_resources.iter_entry_points('flask.commands'):
+            self.add_command(ep.load(), ep.name)
+        for ep in pkg_resources.iter_entry_points('keg.commands'):
+            self.add_command(ep.load(), ep.name)
+        self._loaded_plugin_commands = True
+
+    def list_commands(self, ctx):
+        self._load_plugin_commands()
+
+        info = ctx.ensure_object(ScriptInfo)
+        info.load_app()
+        rv = set(click.Group.list_commands(self, ctx))
+        return sorted(rv)
+
+    def get_command(self, ctx, name):
+        info = ctx.ensure_object(ScriptInfo)
+        info.load_app()
+        return click.Group.get_command(self, ctx, name)
+
+    def main(self, *args, **kwargs):
+        obj = kwargs.get('obj')
+        if obj is None:
+            obj = ScriptInfo(create_app=self.create_app)
+        kwargs['obj'] = obj
+        # TODO: figure out if we want to use this next line.
+        #kwargs.setdefault('auto_envvar_prefix', 'FLASK')
+        return AppGroup.main(self, *args, **kwargs)
 
 
 @click.group('develop', help='Developer info and utils.')
@@ -244,19 +284,85 @@ def keyring_delete(key):
     flask.current_app.keyring_manager.delete(key)
 
 
-def init_app_cli(appcls):
+class CLILoader(object):
+    """
+        This loader takes care of the complexity of click object setup and instantiation in the
+        correct order so that application level CLI options are available before the Keg app is
+        instantiated (so the options can be used to configure the app).
 
-    # this function will be used to initialize the app along, including the value of config_profile
-    # which can be passed on the command line.
-    def _create_app(script_info):
-        app = appcls()
-        app.init(config_profile=script_info.data['config_profile'])
-        return app
+        The order of events is:
 
-    @click.group(cls=KegGroup, create_app=_create_app)
-    @script_info_option('--profile', script_info_key='config_profile', default=None,
-                        help='Name of the configuration profile to use.')
-    def cli(**kwargs):
-        pass
+        - instantiate KegAppGroup
+        - KegAppGroup.main() is called
+            1. the ScriptInfo object is instantiated
+            2. normal click behavior starts, including argument parsing
+                - arguments are always parsed due to invoke_without_command=True
+            3. during argument parsing, option callbacks are excuted which will result in at least
+               the profile name being saved in ScriptInfo().data
+            4. Normal click .main() behavior will continue which could include processing commands
+               decorated with flask.cli.with_appcontext() or calls to KegAppGroup.list_commands()
+               or KegAppGroup.get_command().
+                - ScriptInfo.init_app() will be called during any of these operations
+                - ScriptInfo.init_app() will call self.create_app() below with the ScriptInfo
+                  instance
+    """
+    def __init__(self, appcls):
+        self.appcls = appcls
+        # Don't store instance-level vars here.  This object is only instantiated once per Keg
+        # sub-class but can be used across multiple app instance creations.  So, anything app
+        # instance specific should go on the ScriptInfo instance (see self.options_callback()).
 
-    return cli
+    def create_group(self):
+        """ Create the top most click Group instance which is the entry point for any Keg app
+            being called in a CLI context.
+
+            The return value of this context gets set on Keg.cli
+        """
+
+        return KegAppGroup(
+            self.create_app,
+            params=self.create_script_options(),
+            callback=self.main_callback,
+            invoke_without_command=True,
+        )
+
+    def create_app(self, script_info):
+        """ Instantiate our app, sending CLI option values through as needed. """
+        return self.appcls().init(config_profile=script_info.data['profile'])
+
+    def create_script_options(self):
+        """ Create app level options, ideally that are used to configure the app itself.  """
+        return [
+            click.Option(['--profile'], is_eager=True, default=None, callback=self.options_callback,
+                         help='Name of the configuration profile to use.')
+        ]
+
+    def options_callback(self, ctx, param, value):
+        """ This method is called after argument parsing, after ScriptInfo instantiation but before
+            create_app() is called.  It's the only way to get the options into ScriptInfo.data
+            before the Keg app instance is instantiated.
+        """
+        si = ctx.ensure_object(ScriptInfo)
+        si.data[param.name] = value
+
+    def main_callback(self, **kwargs):
+        """
+            Default Click behavior is to call the help method if no arguments are given to the
+            top-most command.  That's good UX, but the way Click impliments it, the help is
+            shown before argument parsing takes place.  That's bad, because it means our
+            options_callback() is never called and the config profile isn't available when the
+            help command calls KegAppGroup.list_commands().
+
+            So, we force Click to always parse the args using `invoke_without_command=True` above,
+            but when we do that, Click turns off the automatic display of help.  So, we just
+            impliment help-like behavior in this method, which gives us the same net result
+            as default Click behavior.
+        """
+        ctx = click.get_current_context()
+
+        if ctx.invoked_subcommand is not None:
+            # A subcommand is present, so arguments were passed.
+            return
+
+        click.echo(ctx.get_help(), color=ctx.color)
+        ctx.exit()

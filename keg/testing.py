@@ -92,7 +92,11 @@ class CLIBase(object):
 
     def invoke(self, *args, **kwargs):
         cmd_name = kwargs.pop('cmd_name', self.cmd_name)
-        invoke_args = cmd_name.split(' ') + list(args)
+        if cmd_name is None:
+            cmd_name_args = []
+        else:
+            cmd_name_args = cmd_name.split(' ')
+        invoke_args = cmd_name_args + list(args)
         kwargs['runner'] = self.runner
         return invoke_command(self.app_cls, *invoke_args, **kwargs)
 
