@@ -15,4 +15,4 @@ if __name__ == '__main__':
     # This import prevents a nasty bug where there are actually two classes __main__.CLI2App
     # and the one with a full module path.
     import keg_apps.cli2.app as app
-    app.CLI2App.cli_run()
+    app.CLI2App.cli.main()

@@ -66,7 +66,7 @@ def invoke_command(app_cls, *args, **kwargs):
     if use_test_profile:
         app_key = app_cls.environ_key('USE_TEST_PROFILE')
         env[app_key] = 'true'
-    result = runner.invoke(app_cls.cli_group, args, env=env, catch_exceptions=False)
+    result = runner.invoke(app_cls.cli, args, env=env, catch_exceptions=False)
 
     # if an exception was raised, make sure you output the output to make debugging easier
     # -1 as an exit code indicates a non SystemExit exception.

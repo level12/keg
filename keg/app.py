@@ -31,6 +31,7 @@ class Keg(flask.Flask):
     logging_class = keg.logging.Logging
     keyring_manager_class = None
 
+    _cli = None
     cli_loader_class = keg.cli.CLILoader
 
     db_enabled = False
@@ -196,24 +197,12 @@ class Keg(flask.Flask):
     def request_context(self, environ):
         return KegRequestContext(self, environ)
 
-    @classproperty
-    def cli_group(cls):  # noqa
-        if not hasattr(cls, '_cli_group'):
+    def _cli_getter(cls):  # noqa: first argument is not self in this context due to @classproperty
+        if cls._cli is None:
             cal = cls.cli_loader_class(cls)
-            cls._cli_group = cal.create_group()
-        return cls._cli_group
-
-    @classmethod
-    def command(cls, *args, **kwargs):
-        return cls.cli_group.command(*args, **kwargs)
-
-    @classmethod
-    def cli_run(cls):
-        """
-            Convience function intended to be an entry point for an app's command.  Sets up the
-            app and kicks off the cli command processing.
-        """
-        cls.cli_group()
+            cls._cli = cal.create_group()
+        return cls._cli
+    cli = classproperty(_cli_getter, ignore_set=True)
 
     @classmethod
     def environ_key(cls, key):
