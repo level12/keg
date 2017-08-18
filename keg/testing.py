@@ -98,7 +98,11 @@ class CLIBase(object):
             cmd_name_args = cmd_name.split(' ')
         invoke_args = cmd_name_args + list(args)
         kwargs['runner'] = self.runner
-        return invoke_command(self.app_cls, *invoke_args, **kwargs)
+
+        # If the app_cls isn't set, use the class of the current app
+        app_cls = self.app_cls or flask.current_app._get_current_object().__class__
+
+        return invoke_command(app_cls, *invoke_args, **kwargs)
 
 
 class WebBase(object):
