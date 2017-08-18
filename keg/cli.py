@@ -1,22 +1,23 @@
 from __future__ import absolute_import
 
 from collections import defaultdict
+import logging
 import platform
 
 import click
 import flask
-from flask.cli import AppGroup, with_appcontext, run_command, shell_command, ScriptInfo
+import flask.cli
 from six.moves import urllib
 
 from keg import current_app
 from keg.keyring import keyring as keg_keyring
 
 
-class KegAppGroup(AppGroup):
+class KegAppGroup(flask.cli.AppGroup):
     def __init__(self, create_app, add_default_commands=True, *args, **kwargs):
         self.create_app = create_app
 
-        AppGroup.__init__(self, *args, **kwargs)
+        flask.cli.AppGroup.__init__(self, *args, **kwargs)
         if add_default_commands:
             self.add_command(dev_command)
 
@@ -40,24 +41,24 @@ class KegAppGroup(AppGroup):
     def list_commands(self, ctx):
         self._load_plugin_commands()
 
-        info = ctx.ensure_object(ScriptInfo)
+        info = ctx.ensure_object(flask.cli.ScriptInfo)
         info.load_app()
         rv = set(click.Group.list_commands(self, ctx))
         return sorted(rv)
 
     def get_command(self, ctx, name):
-        info = ctx.ensure_object(ScriptInfo)
+        info = ctx.ensure_object(flask.cli.ScriptInfo)
         info.load_app()
         return click.Group.get_command(self, ctx, name)
 
     def main(self, *args, **kwargs):
         obj = kwargs.get('obj')
         if obj is None:
-            obj = ScriptInfo(create_app=self.create_app)
+            obj = flask.cli.ScriptInfo(create_app=self.create_app)
         kwargs['obj'] = obj
         # TODO: figure out if we want to use this next line.
         #kwargs.setdefault('auto_envvar_prefix', 'FLASK')
-        return AppGroup.main(self, *args, **kwargs)
+        return flask.cli.AppGroup.main(self, *args, **kwargs)
 
 
 @click.group('develop', help='Developer info and utils.')
@@ -65,12 +66,12 @@ def dev_command():
     pass
 
 
-dev_command.add_command(run_command)
-dev_command.add_command(shell_command)
+dev_command.add_command(flask.cli.run_command)
+dev_command.add_command(flask.cli.shell_command)
 
 
 @dev_command.command('routes', short_help='List the routes defined for this app.')
-@with_appcontext
+@flask.cli.with_appcontext
 def routes_command():
     output = []
     endpoint_len = 0
@@ -94,7 +95,7 @@ def routes_command():
 
 
 @dev_command.command('templates', short_help='Show paths searched for a template.')
-@with_appcontext
+@flask.cli.with_appcontext
 def templates_command():
     jinja_loader = flask.current_app.jinja_env.loader
     paths = defaultdict(list)
@@ -111,7 +112,7 @@ def templates_command():
 
 @dev_command.command('config', short_help='List info related to config files, profiles, and'
                      ' values.')
-@with_appcontext
+@flask.cli.with_appcontext
 def config_command():
     app = flask.current_app
     config = app.config
@@ -149,7 +150,7 @@ class DatabaseGroup(click.MultiCommand):
 
 @dev_command.command('db', cls=DatabaseGroup, invoke_without_command=True,
                      help='Lists database related sub-commands.')
-@with_appcontext
+@flask.cli.with_appcontext
 @click.pass_context
 def database_group(ctx):
     # only take action if no subcommand is involved.
@@ -167,7 +168,7 @@ def database_group(ctx):
 @click.command('init', short_help='Create all db objects, send related events.')
 @click.option('--clear-first', default=False, is_flag=True,
               help='Clear DB of all data and drop all objects before init.')
-@with_appcontext
+@flask.cli.with_appcontext
 def database_init(clear_first):
     if clear_first:
         current_app.db_manager.db_init_with_clear()
@@ -178,7 +179,7 @@ def database_init(clear_first):
 
 
 @click.command('clear', short_help='Clear DB of all data and drop all objects.')
-@with_appcontext
+@flask.cli.with_appcontext
 def database_clear():
     current_app.db_manager.db_clear()
     click.echo('Database cleared')
@@ -226,7 +227,7 @@ def keyring_group(ctx):
 @click.command('status', short_help='Show keyring related status info.')
 @click.option('--unavailable', default=False, is_flag=True,
               help='Show unavailable backends with reasons.')
-@with_appcontext
+@flask.cli.with_appcontext
 def keyring_status(unavailable):
     if keg_keyring is None:
         keyring_notify_no_module()
@@ -270,7 +271,7 @@ def keyring_status(unavailable):
 
 
 @click.command('list-keys', short_help='Show all keys used in config value substitution.')
-@with_appcontext
+@flask.cli.with_appcontext
 def keyring_list_keys():
     km = flask.current_app.keyring_manager
     for key in sorted(km.sub_keys_seen):
@@ -279,7 +280,7 @@ def keyring_list_keys():
 
 @click.command('delete', short_help='Delete an entry from the keyring.')
 @click.argument('key')
-@with_appcontext
+@flask.cli.with_appcontext
 def keyring_delete(key):
     flask.current_app.keyring_manager.delete(key)
 
@@ -328,13 +329,27 @@ class CLILoader(object):
 
     def create_app(self, script_info):
         """ Instantiate our app, sending CLI option values through as needed. """
-        return self.appcls().init(config_profile=script_info.data['profile'])
+        init_kwargs = self.option_processor(script_info.data)
+        return self.appcls().init(**init_kwargs)
+
+    def option_processor(self, cli_options):
+        """
+            Turn cli_options, which is the result of all parsed options in create_script_options()
+            into a dict which will be given as kwargs to the app's .init() method.
+        """
+        retval = dict(config_profile=cli_options.get('profile', None), config={})
+        if cli_options.get('quiet', False):
+            retval['config']['KEG_LOG_LEVEL'] = logging.WARN
+        return retval
 
     def create_script_options(self):
         """ Create app level options, ideally that are used to configure the app itself.  """
         return [
             click.Option(['--profile'], is_eager=True, default=None, callback=self.options_callback,
-                         help='Name of the configuration profile to use.')
+                         help='Name of the configuration profile to use.'),
+            click.Option(['--quiet'], is_eager=True, is_flag=True, default=False,
+                         callback=self.options_callback,
+                         help='Set default logging level to logging.WARNING.')
         ]
 
     def options_callback(self, ctx, param, value):
@@ -342,7 +357,7 @@ class CLILoader(object):
             create_app() is called.  It's the only way to get the options into ScriptInfo.data
             before the Keg app instance is instantiated.
         """
-        si = ctx.ensure_object(ScriptInfo)
+        si = ctx.ensure_object(flask.cli.ScriptInfo)
         si.data[param.name] = value
 
     def main_callback(self, **kwargs):

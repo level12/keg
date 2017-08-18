@@ -47,9 +47,15 @@ class TestCLI2(CLIBase):
     def test_no_commands_help_message(self):
         result = self.invoke()
         assert 'Usage: ' in result.output
+        assert '--quiet         Set default logging level to logging.WARNING' in result.output
         assert '--profile TEXT  Name of the configuration profile to use.' in result.output
         assert 'develop  Developer info and utils.'
         assert 'hello1' in result.output
+
+    def test_quiet(self):
+        # the asserts for these tests are in keg_apps.cli2.cli
+        self.invoke('--quiet', 'is_quiet')
+        self.invoke('is_not_quiet')
 
 
 class TestConfigCommand(CLIBase):
