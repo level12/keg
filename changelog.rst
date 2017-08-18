@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.6.0 released 2017-08-18
+-------------------------
+
+- ADD: make CLIBase operate off `current_app` as last resort (1b358c1_)
+- ADD: --quiet option to script options (6eb723f_)
+- BREAKING CHANGE: adjust cli API on KegApp (af45880_)
+
+.. _1b358c1: https://github.com/level12/keg/commit/1b358c1
+.. _6eb723f: https://github.com/level12/keg/commit/6eb723f
+.. _af45880: https://github.com/level12/keg/commit/af45880
+
+
 0.5.1 released 2017-08-15
 -------------------------
 
