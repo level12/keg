@@ -3,15 +3,8 @@
 Keg: more than Flask
 ####################
 
-
-.. image:: https://coveralls.io/repos/level12/keg/badge.svg?branch=master
-    :target: https://coveralls.io/r/level12/keg?branch=master
-
 .. image:: https://codecov.io/github/level12/keg/coverage.svg?branch=master
     :target: https://codecov.io/github/level12/keg?branch=master
-
-.. image:: https://img.shields.io/pypi/dm/Keg.svg
-    :target: https://img.shields.io/pypi/dm/Keg.svg
 
 .. image:: https://img.shields.io/pypi/v/Keg.svg
     :target: https://img.shields.io/pypi/v/Keg.svg
@@ -24,10 +17,6 @@ Keg: more than Flask
 
 .. image:: https://img.shields.io/pypi/status/Keg.svg
     :target: https://img.shields.io/pypi/status/Keg.svg
-
-.. image:: https://badges.gitter.im/level12/keg.svg
-    :alt: Join the chat at https://gitter.im/level12/keg
-    :target: https://gitter.im/level12/keg?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 .. image:: https://ci.appveyor.com/api/projects/status/wm35hheykxs8851r
     :alt: AppVeyor Build
