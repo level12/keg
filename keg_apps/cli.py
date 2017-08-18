@@ -15,21 +15,21 @@ class CLIApp(Keg):
     keyring_enabled = False
 
 
-@CLIApp.command()
+@CLIApp.cli.command()
 def hello():
     print('hello keg test')  # noqa
 
 
-@CLIApp.command()
+@CLIApp.cli.command()
 @click.argument('name', default='foo')
 def foo2(name):
     print(('hello {}'.format(name)))  # noqa
 
 
-@CLIApp.command('catch-error')
+@CLIApp.cli.command('catch-error')
 def catch_error():
     raise Exception('deliberate exception for testing')
 
 
 if __name__ == '__main__':
-    CLIApp.cli_run()
+    CLIApp.cli.main()

@@ -43,11 +43,18 @@ class ClassProperty(property):
     on classes rather than instances.
     """
     def __init__(self, fget, *arg, **kw):
-        super(ClassProperty, self).__init__(fget, *arg, **kw)
+        self.ignore_set = kw.pop('ignore_set', False)
         self.__doc__ = fget.__doc__
+        super(ClassProperty, self).__init__(fget, *arg, **kw)
 
-    def __get__(desc, self, cls):  # noqa
-        return desc.fget(cls)
+    def __get__(self, obj, cls):  # noqa
+        return self.fget(cls)
+
+    def __set__(self, cls, value):  # noqa
+        if self.fset is None and not self.ignore_set:
+            raise AttributeError("can't set attribute")
+        if not self.ignore_set:
+            self.fset(cls, value)
 
 
 classproperty = ClassProperty

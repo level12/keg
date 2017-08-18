@@ -9,4 +9,4 @@ class DBApp(Keg):
 
 
 if __name__ == '__main__':
-    DBApp.cli_run()
+    DBApp.cli.main()

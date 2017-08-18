@@ -7,10 +7,10 @@ from keg_apps.profile.app import ProfileApp
 
 
 def cli_entry():
-    ProfileApp.cli_run()
+    ProfileApp.cli.main()
 
 
-@ProfileApp.command()
+@ProfileApp.cli.command()
 def show_profile():
     click.echo(keg.current_app.config['PROFILE_FROM'])
 
