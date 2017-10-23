@@ -71,7 +71,7 @@ The thinking behind that is:
 Installation
 ============
 
-- pip install keg
+`pip install keg`
 
 
 App Configuration
@@ -136,16 +136,6 @@ You can then examine tox.ini for insights into our development process.  In part
 
 * use `py.test` for testing (and coverage analysis)
 * use `flake8` for linting
-* store `pip` requirements files in `requirements/`
-* cache wheels in `requirements/wheelhouse` for faster & more reliable CI builds
-
-Dependency Management
----------------------
-
-Adding a dependency involves:
-
-#. Adding the dependency to one of the requirements files in `requirements/`.
-#. Running `wheelhouse build`
 
 Preview Readme
 --------------
@@ -162,5 +152,6 @@ https://github.com/level12/keg/issues
 Current Status
 ==============
 
-Very Alpha, expect changes.
+* Stable in a relatively small number of production environments.
+* API is likely to change with smaller compatibility breaks happening more frequently than larger ones.
 
