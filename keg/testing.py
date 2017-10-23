@@ -6,7 +6,6 @@ import flask
 import six
 from flask_webtest import TestApp
 
-from keg import current_app
 from keg.utils import app_environ_get
 
 
@@ -26,22 +25,12 @@ class ContextManager(object):
     def __init__(self, appcls):
         self.appcls = appcls
         self.app = None
-        self.ctx = None
 
-    def ensure_current(self, config):
-
+    def make_ready(self, config):
         if not self.app:
             self.app = self.appcls().init(use_test_profile=True, config=config)
-            self.ctx = self.app.app_context()
-            self.ctx.push()
-
-        if current_app._get_current_object is not self.app:
-            self.ctx.push()
 
         return self.app
-
-    def cleanup(self):
-        self.ctx.pop()
 
     def is_ready(self):
         return self.app is not None
@@ -112,4 +101,4 @@ class WebBase(object):
     @classmethod
     def setup_class(cls):
         cls.app = cls.appcls.testing_prep()
-        cls.testapp = TestApp(flask.current_app)
+        cls.testapp = TestApp(cls.app)

@@ -6,28 +6,32 @@ from jinja2 import TemplateSyntaxError
 import pytest
 import six
 
-from keg import current_app
 from keg_apps.templating.app import TemplatingApp
 
 
-def setup_module(module):
-    TemplatingApp.testing_prep()
+@pytest.fixture(scope="module")
+def app():
+    return TemplatingApp.testing_prep()
 
 
 class TestAssetsInclude(object):
-    def render(self, filename):
-        template = current_app.jinja_env.get_template(filename)
-        return template.render()
 
-    def setup_method(self, method):
-        self.ctx = current_app.test_request_context()
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self, app):
+        # setup
+        self.ctx = app.test_request_context()
         self.ctx.push()
         self.assets = self.ctx.assets
-
-    def teardown_method(self, method):
+        self.app = app
+        yield
+        # teardown
         self.ctx.pop()
 
-    def test_include(self):
+    def render(self, filename):
+        template = self.app.jinja_env.get_template(filename)
+        return template.render()
+
+    def test_include(self, app):
         resp = self.render('assets_in_template.html')
         assert resp.strip() == ''
 

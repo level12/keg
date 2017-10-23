@@ -8,8 +8,12 @@ from keg.db import db
 from keg_apps.db.app import DBApp
 
 
-def setup_module(module):
-    DBApp.testing_prep()
+@pytest.fixture(scope="module", autouse=True)
+def app():
+    app = DBApp.testing_prep()
+    # Setup an app context that clears itself when this module's tests are finished.
+    with app.app_context():
+        yield
 
 
 @pytest.fixture(autouse=True)
@@ -23,11 +27,6 @@ def db_session_prep():
 class DialectExam(object):
     bind_name = None
     obj_names_sql = None
-
-    @classmethod
-    def setup_class(cls):
-        # passing None as the app just because on_testing_start() doesn't use it
-        current_app.db_manager.on_testing_start(None)
 
     @classmethod
     def dialect(cls):
