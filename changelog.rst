@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.6.1 released 2017-11-16
+-------------------------
+
+- fix quiet logging (e46fd2b_)
+- a few small updates/fixes to readme (2044439_)
+
+.. _e46fd2b: https://github.com/level12/keg/commit/e46fd2b
+.. _2044439: https://github.com/level12/keg/commit/2044439
+
+
 0.6.0 released 2017-08-18
 -------------------------
 
