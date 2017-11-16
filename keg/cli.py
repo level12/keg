@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 from collections import defaultdict
-import logging
 import platform
 
 import click
@@ -339,7 +338,7 @@ class CLILoader(object):
         """
         retval = dict(config_profile=cli_options.get('profile', None), config={})
         if cli_options.get('quiet', False):
-            retval['config']['KEG_LOG_LEVEL'] = logging.WARN
+            retval['config']['KEG_LOG_STREAM_ENABLED'] = False
         return retval
 
     def create_script_options(self):

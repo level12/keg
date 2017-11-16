@@ -1,9 +1,10 @@
 import logging
 
 import click
-import flask
 
 from .app import CLI2App
+
+log = logging.getLogger(__name__)
 
 
 @CLI2App.cli.command('hello1')
@@ -13,9 +14,11 @@ def hello1():
 
 @CLI2App.cli.command()
 def is_quiet():
-    assert flask.current_app.logging.logging_level == logging.WARN
+    print('printed foo')
+    log.info('logged foo')
 
 
 @CLI2App.cli.command()
 def is_not_quiet():
-    assert flask.current_app.logging.logging_level == logging.INFO
+    print('printed foo')
+    log.info('logged foo')
