@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.6.2 released 2017-12-19
+-------------------------
+
+- db: get rid of code to replace session object (149b42c_)
+
+.. _149b42c: https://github.com/level12/keg/commit/149b42c
+
+
 0.6.1 released 2017-11-16
 -------------------------
 
