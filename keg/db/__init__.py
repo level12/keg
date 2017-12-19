@@ -1,26 +1,12 @@
 from __future__ import absolute_import
 
-from flask_sqlalchemy import SQLAlchemy
+import flask_sqlalchemy as fsa
 
 from keg.signals import testing_run_start, db_init_pre, db_init_post, db_clear_pre, db_clear_post
 from keg.utils import visit_modules
 
 
-class KegSQLAlchemy(SQLAlchemy):
-
-    def init_app(self, app):
-        SQLAlchemy.init_app(self, app)
-        if app.testing:
-            self.testing_scoped_session()
-
-    def testing_scoped_session(self):
-        # don't want to have to import this if we are in production, so put import
-        # inside of the method
-        from flask_webtest import get_scopefunc
-
-        # flask-sqlalchemy creates the session when the class is initialized.  We have to re-create
-        # with different session options and override the session attribute with the new session
-        db.session = db.create_scoped_session(options={'scopefunc': get_scopefunc()})
+class KegSQLAlchemy(fsa.SQLAlchemy):
 
     def get_engines(self, app):
         # the default engine doesn't have a bind

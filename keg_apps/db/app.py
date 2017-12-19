@@ -8,5 +8,10 @@ class DBApp(Keg):
     db_enabled = True
 
 
+@DBApp.cli.command()
+def hello():
+    print('hello db cli')
+
+
 if __name__ == '__main__':
     DBApp.cli.main()

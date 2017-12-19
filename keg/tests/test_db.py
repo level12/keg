@@ -5,6 +5,7 @@ import pytest
 from keg import current_app
 from keg.db import db
 from keg.signals import db_init_pre, db_init_post, db_clear_post, db_clear_pre
+from keg.testing import invoke_command
 
 import keg_apps.db.model.entities as ents
 from keg_apps.db.app import DBApp
@@ -102,3 +103,13 @@ class TestDatabaseManager(object):
         assert self.init_post_connected
         assert self.clear_pre_connected
         assert self.clear_post_connected
+
+
+class TestKegSQLAlchemy(object):
+    def test_session_ids_with_cli_invocation(self):
+        sess_id = id(db.session)
+
+        result = invoke_command(DBApp, 'hello')
+        assert 'hello db cli' in result.output
+
+        assert id(db.session) == sess_id
