@@ -1,16 +1,18 @@
 from __future__ import absolute_import
 
-from io import StringIO
+import logging
+
+import mock
+import six
 
 from keg import signals
 from keg_apps.logging import LoggingApp, log
-import mock
 
 
 class TestLogging(object):
 
     def test_stream_handler(self):
-        with mock.patch('sys.stderr', new_callable=StringIO) as m_stderr:
+        with mock.patch('sys.stderr', new_callable=six.StringIO) as m_stderr:
             LoggingApp().init(use_test_profile=True)
             log.warning(u'test warn log')
             log.info(u'test info log')
@@ -53,3 +55,34 @@ class TestLogging(object):
         args, kwargs = calls[1]
         log_record = args[0]
         assert log_record.message == 'test info log'
+
+
+class TestJsonFormatter(object):
+    def setup(self):
+        self.logger = logging.getLogger('logging-test')
+        self.logger.setLevel(logging.DEBUG)
+        self.buffer = six.StringIO()
+
+        self.logHandler = logging.StreamHandler(self.buffer)
+        self.logger.addHandler(self.logHandler)
+
+    def test_default_prefix(self):
+        app = LoggingApp().init(use_test_profile=True)
+        jf = app.logging.create_json_formatter()
+        self.logHandler.setFormatter(jf)
+
+        self.logger.info("foo")
+
+        output = self.buffer.getvalue()
+        assert output.startswith('@cee:')
+
+    def test_config_prefix_overrides_default(self):
+        config = {'KEG_LOG_JSON_FORMATTER_KWARGS': {'prefix': '@bar'}}
+        app = LoggingApp().init(use_test_profile=True, config=config)
+        jf = app.logging.create_json_formatter()
+        self.logHandler.setFormatter(jf)
+
+        self.logger.info("foo")
+
+        output = self.buffer.getvalue()
+        assert output.startswith('@bar')

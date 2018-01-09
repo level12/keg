@@ -121,7 +121,10 @@ class Logging(object):
         return logging.Formatter(self.syslog_format_str)
 
     def create_json_formatter(self):
-        return JSONFormatter(self.json_format_str)
+        prefix = self.config.get('KEG_LOG_SYSLOG_JSON_PREFIX', '@cee:')
+        kwargs = self.config.get('KEG_LOG_JSON_FORMATTER_KWARGS', {})
+        kwargs.setdefault('prefix', prefix)
+        return JSONFormatter(self.json_format_str, **kwargs)
 
 
 def find_syslog_address(config):
