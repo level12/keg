@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.6.4 released 2018-01-09
+-------------------------
+
+- when testing, don't log to syslog by default (304a0a7_)
+
+.. _304a0a7: https://github.com/level12/keg/commit/304a0a7
+
+
 0.6.3 released 2018-01-09
 -------------------------
 
