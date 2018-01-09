@@ -41,7 +41,7 @@ class TestLogging(object):
 
     def test_syslog_handler(self):
         with mock.patch('keg.logging.SysLogHandler.emit') as m_emit:
-            LoggingApp().init(use_test_profile=True)
+            LoggingApp().init(use_test_profile=True, config={'KEG_LOG_SYSLOG_ENABLED': True})
             log.warning('test warn log')
             log.info('test info log')
 

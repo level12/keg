@@ -186,6 +186,7 @@ class TestProfile(object):
     DEBUG = True
     TESTING = True
     KEG_KEYRING_ENABLE = False
+    KEG_LOG_SYSLOG_ENABLED = False
 
     # set this to allow generation of URLs without a request context
     SERVER_NAME = 'keg.example.com' if six.PY3 else b'keg.example.com'
