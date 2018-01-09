@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.6.3 released 2018-01-09
+-------------------------
+
+- add '@cee:' prefix to json syslog formatter (b7ea5d3_)
+
+.. _b7ea5d3: https://github.com/level12/keg/commit/b7ea5d3
+
+
 0.6.2 released 2017-12-19
 -------------------------
 
