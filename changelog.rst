@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.6.5 released 2018-05-28
+-------------------------
+
+- Update readme, start using pipenv, pin Flask < 1.0 (abdc9bf_)
+
+.. _abdc9bf: https://github.com/level12/keg/commit/abdc9bf
+
+
 0.6.4 released 2018-01-09
 -------------------------
 
