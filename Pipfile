@@ -1,0 +1,25 @@
+[[source]]
+name = "pypi"
+verify_ssl = true
+url = "https://pypi.python.org/simple"
+
+[dev-packages]
+
+[packages]
+"e1839a8" = {path = ".", editable = true}
+# Everything else needed for tests/development but since Keg is a library, no point in putting
+# all this with --dev flag.
+restview = "*"
+"flake8" = "*"
+flask-webtest = "*"
+flask-wtf = "*"
+# Secretstorage 3.0+ doesn't work with Python 2.7
+secretstorage = {version = "<3"}
+keyring = "*"
+mock = "*"
+"pep8-naming" = "*"
+"psycopg2-binary" = "*"
+pytest = "*"
+pytest-cov = "*"
+readme_renderer = "*"
+tox = "*"

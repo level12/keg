@@ -104,33 +104,37 @@ look for.  It should be a string.
 
 A Keg app considers the "selected" profile as follows:
 
-    * If `config_profile` was passed into `myapp.init()` as an argument, use it as the
-      selected profile.  The `--profile` cli option uses this method to set the selected profile and
-      therefore has the highest priority.
-    * Look in the app's environment namespace for "CONFIG_PROFILE".  If found, use it.
-    * If running tests, use "TestProfile".  Whether or not the app is operating in this mode is
-      controlled by the use of:
+* If `config_profile` was passed into `myapp.init()` as an argument, use it as the
+  selected profile.  The `--profile` cli option uses this method to set the selected profile and
+  therefore has the highest priority.
+* Look in the app's environment namespace for "CONFIG_PROFILE".  If found, use it.
+* If running tests, use "TestProfile".  Whether or not the app is operating in this mode is
+  controlled by the use of:
 
-      - `myapp.init(use_test_profile=True)` which is used by `MyApp.testing_prep()`
-      - looking in the app's environment namespace for "USE_TEST_PROFILE" which is used by
-        `keg.testing.invoke_command()`
+  - `myapp.init(use_test_profile=True)` which is used by `MyApp.testing_prep()`
+  - looking in the app's environment namespace for "USE_TEST_PROFILE" which is used by
+    `keg.testing.invoke_command()`
 
-    * Look in the app's main config file (`app.config`) and all it's other
-      config files for the variable `DEFAULT_PROFILE`.  If found, use the value from the file with
-      highest priority.
+* Look in the app's main config file (`app.config`) and all it's other
+  config files for the variable `DEFAULT_PROFILE`.  If found, use the value from the file with
+  highest priority.
 
 
 Keg Development
 ===============
 
-To develop on keg, begin by running our tests::
+To develop on keg, begin by installing dependencies and running the tests::
 
     git clone https://github.com/level12/keg keg-src
     cd keg-src
+
     cp keg_apps/db/user-config-tpl.py ~/.config/keg_apps.db/keg_apps.db-config.py
     # edit the DB connection info in this file (you don't have to use vim):
     vim ~/.config/keg_apps.db/keg_apps.db-config.py
-    tox
+
+    pipenv --python=python3.6
+    pipenv install
+    pipenv run pytest keg
 
 You can then examine tox.ini for insights into our development process.  In particular, we:
 

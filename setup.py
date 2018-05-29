@@ -39,27 +39,10 @@ setup(
         'BlazeUtils',
         'blinker',
         'Click>=3.0',
-        'Flask>=0.12.0',
+        'Flask<1.0.0',
         'Flask-SQLAlchemy',
         'pathlib',
         'python-json-logger',
         'six',
-    ],
-    extras_require={
-        'dev': ['restview'],
-        'test': [
-            'flake8',
-            'flake8-print',
-            'Flask-WebTest',
-            'Flask-WTF',
-            'keyring',
-            'mock',
-            'pep8-naming',
-            'psycopg2',
-            'pymssql',
-            'pytest',
-            'pytest-cov',
-            'tox',
-        ],
-    }
+    ]
 )
