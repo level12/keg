@@ -9,6 +9,7 @@ import flask.cli
 from six.moves import urllib
 
 from keg import current_app
+from keg.extensions import lazy_gettext as _
 from keg.keyring import keyring as keg_keyring
 
 
@@ -60,7 +61,7 @@ class KegAppGroup(flask.cli.AppGroup):
         return flask.cli.AppGroup.main(self, *args, **kwargs)
 
 
-@click.group('develop', help='Developer info and utils.')
+@click.group('develop', help=_('Developer info and utils.'))
 def dev_command():
     pass
 
@@ -69,7 +70,7 @@ dev_command.add_command(flask.cli.run_command)
 dev_command.add_command(flask.cli.shell_command)
 
 
-@dev_command.command('routes', short_help='List the routes defined for this app.')
+@dev_command.command('routes', short_help=_('List the routes defined for this app.'))
 @flask.cli.with_appcontext
 def routes_command():
     output = []
@@ -93,7 +94,7 @@ def routes_command():
         click.echo(line)
 
 
-@dev_command.command('templates', short_help='Show paths searched for a template.')
+@dev_command.command('templates', short_help=_('Show paths searched for a template.'))
 @flask.cli.with_appcontext
 def templates_command():
     jinja_loader = flask.current_app.jinja_env.loader
@@ -109,8 +110,8 @@ def templates_command():
             click.echo('    {}'.format(tpath))
 
 
-@dev_command.command('config', short_help='List info related to config files, profiles, and'
-                     ' values.')
+@dev_command.command('config', short_help=_('List info related to config files, profiles, and'
+                     ' values.'))
 @flask.cli.with_appcontext
 def config_command():
     app = flask.current_app
@@ -118,19 +119,19 @@ def config_command():
     keys = list(config.keys())
     keys.sort()
 
-    click.echo('Default config objects:')
+    click.echo(_('Default config objects:'))
     for val in config.default_config_locations_parsed():
         click.echo('    {}'.format(val))
 
-    click.echo('Config file locations:')
+    click.echo(_('Config file locations:'))
     for val in config.config_file_paths():
         click.echo('    {}'.format(val))
 
-    click.echo('Config objects used:')
+    click.echo(_('Config objects used:'))
     for val in config.configs_found:
         click.echo('    {}'.format(val))
 
-    click.echo('Resulting app config (including Flask defaults):')
+    click.echo(_('Resulting app config (including Flask defaults):'))
     for key in keys:
         click.echo('    {} = {}'.format(key, config[key]))
 
@@ -148,14 +149,14 @@ class DatabaseGroup(click.MultiCommand):
 
 
 @dev_command.command('db', cls=DatabaseGroup, invoke_without_command=True,
-                     help='Lists database related sub-commands.')
+                     help=_('Lists database related sub-commands.'))
 @flask.cli.with_appcontext
 @click.pass_context
 def database_group(ctx):
     # only take action if no subcommand is involved.
     if ctx.invoked_subcommand is None:
         if not current_app.db_enabled:
-            click.echo('Database not enabled for this app.  No subcommands available.')
+            click.echo(_('Database not enabled for this app.  No subcommands available.'))
         else:
             # Database enabled, but no subcommand was given, therefore we want to just show
             # the help message, which would be the default behavior if we had not used the
@@ -164,24 +165,24 @@ def database_group(ctx):
             ctx.exit()
 
 
-@click.command('init', short_help='Create all db objects, send related events.')
+@click.command('init', short_help=_('Create all db objects, send related events.'))
 @click.option('--clear-first', default=False, is_flag=True,
-              help='Clear DB of all data and drop all objects before init.')
+              help=_('Clear DB of all data and drop all objects before init.'))
 @flask.cli.with_appcontext
 def database_init(clear_first):
     if clear_first:
         current_app.db_manager.db_init_with_clear()
-        click.echo('Database cleared and initialized')
+        click.echo(_('Database cleared and initialized'))
     else:
         current_app.db_manager.db_init()
-        click.echo('Database initialzed')
+        click.echo(_('Database initialzed'))
 
 
-@click.command('clear', short_help='Clear DB of all data and drop all objects.')
+@click.command('clear', short_help=_('Clear DB of all data and drop all objects.'))
 @flask.cli.with_appcontext
 def database_clear():
     current_app.db_manager.db_clear()
-    click.echo('Database cleared')
+    click.echo(_('Database cleared'))
 
 
 class KeyringGroup(click.MultiCommand):
@@ -202,13 +203,13 @@ class KeyringGroup(click.MultiCommand):
 
 
 def keyring_notify_no_module():
-    click.echo('Keyring module not installed. Keyring functionality disabled.\n\nYou can'
-               ' enable keyring functionality by installing the package:'
-               ' `pip install keyring`.')
+    click.echo(_('Keyring module not installed. Keyring functionality disabled.\n\nYou can'
+                 ' enable keyring functionality by installing the package:'
+                 ' `pip install keyring`.'))
 
 
 @dev_command.command('keyring', cls=KeyringGroup, invoke_without_command=True,
-                     help='Lists keyring related sub-commands.')
+                     help=_('Lists keyring related sub-commands.'))
 @click.pass_context
 def keyring_group(ctx):
     # only take action if no subcommand is involved.
@@ -223,9 +224,9 @@ def keyring_group(ctx):
             ctx.exit()
 
 
-@click.command('status', short_help='Show keyring related status info.')
+@click.command('status', short_help=_('Show keyring related status info.'))
 @click.option('--unavailable', default=False, is_flag=True,
-              help='Show unavailable backends with reasons.')
+              help=_('Show unavailable backends with reasons.'))
 @flask.cli.with_appcontext
 def keyring_status(unavailable):
     if keg_keyring is None:
@@ -238,38 +239,39 @@ def keyring_status(unavailable):
     # call get_all_keyring() before this so we are sure all keyrings are loaded
     # on KeyringBackend
     if unavailable:
-        click.echo('Unavailable backends')
+        click.echo(_('Unavailable backends'))
         for cls in kb.KeyringBackend._classes:
             try:
                 cls.priority
             except Exception as e:
-                click.echo('    {0.__module__}:{0.__name__} - {1}'.format(cls, e))
+                click.echo(_('    {_class.__module__}:{_class.__name__} - {exception}',
+                             _class=cls, exception=e))
 
-    click.echo('\nAvailable backends (backends with priority < 1 are not'
-               ' recommended and may be insecure)')
+    click.echo(_('\nAvailable backends (backends with priority < 1 are not'
+                 ' recommended and may be insecure)'))
     for backend in viable:
-        click.echo('    {0.__module__}:{0.__name__} (priority: {1})'
-                   .format(backend.__class__, backend.priority))
+        click.echo(_('    {_class.__module__}:{_class.__name__} (priority: {priority})',
+                     _class=backend.__class__, priority=backend.priority))
 
-    click.echo('\nDefault backend')
+    click.echo(_('\nDefault backend'))
     backend = keyring.get_keyring()
-    click.echo('    {0.__module__}:{0.__name__}'.format(backend.__class__))
+    click.echo(_('    {_class.__module__}:{_class.__name__}', _class=backend.__class__))
     if hasattr(backend, 'file_path'):
-        click.echo('    file path: {}'.format(backend.file_path))
+        click.echo(_('    file path: {file_path}', file_path=backend.file_path))
 
     if not flask.current_app.keyring_enabled:
-        click.echo('\nKeyring functionality for this app has been DISABLED through the config'
-                   ' setting KEG_KEYRING_ENABLE.')
+        click.echo(_('\nKeyring functionality for this app has been DISABLED through the config'
+                     ' setting KEG_KEYRING_ENABLE.'))
     elif not flask.current_app.keyring_manager.verify_backend():
-        click.echo('\nWARNING: the current backend is insecure,'
-                   ' keyring substitution unavailable.')
+        click.echo(_('\nWARNING: the current backend is insecure,'
+                     ' keyring substitution unavailable.'))
         if platform.system() == 'Linux':
-            click.echo('\nTRY THIS: use the SecretStorage Setup utility to get a more secure'
-                       ' keyring backend.')
+            click.echo(_('\nTRY THIS: use the SecretStorage Setup utility to get a more secure'
+                         ' keyring backend.'))
             click.echo('https://pypi.python.org/pypi/SecretStorage-Setup\n')
 
 
-@click.command('list-keys', short_help='Show all keys used in config value substitution.')
+@click.command('list-keys', short_help=_('Show all keys used in config value substitution.'))
 @flask.cli.with_appcontext
 def keyring_list_keys():
     km = flask.current_app.keyring_manager
@@ -277,7 +279,7 @@ def keyring_list_keys():
         click.echo(key)
 
 
-@click.command('delete', short_help='Delete an entry from the keyring.')
+@click.command('delete', short_help=_('Delete an entry from the keyring.'))
 @click.argument('key')
 @flask.cli.with_appcontext
 def keyring_delete(key):
@@ -345,10 +347,10 @@ class CLILoader(object):
         """ Create app level options, ideally that are used to configure the app itself.  """
         return [
             click.Option(['--profile'], is_eager=True, default=None, callback=self.options_callback,
-                         help='Name of the configuration profile to use.'),
+                         help=_('Name of the configuration profile to use.'),)
             click.Option(['--quiet'], is_eager=True, is_flag=True, default=False,
                          callback=self.options_callback,
-                         help='Set default logging level to logging.WARNING.')
+                         help=_('Set default logging level to logging.WARNING.'))
         ]
 
     def options_callback(self, ctx, param, value):

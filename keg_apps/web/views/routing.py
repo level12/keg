@@ -4,6 +4,9 @@ import flask
 from flask import request
 from keg.web import BaseView as KegBaseView, route, rule
 
+from keg_apps.extensions import lazy_gettext as _
+
+
 blueprint = flask.Blueprint('routing', __name__)
 
 
@@ -18,10 +21,10 @@ class VerbRouting(BaseView):
     """
 
     def get(self):
-        return 'method get'
+        return _('method get')
 
     def post(self):
-        return 'method post'
+        return _('method post')
 
 
 class VerbRoutingSub(VerbRouting):
@@ -39,7 +42,7 @@ class ExplicitRoute(BaseView):
     rule('/some-route')
 
     def get(self):
-        return 'get some-route'
+        return _('get some-route')
 
 
 class HelloWorld(BaseView):
@@ -51,7 +54,7 @@ class HelloWorld(BaseView):
     rule('<name>')
 
     def get(self, name='World'):
-        return 'Hello {}'.format(name)
+        return _('Hello {name}', name=name)
 
 
 class HWRuleDefault(BaseView):
@@ -67,10 +70,10 @@ class HWRuleDefault(BaseView):
     rule('<name>', post=True)
 
     def post(self, name):
-        return 'post Hello {}'.format(name)
+        return _('post Hello {name}', name=name)
 
     def get(self, name):
-        return 'Hello {}'.format(name)
+        return _('Hello {name}', name=name)
 
 
 class HelloReq(BaseView):
@@ -82,7 +85,7 @@ class HelloReq(BaseView):
     rule('/hello-req/<name>')
 
     def get(self, name):
-        return 'Hello {}'.format(name)
+        return _('Hello {name}', name=name)
 
 
 class Cars(BaseView):
@@ -99,26 +102,26 @@ class Cars(BaseView):
 
     @route()
     def list(self):
-        return 'list'
+        return _('list')
 
     @route()
     def create_get(self):
-        return 'create get'
+        return _('create get')
 
     @route(post_only=True)
     def create_post(self):
-        return 'create post'
+        return _('create post')
 
     @route('<int:car_id>', post=True)
     def edit(self, car_id):
         if request.method == 'GET':
-            return 'form w/ data: {}'.format(car_id)
+            return _('form w/ data: {id}', id=car_id)
         else:
-            return 'update car: {}'.format(car_id)
+            return _('update car: {id}', id=car_id)
 
     @route('<int:ident>')
     def delete(self, ident):
-        return 'delete: {}'.format(ident)
+        return _('delete: {ident}', ident=ident)
 
 
 class Tickets(BaseView):
@@ -137,20 +140,20 @@ class Tickets(BaseView):
 
     def get(self, ticket_id=None):
         if ticket_id:
-            return 'single'
-        return 'list'
+            return _('single')
+        return _('list')
 
     def post(self):
-        return 'create'
+        return _('create')
 
     def put(self, ticket_id):
-        return 'update'
+        return _('update')
 
     def patch(self, ticket_id):
-        return 'partial update'
+        return _('partial update')
 
     def delete(self, ticket_id):
-        return 'delete'
+        return _('delete')
 
 
 class Misc(BaseView):
@@ -160,14 +163,14 @@ class Misc(BaseView):
     rule('bar', post_only=True)
 
     def get(self):
-        return 'get'
+        return _('get')
 
     def post(self):
-        return 'post'
+        return _('post')
 
     @route('/an-abs-url')
     def an_abs_url(self):
-        return 'found me'
+        return _('found me')
 
     @route('8')
     @route('9')
@@ -194,7 +197,7 @@ class CrudBase(KegBaseView):
     """
     @route()
     def list(self):
-        return 'listing {}'.format(self.__class__.__name__)
+        return _('listing {class_name}', class_name=self.__class__.__name__)
 
 
 class Trucks(CrudBase):

@@ -12,6 +12,7 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.utils import validate_arguments, ArgumentValidationError
 
 from keg.compat import with_metaclass
+from keg.extensions import lazy_gettext as _
 
 
 class ImmediateResponse(Exception):
@@ -70,13 +71,12 @@ def _call_with_expected_args(view, calling_args, method, method_is_bound=True):
         pos_args = (view,) if method_is_bound else tuple()
         args, kwargs = validate_arguments(method, pos_args, calling_args.copy())
     except ArgumentValidationError as e:
-        msg = 'Argument mismatch occured: method=%s, missing=%s, extra_keys=%s, extra_pos=%s.' \
-              '  Arguments available: %s' % (method, e.missing, e.extra, e.extra_positional,
-                                             calling_args)
+        msg = _('Argument mismatch occured: method={method}, missing={missing}, '
+                'extra_keys={extra_keys}, extra_pos={extra_pos}.'
+                '  Arguments available: {calling_args}',
+                method=method, missing=e.missing, extra_keys=e.extra,
+                extra_pos=e.extra_positional, calling_args=calling_args)
         raise ViewArgumentError(msg)
-        # used to raise a BadRequest here, but after deliberation, it seems likely this is only
-        # going to happen b/c of programmer error.  Therefore, just propogate the exception.
-        raise
     if method_is_bound:
         # remove "self" from args since its a bound method
         args = args[1:]
@@ -133,7 +133,7 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
 
         method_obj = getattr(self, method_name, None)
 
-        assert method_obj is not None, 'Unimplemented method %s' % method_name
+        assert method_obj is not None, _('Unimplemented method {name}', name=method_name)
 
         return method_obj
 

@@ -83,8 +83,8 @@ CLI Command
 The command `<myapp> develop config` will give detailed information about the files and objects
 being used to configure an application.
 
-Profile Prority
----------------
+Profile Priority
+----------------
 
 All configuration classes with the name `DefaultProfile` will be applied to the app's config
 first.

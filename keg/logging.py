@@ -8,6 +8,7 @@ import stat
 
 from pythonjsonlogger import jsonlogger
 
+from keg.extensions import lazy_gettext as _
 
 log = logging.getLogger(__name__)
 
@@ -109,10 +110,10 @@ class Logging(object):
         if 'address' not in kwargs:
             address = find_syslog_address(self.config)
             if address:
-                log.debug('Using syslog address: {}'.format(address))
+                log.debug(_('Using syslog address: {address}', address=address))
                 kwargs['address'] = address
             else:
-                log.debug('did not find syslog address')
+                log.debug(_('did not find syslog address'))
         return SysLogHandler(**kwargs)
 
     def create_syslog_formatter(self):

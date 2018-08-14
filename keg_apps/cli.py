@@ -23,12 +23,12 @@ def hello():
 @CLIApp.cli.command()
 @click.argument('name', default='foo')
 def foo2(name):
-    print(('hello {}'.format(name)))  # noqa
+    print((_('hello {name}', name=name)))  # noqa
 
 
 @CLIApp.cli.command('catch-error')
 def catch_error():
-    raise Exception('deliberate exception for testing')
+    raise Exception(_('deliberate exception for testing'))
 
 
 if __name__ == '__main__':
