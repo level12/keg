@@ -41,6 +41,7 @@ setup(
         'Click>=3.0',
         'Flask<1.0.0',
         'Flask-SQLAlchemy',
+        'morphi',
         'pathlib',
         'python-json-logger',
         'six',

@@ -175,7 +175,7 @@ def database_init(clear_first):
         click.echo(_('Database cleared and initialized'))
     else:
         current_app.db_manager.db_init()
-        click.echo(_('Database initialzed'))
+        click.echo(_('Database initialized'))
 
 
 @click.command('clear', short_help=_('Clear DB of all data and drop all objects.'))

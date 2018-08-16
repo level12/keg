@@ -1,33 +1,10 @@
-try:
-    import foobarbaz
-except ImportError:
-    foobarbaz = None
+from morphi.messages import Manager
+from morphi.registry import default_registry
 
-if foobarbaz:
-    gettext = foobarbaz.gettext
-    lazy_gettext = foobarbaz.lazy_gettext
-    ngettext = foobarbaz.ngettext
-    lazy_ngettext = foobarbaz.lazy_ngettext
+translation_manager = Manager(package_name='keg')
+default_registry.subscribe(translation_manager)
 
-else:
-    def gettext(message, **variables):
-        if not variables:
-            return message
-
-        return message.format(**variables)
-
-    lazy_gettext = gettext
-
-    def ngettext(singular, plural, num, **variables):
-        variables.setdefault('num', num)
-
-        return gettext(
-            (
-                singular
-                if num == 1
-                else plural
-            ),
-            **variables
-        )
-
-    lazy_ngettext = ngettext
+gettext = translation_manager.gettext
+lazy_gettext = translation_manager.lazy_gettext
+lazy_ngettext = translation_manager.lazy_ngettext
+ngettext = translation_manager.ngettext
