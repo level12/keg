@@ -4,7 +4,7 @@ import flask
 from flask import request
 from keg.web import BaseView as KegBaseView, route, rule
 
-from keg_apps.extensions import lazy_gettext as _
+from keg_apps.extensions import gettext as _
 
 
 blueprint = flask.Blueprint('routing', __name__)

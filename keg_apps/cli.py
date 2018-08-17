@@ -7,6 +7,7 @@ fix_sys_path()
 import click  # noqa
 
 from keg.app import Keg  # noqa
+from keg_apps.extensions import gettext as _  # noqa: E402
 
 
 class CLIApp(Keg):

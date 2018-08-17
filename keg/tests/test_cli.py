@@ -97,7 +97,7 @@ class TestDatabaseCommands(CLIBase):
     @mock.patch('keg.db.DatabaseManager.db_init')
     def test_init(self, m_db_init):
         result = self.invoke('init')
-        assert 'Database initialzed' in result.output
+        assert 'Database initialized' in result.output
         m_db_init.assert_called_once_with()
 
     @mock.patch('keg.db.DatabaseManager.db_init_with_clear')

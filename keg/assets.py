@@ -8,6 +8,7 @@ import six
 
 from keg.extensions import lazy_gettext as _
 
+
 class AssetException(Exception):
     pass
 

@@ -9,7 +9,7 @@ import flask.cli
 from six.moves import urllib
 
 from keg import current_app
-from keg.extensions import lazy_gettext as _
+from keg.extensions import gettext as _
 from keg.keyring import keyring as keg_keyring
 
 
@@ -347,7 +347,7 @@ class CLILoader(object):
         """ Create app level options, ideally that are used to configure the app itself.  """
         return [
             click.Option(['--profile'], is_eager=True, default=None, callback=self.options_callback,
-                         help=_('Name of the configuration profile to use.'),)
+                         help=_('Name of the configuration profile to use.'),),
             click.Option(['--quiet'], is_eager=True, is_flag=True, default=False,
                          callback=self.options_callback,
                          help=_('Set default logging level to logging.WARNING.'))

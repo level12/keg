@@ -56,8 +56,8 @@ class Keg(flask.Flask):
 
         # flask requires an import name, so we should too.
         if import_name is None and self.import_name is None:
-            raise KegAppError(_('Please set the "import_name" attribute on your app class or pass it'
-                                ' into the app instance.'))
+            raise KegAppError(_('Please set the "import_name" attribute on your app class or'
+                                ' pass it into the app instance.'))
 
         # passed in value takes precedence
         import_name = import_name or self.import_name
@@ -130,8 +130,8 @@ class Keg(flask.Flask):
             if keyring is None:
                 warnings.warn(_('Keyring substitution is enabled, but the keyring package is not'
                                 ' installed.  Please install the keyring package (pip install'
-                                ' keyring) or disable keyring support by setting `KEG_KEYRING_ENABLE'
-                                ' = False` in your configuration profile.'))
+                                ' keyring) or disable keyring support by setting'
+                                ' `KEG_KEYRING_ENABLE = False` in your configuration profile.'))
                 return
 
             self.keyring_manager = Manager(self)

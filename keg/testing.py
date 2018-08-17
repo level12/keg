@@ -3,8 +3,10 @@ from __future__ import absolute_import
 import click
 import click.testing
 import flask
-from flask_webtest import TestApp
 import six
+from flask_webtest import TestApp
+from morphi.helpers.jinja import configure_jinja_environment
+from morphi.messages import Manager
 
 from keg import current_app
 from keg.utils import app_environ_get
@@ -113,3 +115,4 @@ class WebBase(object):
     def setup_class(cls):
         cls.app = cls.appcls.testing_prep()
         cls.testapp = TestApp(flask.current_app)
+        configure_jinja_environment(cls.testapp.app.jinja_env, Manager())

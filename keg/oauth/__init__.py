@@ -75,7 +75,8 @@ class Manager(object):
         try:
             return self.providers[provider_key]
         except KeyError:
-            raise OAuthError(_('Provider "{provider}" has not been registered.', provider=provider_key))
+            raise OAuthError(_('Provider "{provider}" has not been registered.',
+                               provider=provider_key))
 
     def authorize(self, provider, callback):
         session[self.session_key('provider')] = provider
