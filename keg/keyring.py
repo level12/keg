@@ -12,6 +12,8 @@ try:
 except ImportError:
     keyring = None
 
+from keg.extensions import lazy_gettext as _
+
 
 class KeyringError(Exception):
     pass
@@ -22,8 +24,8 @@ class MissingValueError(Exception):
     def __init__(self, key):
         self.key = key
 
-        super(Exception, self).__init__("No value for {} found in key "
-                                        "ring".format(key))
+        super(Exception, self).__init__(_("No value for {key} found in key "
+                                          "ring", key=key))
 
 
 class Manager(object):
@@ -44,10 +46,10 @@ class Manager(object):
         self.secure_entry = secure_entry
 
         if not self.verify_backend():
-            self.log.warning(
+            self.log.warning(_(
                 'Insecure keyring backend detected, keyring substitution unavailable. '
                 'Run this app\'s keyring command for more info.'
-            )
+            ))
 
     def verify_backend(self):
         backend = keyring.get_keyring()
@@ -85,8 +87,9 @@ class Manager(object):
             self.sub_keys_seen.add(clean)
 
             if self.log:
-                msg = 'Keyring Substitute: replacing {} for key {}'
-                self.log.debug(msg.format(raw, clean))
+                msg = _('Keyring Substitute: replacing {raw} for key {clean}',
+                        raw=raw, clean=clean)
+                self.log.debug(msg)
 
             stored_value = keyring.get_password(service, clean)
             if not stored_value:
@@ -130,7 +133,7 @@ class Manager(object):
         keyring.set_password(service_name or self.service_name, key, value)
 
     def ask_and_create(self, key, service_name=None):
-        msg = 'Missing secret for "{0}": '.format(key)
+        msg = _('Missing secret for "{key}": ', key=key)
 
         # Windows getpass implementation breaks in Python2 when passing it Unicode
         if sys.version_info < (3,) and sys.platform.startswith('win'):

@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from flask import url_for, session, request, jsonify, Blueprint, flash, current_app
 from flask_oauthlib.client import OAuth
 
+from keg.extensions import lazy_gettext as _
 from keg.web import redirect
 
 oauthlib = OAuth()
@@ -42,10 +43,9 @@ class Google(Provider):
         if isinstance(resp, Exception):
             flash(str(resp), 'error')
         elif resp is None:
-            error_message = 'authentication failure: reason=%s error=%s' % (
-                request.args.get('error_reason', 'unknown'),
-                request.args.get('error', 'unknown')
-            )
+            error_message = _('authentication failure: reason={reason} error={error}',
+                              reason=request.args.get('error_reason', _('unknown')),
+                              error=request.args.get('error', _('unknown')))
             flash(error_message, 'error')
         else:
             return resp['access_token']
@@ -75,7 +75,8 @@ class Manager(object):
         try:
             return self.providers[provider_key]
         except KeyError:
-            raise OAuthError('Provier "{}" has not been registered.'.format(provider_key))
+            raise OAuthError(_('Provider "{provider}" has not been registered.',
+                               provider=provider_key))
 
     def authorize(self, provider, callback):
         session[self.session_key('provider')] = provider

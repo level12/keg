@@ -6,6 +6,8 @@ import pathlib
 from jinja2 import TemplateNotFound
 import six
 
+from keg.extensions import lazy_gettext as _
+
 
 class AssetException(Exception):
     pass
@@ -36,8 +38,8 @@ class AssetManager(object):
         css_asset_name = six.text_type(pathlib.PurePosixPath(template_name).with_suffix('.css'))
         css_found = self.load_asset(css_asset_name)
         if not js_found and not css_found:
-            raise AssetException('Could not find related assets for template: {}'
-                                 .format(template_name))
+            raise AssetException(_('Could not find related assets for template: {template_name}',
+                                   template_name=template_name))
 
     def combine_content(self, asset_type):
         output = []

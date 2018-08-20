@@ -3,8 +3,8 @@ from __future__ import absolute_import
 import click
 import click.testing
 import flask
-from flask_webtest import TestApp
 import six
+from flask_webtest import TestApp
 
 from keg import current_app
 from keg.utils import app_environ_get

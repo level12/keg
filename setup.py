@@ -44,5 +44,10 @@ setup(
         'pathlib',
         'python-json-logger',
         'six',
-    ]
+    ],
+    extras_require={
+        'i18n': [
+            'morphi'
+        ]
+    }
 )

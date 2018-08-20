@@ -13,6 +13,7 @@ import keg.config
 from keg.ctx import KegRequestContext
 import keg.logging
 import keg.signals as signals
+from keg.extensions import lazy_gettext as _
 from keg.templating import _keg_default_template_ctx_processor, AssetsExtension
 from keg.utils import classproperty, visit_modules, hybridmethod
 import keg.web
@@ -55,8 +56,8 @@ class Keg(flask.Flask):
 
         # flask requires an import name, so we should too.
         if import_name is None and self.import_name is None:
-            raise KegAppError('Please set the "import_name" attribute on your app class or pass it'
-                              ' into the app instance.')
+            raise KegAppError(_('Please set the "import_name" attribute on your app class or'
+                                ' pass it into the app instance.'))
 
         # passed in value takes precedence
         import_name = import_name or self.import_name
@@ -81,7 +82,7 @@ class Keg(flask.Flask):
 
     def init(self, config_profile=None, use_test_profile=False, config=None):
         if self._init_ran:
-            raise KegAppError('init() already called on this instance')
+            raise KegAppError(_('init() already called on this instance'))
         self._init_ran = True
 
         self.init_config(config_profile, use_test_profile, config)
@@ -127,10 +128,10 @@ class Keg(flask.Flask):
         if self.keyring_enabled:
             from keg.keyring import Manager, keyring
             if keyring is None:
-                warnings.warn('Keyring substitution is enabled, but the keyring package is not'
-                              ' installed.  Please install the keyring package (pip install'
-                              ' keyring) or disable keyring support by setting `KEG_KEYRING_ENABLE'
-                              ' = False` in your configuration profile.')
+                warnings.warn(_('Keyring substitution is enabled, but the keyring package is not'
+                                ' installed.  Please install the keyring package (pip install'
+                                ' keyring) or disable keyring support by setting'
+                                ' `KEG_KEYRING_ENABLE = False` in your configuration profile.'))
                 return
 
             self.keyring_manager = Manager(self)
@@ -192,7 +193,7 @@ class Keg(flask.Flask):
 
     def handle_server_error(self, error):
         # send_exception_email()
-        return '500 SERVER ERROR<br/><br/>administrators notified'
+        return '500 SERVER ERROR<br/><br/>{}'.format(_('administrators notified'))
 
     def request_context(self, environ):
         return KegRequestContext(self, environ)
@@ -222,7 +223,7 @@ class Keg(flask.Flask):
         # For now, do the import here so we don't have a hard dependency on WebTest
         from keg.testing import ContextManager
         if cls is Keg:
-            raise TypeError('Don\'t use testing_prep() on Keg.  Create a subclass first.')
+            raise TypeError(_('Don\'t use testing_prep() on Keg.  Create a subclass first.'))
         cm = ContextManager.get_for(cls)
 
         # if the context manager's app isn't ready, that means this will be the first time the app
