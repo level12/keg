@@ -11,12 +11,17 @@ environment:
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7.12"
       PYTHON_ARCH: "32"
-      TOXENV: py27
+      TOXENV: py27-{base,i18n}
 
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.2"
       PYTHON_ARCH: "32"
-      TOXENV: py35
+      TOXENV: py35-{base,i18n}
+
+    - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6.5"
+      PYTHON_ARCH: "32"
+      TOXENV: py36-{base,i18n}
 
   INSTANCENAME: "SQL2008R2SP2"
   PGUSER: postgres
@@ -55,7 +60,6 @@ test_script:
   - pipenv install pymssql
   - pipenv install
   - pipenv run tox
-
 
 after_test:
   # If tests are successful, create a whl package for the project.
