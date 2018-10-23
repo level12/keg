@@ -68,6 +68,11 @@ class TestCLI2(CLIBase):
         assert 'printed foo' in result.output
         assert 'logged foo' in result.output
 
+    def test_handle_input(self):
+        result = self.invoke('reverse', input='abcde')
+        assert 'Input: abcde' in result.output
+        assert 'edcba' in result.output
+
 
 class TestConfigCommand(CLIBase):
     app_cls = CLIApp
