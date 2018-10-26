@@ -43,7 +43,7 @@ install:
   - pip --version
 
   # Install tox from the wheelhouse
-  - pip install tox wheel codecov
+  - pip install tox wheel codecov pipenv
 
 build: off
 
@@ -51,7 +51,11 @@ before_test:
   - "createdb keg_test"
 
 test_script:
-  - tox
+  - pipenv run python -m pip install --upgrade pip
+  - pipenv install pymssql
+  - pipenv install
+  - pipenv run tox
+
 
 after_test:
   # If tests are successful, create a whl package for the project.
