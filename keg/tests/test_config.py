@@ -121,13 +121,13 @@ class TestProfileLoading(object):
         """
             Using testing.invoke_command() should use a testing profile by default.
         """
-        resp = invoke_command(ProfileApp, 'show_profile')
+        resp = invoke_command(ProfileApp, 'show-profile')
         assert 'testing-default' in resp.output
 
     def test_invoke_command_with_environment(self):
         """
             Environement overrides should still take priority for invoke_command() usage.
         """
-        resp = invoke_command(ProfileApp, 'show_profile',
+        resp = invoke_command(ProfileApp, 'show-profile',
                               env={'KEG_APPS_PROFILE_CONFIG_PROFILE': 'EnvironmentProfile'})
         assert 'environment' in resp.output

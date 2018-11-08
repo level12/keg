@@ -10,7 +10,7 @@ def cli_entry():
     ProfileApp.cli.main()
 
 
-@ProfileApp.cli.command()
+@ProfileApp.cli.command('show-profile')
 def show_profile():
     click.echo(keg.current_app.config['PROFILE_FROM'])
 

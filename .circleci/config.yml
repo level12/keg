@@ -16,7 +16,7 @@ jobs:
 
             - run:
                 name: install tox and upgrade pip
-                command: sudo pip install -U pip tox pipenv
+                command: pip install -U pip tox pipenv
 
             - run:
                 name: version checks
