@@ -60,11 +60,11 @@ class TestCLI2(CLIBase):
 
     def test_quiet(self):
         # the asserts for these tests are in keg_apps.cli2.cli
-        result = self.invoke('--quiet', 'is_quiet')
+        result = self.invoke('--quiet', 'is-quiet')
         assert 'printed foo' in result.output
         assert 'logged foo' not in result.output
 
-        result = self.invoke('is_not_quiet')
+        result = self.invoke('is-not-quiet')
         assert 'printed foo' in result.output
         assert 'logged foo' in result.output
 

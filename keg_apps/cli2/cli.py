@@ -12,13 +12,13 @@ def hello1():
     click.echo('hello1')
 
 
-@CLI2App.cli.command()
+@CLI2App.cli.command('is-quiet')
 def is_quiet():
     print('printed foo')
     log.info('logged foo')
 
 
-@CLI2App.cli.command()
+@CLI2App.cli.command('is-not-quiet')
 def is_not_quiet():
     print('printed foo')
     log.info('logged foo')
