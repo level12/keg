@@ -31,7 +31,7 @@ class Manager(object):
     # regex that matches "${*}$" where * = any printable ASCII character
     # that isn't "}"
     # see: http://www.catonmat.net/blog/my-favorite-regex/
-    sub_pattern = '(\$\{([ -|~]+?)\}\$)'
+    sub_pattern = r'(\$\{([ -|~]+?)\}\$)'
 
     backend_min_priority = 1
 
