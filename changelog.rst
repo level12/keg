@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.6.6 released 2018-11-13
+-------------------------
+
+- Add optional i18n support using morphi (d75a8fb_)
+- Update pipenv dependencies to remove warning (b3b089e_)
+- Pass through CLI invocation arguments and allow STDIN in CLI tests (bac2e3b_)
+
+.. _d75a8fb: https://github.com/level12/keg/commit/d75a8fb
+.. _b3b089e: https://github.com/level12/keg/commit/b3b089e
+.. _bac2e3b: https://github.com/level12/keg/commit/bac2e3b
+
+
 0.6.5 released 2018-05-28
 -------------------------
 
