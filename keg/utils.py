@@ -8,6 +8,8 @@ from flask._compat import reraise
 import pathlib
 from werkzeug.utils import import_string
 
+from keg.extensions import lazy_gettext as _
+
 
 # sentinal object
 class NotGiven(object):
@@ -26,8 +28,8 @@ def ensure_dirs(newdir, mode=NotGiven):
     if dpath.is_dir():
         return
     if dpath.is_file():
-        raise OSError("A file with the same name as the desired"
-                      " directory, '{}', already exists.".format(dpath))
+        raise OSError(_("A file with the same name as the desired"
+                        " directory, '{dpath}', already exists.", dpath=dpath))
 
     ensure_dirs(dpath.parent, mode=mode)
     dpath.mkdir(mode)
@@ -52,7 +54,7 @@ class ClassProperty(property):
 
     def __set__(self, cls, value):  # noqa
         if self.fset is None and not self.ignore_set:
-            raise AttributeError("can't set attribute")
+            raise AttributeError(_("can't set attribute"))
         if not self.ignore_set:
             self.fset(cls, value)
 

@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 from keg.app import Keg
 
+from keg_apps.extensions import lazy_gettext as _
+
 
 class DBApp(Keg):
     import_name = 'keg_apps.db'
@@ -10,7 +12,7 @@ class DBApp(Keg):
 
 @DBApp.cli.command()
 def hello():
-    print('hello db cli')
+    print(_('hello db cli'))
 
 
 if __name__ == '__main__':

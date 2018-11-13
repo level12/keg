@@ -3,6 +3,9 @@ import flask
 
 from keg.web import BaseView
 
+from keg_apps.extensions import lazy_gettext as _
+
+
 blueprint = flask.Blueprint('templating', __name__)
 
 
@@ -12,7 +15,7 @@ class BaseView(BaseView):
 
 class Template1(BaseView):
     def get(self):
-        self.assign('name', 'world')
+        self.assign('name', _('world'))
 
 
 class Template2(BaseView):

@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 from flask.globals import _request_ctx_stack
 
+from keg.extensions import lazy_gettext as _
+
 
 def _keg_default_template_ctx_processor():
     """Default template context processor.  Injects `assets`.
@@ -38,7 +40,7 @@ class AssetsExtension(Extension):
             args = [nodes.Const(parser.name, lineno=lineno)]
         else:
             # print parser.parse_expression()
-            parser.fail('asset_include does not yet support parameters')
+            parser.fail(_('asset_include does not yet support parameters'))
 
         # parse the closing bracket for this asset_include call
         next(stream)

@@ -1,1 +1,7 @@
-{{'hello '|addkeg}} {{sayfoo()}}
+{%- if _ is not defined -%}
+    {% macro _(message) -%}
+        {{ message }}
+    {%- endmacro %}
+{%- endif -%}
+
+{{_('hello ')|addkeg}} {{sayfoo()}}

@@ -2,12 +2,15 @@ from __future__ import absolute_import
 
 import flask
 
+from keg.extensions import lazy_gettext as _
+
+
 keg = flask.Blueprint('keg', __name__)
 
 
 @keg.route('/exception-test')
 def exception_test():
-    raise Exception('Deliberate exception for testing purposes')
+    raise Exception(_('Deliberate exception for testing purposes'))
 
 
 @keg.route('/ping')

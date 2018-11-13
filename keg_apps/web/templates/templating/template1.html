@@ -1,1 +1,7 @@
-Hello {{name}}!
+{%- if _ is not defined -%}
+    {% macro _(message) -%}
+        {{ message }}
+    {%- endmacro %}
+{%- endif -%}
+
+{{ _('Hello %(name)s!') | format(name=name) }}
