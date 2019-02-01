@@ -159,3 +159,16 @@ Current Status
 * Stable in a relatively small number of production environments.
 * API is likely to change with smaller compatibility breaks happening more frequently than larger ones.
 
+
+Configuration Variables
+-----------------------
+
+This is not an exhaustive list of `KEG_` specific configuration variables:
+
+- ``KEG_DB_ENGINE_OPTIONS``: Add additional engine options to the
+  ``sqlalchemy.create_engine`` call when working with a database. ::
+
+      KEG_DB_ENGINE_OPTIONS = {
+          'json_serializer': flask.json.dumps,
+          'json_deserializer': flask.json.loads,
+      }
