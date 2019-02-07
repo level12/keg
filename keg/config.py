@@ -176,6 +176,7 @@ class DefaultProfile(object):
     KEG_SMTP_HOST = 'localhost'
 
     KEG_DB_DIALECT_OPTIONS = {}
+    KEG_DB_ENGINE_OPTIONS = {}
 
 
 class DevProfile(object):

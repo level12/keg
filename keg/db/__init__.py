@@ -8,6 +8,19 @@ from keg.utils import visit_modules
 
 class KegSQLAlchemy(fsa.SQLAlchemy):
 
+    def apply_driver_hacks(self, app, info, options):
+        """Override some driver specific settings"""
+        super(KegSQLAlchemy, self).apply_driver_hacks(app, info, options)
+
+        engine_opts = app.config.get('KEG_DB_ENGINE_OPTIONS', {})
+
+        # Turn on SA pessimistic disconnect handling by default:
+        # http://docs.sqlalchemy.org/en/latest/core/pooling.html#disconnect-handling-pessimistic
+        engine_opts.setdefault('pool_pre_ping', True)
+
+        # Update the options with the engine options we received from the application
+        options.update(engine_opts)
+
     def get_engines(self, app):
         # the default engine doesn't have a bind
         retval = [(None, self.get_engine(app))]
