@@ -18,8 +18,8 @@ class KegSQLAlchemy(fsa.SQLAlchemy):
         # http://docs.sqlalchemy.org/en/latest/core/pooling.html#disconnect-handling-pessimistic
         engine_opts.setdefault('pool_pre_ping', True)
 
-        if engine_opts:
-            options.update(engine_opts)
+        # Update the options with the engine options we received from the application
+        options.update(engine_opts)
 
     def get_engines(self, app):
         # the default engine doesn't have a bind
