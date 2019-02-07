@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.7.0 released 2019-02-07
+-------------------------
+
+- Enable setting engine options from KEG variable (5bb807f_)
+
+.. _5bb807f: https://github.com/level12/keg/commit/5bb807f
+
+
 0.6.6 released 2018-11-13
 -------------------------
 
