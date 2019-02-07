@@ -10,7 +10,7 @@ class KegSQLAlchemy(fsa.SQLAlchemy):
 
     def apply_driver_hacks(self, app, info, options):
         """Override some driver specific settings"""
-        super().apply_driver_hacks(app, info, options)
+        super(KegSQLAlchemy, self).apply_driver_hacks(app, info, options)
 
         engine_opts = app.config.get('KEG_DB_ENGINE_OPTIONS', {})
 
