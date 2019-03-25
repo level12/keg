@@ -13,9 +13,7 @@ class TestProfile(object):
     # are done on the primary connection, which defaults to SQLite.
     #
     # Appveyor: see user-config-tpl-appveyor.py
-    #
-    # Developers: setup a TestProfile config for these tests in file:
-    # <keg src>/keg_apps.db-config.py
+    # Developers: see instructions in readme for setup of local config file
     SQLALCHEMY_BINDS = {
         'postgres': 'postgresql://postgres:password@localhost/postgres',
         'sqlite2': 'sqlite:///'

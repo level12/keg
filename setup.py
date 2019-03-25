@@ -29,6 +29,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     license='BSD',
     packages=find_packages(),
@@ -46,8 +47,17 @@ setup(
         'six',
     ],
     extras_require={
+        'tests': [
+            'flask-webtest',
+            'flask-wtf',
+            'keyring',
+            'pytest',
+            'pytest-cov',
+            'psycopg2-binary',
+            'mock',
+        ],
         'i18n': [
             'morphi'
-        ]
+        ],
     }
 )

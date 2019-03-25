@@ -132,13 +132,13 @@ To develop on keg, begin by installing dependencies and running the tests::
     # edit the DB connection info in this file (you don't have to use vim):
     vim ~/.config/keg_apps.db/keg_apps.db-config.py
 
-    pipenv --python=python3.6
-    pipenv install
-    pipenv run pytest keg
+    # Create a virtualenv with a supported python version.  Activate it.
+    pip install -e .[tests]
+    pytest keg
 
 You can then examine tox.ini for insights into our development process.  In particular, we:
 
-* use `py.test` for testing (and coverage analysis)
+* use `pytest` for testing (and coverage analysis)
 * use `flake8` for linting
 
 Preview Readme
