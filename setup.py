@@ -51,6 +51,7 @@ setup(
             'flask-webtest',
             'flask-wtf',
             'keyring',
+            "pymssql; sys_platform == 'win32'",
             'pytest',
             'pytest-cov',
             'psycopg2-binary',

@@ -1,3 +1,6 @@
+# If a branch has a PR, don't build it separately.  Avoids queueing two appveyor runs for the same
+# commit.
+skip_branch_with_pr: true
 environment:
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
@@ -9,19 +12,17 @@ environment:
     # Pre-installed Python versions, which Appveyor may upgrade to
     # a later point release.
     - PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7.12"
-      PYTHON_ARCH: "32"
-      TOXENV: py27-{base,i18n}
+      TOXENV: py27-{base,lowest,i18n}
 
     - PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5.2"
-      PYTHON_ARCH: "32"
-      TOXENV: py35-{base,i18n}
+      PYTHON_VERSION: '3.5'
+      TOXENV: py35
 
     - PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6.5"
-      PYTHON_ARCH: "32"
-      TOXENV: py36-{base,i18n}
+      TOXENV: py36
+
+    - PYTHON: "C:\\Python37"
+      TOXENV: py37-{base,lowest,i18n}
 
   INSTANCENAME: "SQL2008R2SP2"
   PGUSER: postgres
@@ -47,8 +48,9 @@ install:
   - python -c "import struct; print(struct.calcsize('P') * 8)"
   - pip --version
 
-  # Install tox from the wheelhouse
-  - pip install tox wheel codecov pipenv
+  # Install everything needed for tests that tox doesn't install
+  - python -m pip install --upgrade pip
+  - python -m pip install --upgrade virtualenv tox wheel codecov pymssql
 
 build: off
 
@@ -56,10 +58,7 @@ before_test:
   - "createdb keg_test"
 
 test_script:
-  - pipenv run python -m pip install --upgrade pip
-  - pipenv install pymssql
-  - pipenv install
-  - pipenv run tox
+  - python -m tox
 
 after_test:
   # If tests are successful, create a whl package for the project.
