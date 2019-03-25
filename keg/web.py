@@ -6,12 +6,12 @@ import sys
 from blazeutils.strings import case_cw2us, case_cw2dash
 import flask
 from flask import request
+from flask._compat import with_metaclass
 from flask.views import MethodView, MethodViewType, http_method_funcs
 import six
 from werkzeug.datastructures import MultiDict
 from werkzeug.utils import validate_arguments, ArgumentValidationError
 
-from keg.compat import with_metaclass
 from keg.extensions import lazy_gettext as _
 
 
@@ -84,17 +84,18 @@ def _call_with_expected_args(view, calling_args, method, method_is_bound=True):
 
 
 class _ViewMeta(MethodViewType):
-
-    def __new__(cls, clsname, bases, attr):
-        rules = attr.pop('_rules', [])
-        viewcls = super(_ViewMeta, cls).__new__(cls, clsname, bases, attr)
+    def __init__(cls, name, bases, d):
+        MethodViewType.__init__(cls, name, bases, d)
+        rules = []
+        if hasattr(cls, '_rules'):
+            rules = cls._rules
+            del cls._rules
 
         # Assuming child views will always have a blueprint OR they are intended to be used like
         # abstract classes and will never be routed to directly.
-        if viewcls.blueprint is not None:
-            viewcls.init_routes()
-            viewcls.init_blueprint(rules)
-        return viewcls
+        if cls.blueprint is not None:
+            cls.init_routes()
+            cls.init_blueprint(rules)
 
 
 class BaseView(with_metaclass(_ViewMeta, MethodView)):
@@ -237,7 +238,7 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
                     cls.view_funcs[method_route.endpoint] = view_func
                 mr_options['view_func'] = cls.view_funcs[method_route.endpoint]
                 cls.blueprint.add_url_rule(method_route.rule(), **mr_options)
-            if method_name in http_method_funcs:
+            if method_name in http_method_funcs and cls.methods:
                 # A @route() is being used on a method with the same name as an HTTP verb.
                 # Since this method is being explicitly routed, the automatic rule that would
                 # be created due to MethodView logic should not apply.

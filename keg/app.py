@@ -50,9 +50,7 @@ class Keg(flask.Flask):
 
     _init_ran = False
 
-    def __init__(self, import_name=None, static_path=None, static_url_path=None,
-                 static_folder='static', template_folder='templates', instance_path=None,
-                 instance_relative_config=False, config=None):
+    def __init__(self, import_name=None, *args, **kwargs):
 
         # flask requires an import name, so we should too.
         if import_name is None and self.import_name is None:
@@ -63,12 +61,9 @@ class Keg(flask.Flask):
         import_name = import_name or self.import_name
 
         self.keyring_manager = None
-        self._init_config = config or {}
+        self._init_config = kwargs.pop('config', {})
 
-        flask.Flask.__init__(self, import_name, static_path=static_path,
-                             static_url_path=static_url_path, static_folder=static_folder,
-                             template_folder=template_folder, instance_path=instance_path,
-                             instance_relative_config=instance_relative_config)
+        flask.Flask.__init__(self, import_name, *args, **kwargs)
 
     def make_config(self, instance_relative=False):
         """

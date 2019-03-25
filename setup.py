@@ -40,7 +40,7 @@ setup(
         'BlazeUtils',
         'blinker',
         'Click>=3.0',
-        'Flask<1.0.0',
+        'Flask',
         'Flask-SQLAlchemy',
         'pathlib',
         'python-json-logger',
