@@ -120,9 +120,6 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
             method_name_verb = '{}_{}'.format(method_name, request.method.lower())
             if not hasattr(self, method_name) and hasattr(self, method_name_verb):
                 method_name = method_name_verb
-
-        elif request.is_xhr:
-            method_name = 'xhr'
         else:
             method_name = request.method.lower()
 
