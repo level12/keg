@@ -1,6 +1,21 @@
 Changelog
 =========
 
+0.8.0 released 2019-03-25
+-------------------------
+
+- BREAKING CHANGE: Remove web.BaseView awareness of xhr() method and remove dependency on the
+  deprecated flask.request.is_xhr (0899c5d_)
+- improve CI (3311389_)
+- Update to support Flask 1.0+ (63e3667_)
+- remove Pipenv including updated readme & tox (03b3920_)
+
+.. _3311389: https://github.com/level12/keg/commit/3311389
+.. _63e3667: https://github.com/level12/keg/commit/63e3667
+.. _03b3920: https://github.com/level12/keg/commit/03b3920
+.. _0899c5d: https://github.com/level12/keg/commit/0899c5d
+
+
 0.7.0 released 2019-02-07
 -------------------------
 
