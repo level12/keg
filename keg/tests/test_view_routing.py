@@ -72,6 +72,22 @@ class TestViewRouting(WebBase):
         assert rule.methods == {'GET', 'HEAD', 'OPTIONS'}
         assert rule.endpoint == 'routing.explicit-route'
 
+    def test_blueprint_routes(self):
+        self.testapp.get('/blueprint-test', status=404)
+        self.testapp.get('/tanagra/blueprint-test')
+        self.testapp.get('/custom-route', status=404)
+        self.testapp.get('/tanagra/custom-route')
+
+        from keg_apps.web.views import custom
+        assert custom.BlueprintTest.calc_url() == '/tanagra/blueprint-test'
+        assert custom.BlueprintTest.calc_url(use_blueprint=False) == '/blueprint-test'
+        assert custom.BlueprintTest.calc_endpoint() == 'custom.blueprint-test'
+        assert custom.BlueprintTest.calc_endpoint(use_blueprint=False) == 'blueprint-test'
+        assert custom.BlueprintTest2.calc_url() == '/tanagra/custom-route'
+        assert custom.BlueprintTest2.calc_url(use_blueprint=False) == '/custom-route'
+        assert custom.BlueprintTest2.calc_endpoint() == 'custom.blueprint-test2'
+        assert custom.BlueprintTest2.calc_endpoint(use_blueprint=False) == 'blueprint-test2'
+
     def test_hello_world(self):
         resp = self.testapp.get('/hello-world')
         assert resp.text == 'Hello World'

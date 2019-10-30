@@ -19,3 +19,14 @@ class TestBaseViewFeatures(WebBase):
         resp = self.testapp.get('/auto-assign-with-response')
         lines = resp.body.splitlines()
         assert lines[0] == b'bar = '
+
+
+class TestBlueprintUsage(WebBase):
+    appcls = WebApp
+
+    def test_blueprint_url_prefix(self):
+        self.testapp.get('/tanagra/blueprint-test')
+
+    def test_blueprint_template_folder(self):
+        resp = self.testapp.get('/tanagra/blueprint-test')
+        assert 'blueprint template found ok' in resp

@@ -198,7 +198,7 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
             return self.template_name
         template_path = '{}.html'.format(case_cw2us(self.__class__.__name__))
         blueprint_name = request.blueprint
-        if blueprint_name:
+        if blueprint_name and not flask.current_app.blueprints[blueprint_name].template_folder:
             template_path = '{}/{}'.format(blueprint_name, template_path)
         return template_path
 
@@ -209,14 +209,20 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
         return flask.render_template(self.calc_template_name(), **self.template_args)
 
     @classmethod
-    def calc_url(cls):
+    def calc_url(cls, use_blueprint=True):
+        # calc_url will generally return the full url to reach a view. Turn use_blueprint off when
+        # setting up the blueprint itself (see init_routes and init_blueprint)
+        prefix = cls.blueprint.url_prefix if cls.blueprint and use_blueprint else ''
         if cls.url is not None:
-            return cls.url
-        return '/' + case_cw2dash(cls.__name__)
+            return prefix + cls.url
+        return prefix + '/' + case_cw2dash(cls.__name__)
 
     @classmethod
-    def calc_endpoint(cls):
-        return case_cw2dash(cls.__name__)
+    def calc_endpoint(cls, use_blueprint=True):
+        # calc_endpoint will generally return the full endpoint for a view. Turn use_blueprint off
+        # when setting up the blueprint itself (see init_routes and init_blueprint)
+        prefix = (cls.blueprint.name + '.') if cls.blueprint and use_blueprint else ''
+        return prefix + case_cw2dash(cls.__name__)
 
     @classmethod
     def init_routes(cls):
@@ -229,8 +235,9 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
 
         for method_name, method_obj in inspect.getmembers(cls, predicate=method_with_rules):
             for rule, options in method_obj._keg_rules:
-                method_route = MethodRoute(method_name, rule, options, cls.calc_url(),
-                                           cls.calc_endpoint())
+                method_route = MethodRoute(method_name, rule, options,
+                                           cls.calc_url(use_blueprint=False),
+                                           cls.calc_endpoint(use_blueprint=False))
                 mr_options = method_route.options()
                 if method_route.endpoint not in cls.view_funcs:
                     view_func = cls.as_view(method_route.view_func_name,
@@ -246,8 +253,8 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
 
     @classmethod
     def init_blueprint(cls, rules):
-        endpoint = cls.calc_endpoint()
-        class_url = cls.calc_url()
+        endpoint = cls.calc_endpoint(use_blueprint=False)
+        class_url = cls.calc_url(use_blueprint=False)
 
         if cls.methods:
             # Flask assigns the endpoint to the __name__ atribute of the function it creates and
