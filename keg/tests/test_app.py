@@ -1,17 +1,17 @@
 from __future__ import absolute_import
 
-from blazeutils.testing import raises
+import pytest
 
 from keg.app import Keg, KegAppError
 
 
 class TestInit(object):
 
-    @raises(KegAppError, 'init() already called')
     def test_init_called_twice_error(self):
-        app = Keg(__name__)
-        app.init(use_test_profile=True)
-        app.init(use_test_profile=True)
+        with pytest.raises(KegAppError, match=r'init\(\) already called on this instance'):
+            app = Keg(__name__)
+            app.init(use_test_profile=True)
+            app.init(use_test_profile=True)
 
 
 class TestRouteDecorator(object):
