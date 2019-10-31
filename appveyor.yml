@@ -9,20 +9,11 @@ environment:
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
 
   matrix:
-    # Pre-installed Python versions, which Appveyor may upgrade to
-    # a later point release.
-    - PYTHON: "C:\\Python27"
-      TOXENV: py27-{base,lowest,i18n}
-
-    - PYTHON: "C:\\Python35"
-      PYTHON_VERSION: '3.5'
-      TOXENV: py35
-
     - PYTHON: "C:\\Python36"
-      TOXENV: py36
+      TOXENV: py36,py36-{lowest,i18n}
 
     - PYTHON: "C:\\Python37"
-      TOXENV: py37-{base,lowest,i18n}
+      TOXENV: py37,py37-{lowest,i18n}
 
   INSTANCENAME: "SQL2008R2SP2"
   PGUSER: postgres
@@ -50,7 +41,7 @@ install:
 
   # Install everything needed for tests that tox doesn't install
   - python -m pip install --upgrade pip
-  - python -m pip install --upgrade virtualenv tox wheel codecov pymssql
+  - python -m pip install --upgrade virtualenv tox wheel codecov pyodbc sqlalchemy-pyodbc-mssql
 
 build: off
 
