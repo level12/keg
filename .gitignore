@@ -13,3 +13,4 @@ dist
 tags
 .vscode
 .pytest_cache
+keg_apps/keg_apps.db-config.py

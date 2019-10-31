@@ -5,6 +5,7 @@ class TestProfile(object):
     SQLALCHEMY_BINDS = {
         # Change the postgres database connection to a database dedicated to Keg tests.
         'postgres': 'postgresql://postgres:Password12!@localhost/keg_test',
-        'mssql': 'mssql+pymssql://sa:Password12!@localhost:1433/tempdb',
+        'mssql': 'mssql+pyodbc_mssql://sa:Password12!@localhost:1433/tempdb'
+        '?driver=SQL+Server+Native+Client+11.0',
         'sqlite2': 'sqlite:///'
     }
