@@ -228,6 +228,47 @@ A view may be given a `url` attribute to override the default:
 See `keg_apps/web/views/routing.py` for other routing possibilities that BaseView supports.
 
 
+Components
+==========
+
+Keg components follow the paradigm of flask extensions, and provide some defaults for the
+purpose of setting up model/view structure. Using components, a project may be broken down into
+logical blocks, each having their own entities, blueprints, templates, tests, etc.
+
+* Components need to be registered in config at `KEG_REGISTERED_COMPONENTS`
+
+  * The path given here should be a full dotted path to the top level of the component
+
+    * e.g. `my_app.components.blog`
+
+  * At the top level of the component, `__component__` must be defined as an instance of KegComponent
+
+    * e.g. `__component__ = KegComponent('blog')`
+
+* Component discovery
+
+  * A component will attempt to load model and blueprints on app init
+  * The default paths relative to the component may be modified or extended on the component's definition
+
+    * Note, these default paths need not exist for successful app init
+
+  * Model: `.model.entities`
+
+    * Override via the component's `db_visit_modules` list of relative import paths
+
+  * Blueprint: `.views.component_bp`
+
+    * Use the `get_named_blueprint` or `get_blueprint` helpers on the component's `__component__`
+      to create blueprints with configured template folders
+    * Override via the component's `blueprints` list
+
+      * List elements are a tuple of the relative import path and the name of the blueprint attribute
+
+    * Components have their own template stores, in a `templates` folder
+
+      * Override the component's template path via the `template_folder` attribute
+
+
 Keg Development
 ===============
 

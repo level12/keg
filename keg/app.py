@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import importlib
 import warnings
 
 import flask
@@ -135,6 +136,12 @@ class Keg(flask.Flask):
     def init_extensions(self):
         self.init_db()
 
+        # Keg components are essentially flask extensions, so they need to be set up during the
+        # init process. Being extensions, it makes sense to trigger this here. But, they will best
+        # be set up at the end of the init process, because other app-specific extensions may be
+        # set up in `on_init_complete` for error handling/notifications and the like.
+        signals.init_complete.connect(self.init_registered_components, sender=self)
+
     def db_manager_cls(self):
         from keg.db import DatabaseManager
         return DatabaseManager
@@ -143,6 +150,17 @@ class Keg(flask.Flask):
         if self.db_enabled:
             cls = self.db_manager_cls()
             self.db_manager = cls(self)
+
+    def init_registered_components(self, app):
+        # KEG_REGISTERED_COMPONENTS is presumed to be a set/list/iterable of dotted paths usable
+        # for import. At the top level of the imported path, there should be a `__component__`
+        # that takes the dotted path that was used for import (as an absolute parent for relative
+        # imports) and has an init_app. Ideally, based on KegComponent.
+        for comp_path in self.config.get('KEG_REGISTERED_COMPONENTS', set()):
+            comp_module = importlib.import_module(comp_path)
+            comp_object = getattr(comp_module, '__component__')
+            comp_object.set_dotted_path(comp_path)
+            comp_object.init_app(self)
 
     def init_blueprints(self):
         # TODO: probably want to be selective about adding our blueprint

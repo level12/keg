@@ -7,6 +7,7 @@ from keg.db import db
 from keg.signals import db_init_pre, db_init_post, db_clear_post, db_clear_pre
 from keg.testing import invoke_command
 
+#from keg_apps.db.blog.model.entities import Blog
 import keg_apps.db.model.entities as ents
 from keg_apps.db.app import DBApp
 from keg_apps.db2 import DB2App
@@ -27,11 +28,14 @@ class TestDB(object):
         DBApp.testing_prep()
 
     def test_primary_db_entity(self):
-        assert ents.Blog.query.count() == 0
-        blog = ents.Blog(title=u'foo')
+        # importing Blog here to ensure we're importing after app init, which will only succeed if
+        # the component has loaded properly
+        from keg_apps.db.blog.model.entities import Blog
+        assert Blog.query.count() == 0
+        blog = Blog(title=u'foo')
         db.session.add(blog)
         db.session.commit()
-        assert ents.Blog.query.count() == 1
+        assert Blog.query.count() == 1
 
     def test_postgres_bind_db_entity(self):
         assert ents.PGDud.query.count() == 0
@@ -63,6 +67,10 @@ class TestDatabaseManager(object):
         DBApp.testing_prep()
 
     def test_db_init_with_clear(self):
+        # importing Blog here to ensure we're importing after app init, which will only succeed if
+        # the component has loaded properly
+        from keg_apps.db.blog.model.entities import Blog
+
         # have to use self here to enable the inner functions to adjust an outer-context variable
         self.init_pre_connected = False
         self.init_post_connected = False
@@ -85,8 +93,8 @@ class TestDatabaseManager(object):
         def catch_clear_post(app):
             self.clear_post_connected = True
 
-        ents.Blog.testing_create()
-        assert ents.Blog.query.count() >= 1
+        Blog.testing_create()
+        assert Blog.query.count() >= 1
         ents.PGDud2.testing_create()
         assert ents.PGDud2.query.count() >= 1
 
@@ -95,9 +103,9 @@ class TestDatabaseManager(object):
         # todo: We could check all the intermediate steps, but this is more a functional test
         # for now.  If the record is gone and we can create an new blog post, then we assume the
         # clear and init went ok.
-        assert ents.Blog.query.count() == 0
-        ents.Blog.testing_create()
-        assert ents.Blog.query.count() == 1
+        assert Blog.query.count() == 0
+        Blog.testing_create()
+        assert Blog.query.count() == 1
 
         assert self.init_pre_connected
         assert self.init_post_connected
