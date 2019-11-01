@@ -42,8 +42,13 @@ class KegComponent:
         self.relative_dotted_path = dotted_path
 
     def init_app(self, app):
+        self.init_config(app)
         self.init_db()
         self.init_blueprints(app)
+
+    def init_config(self, app):
+        # Components may define their own config defaults
+        pass
 
     def init_db(self):
         # Intent is to import the listed modules, so their entities are registered in metadata
