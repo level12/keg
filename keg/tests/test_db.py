@@ -7,7 +7,9 @@ from keg.db import db
 from keg.signals import db_init_pre, db_init_post, db_clear_post, db_clear_pre
 from keg.testing import invoke_command
 
-#from keg_apps.db.blog.model.entities import Blog
+# Note: we do not want to import Blog directly here. Doing so will affect metadata collection and
+# prevent the tests below from proving that component initialization is loading the model.
+# from keg_apps.db.blog.model.entities import Blog
 import keg_apps.db.model.entities as ents
 from keg_apps.db.app import DBApp
 from keg_apps.db2 import DB2App
