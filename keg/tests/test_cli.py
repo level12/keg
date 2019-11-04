@@ -55,7 +55,8 @@ class TestCLI2(CLIBase):
         assert 'Usage: ' in result.output
         assert '--quiet         Set default logging level to logging.WARNING' in result.output
         assert '--profile TEXT  Name of the configuration profile to use.' in result.output
-        assert 'develop  Developer info and utils.'
+        assert '--help-all      Show all commands with subcommands.' in result.output
+        assert 'develop       Developer info and utils.' in result.output
         assert 'hello1' in result.output
 
     def test_quiet(self):
@@ -67,6 +68,20 @@ class TestCLI2(CLIBase):
         result = self.invoke('is-not-quiet')
         assert 'printed foo' in result.output
         assert 'logged foo' in result.output
+
+    def test_help_all(self):
+        expected_lines = [
+            'Usage', '', 'Options', '--profile', '--quiet', '--help-all', '--help',
+            'Commands', 'develop', 'Commands', 'config', 'db', 'Commands', 'clear',
+            'init', 'keyring', 'Commands', 'delete', 'list-keys', 'status', 'routes',
+            'run', 'shell', 'templates', 'hello1', 'is-not-quiet', 'is-quiet', 'reverse',
+            ''
+        ]
+        result = self.invoke('--help-all')
+        output_lines = result.output.split('\n')
+        assert len(expected_lines) == len(output_lines), result.output
+        for command, line in zip(expected_lines, output_lines):
+            assert line.lstrip().startswith(command), f'"{line}" does not start with "{command}"'
 
     def test_handle_input(self):
         result = self.invoke('reverse', input='abcde')

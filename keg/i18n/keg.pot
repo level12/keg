@@ -1,33 +1,33 @@
 # Translations template for Keg.
-# Copyright (C) 2018 ORGANIZATION
+# Copyright (C) 2019 ORGANIZATION
 # This file is distributed under the same license as the Keg project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Keg 0.6.5\n"
+"Project-Id-Version: Keg 0.8.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-08-16 18:37-0400\n"
+"POT-Creation-Date: 2019-11-04 16:56-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.7.0\n"
 
-#: keg/app.py:59
+#: keg/app.py:57
 msgid ""
 "Please set the \"import_name\" attribute on your app class or pass it "
 "into the app instance."
 msgstr ""
 
-#: keg/app.py:85
+#: keg/app.py:80
 msgid "init() already called on this instance"
 msgstr ""
 
-#: keg/app.py:131
+#: keg/app.py:126
 msgid ""
 "Keyring substitution is enabled, but the keyring package is not "
 "installed.  Please install the keyring package (pip install keyring) or "
@@ -35,83 +35,83 @@ msgid ""
 "configuration profile."
 msgstr ""
 
-#: keg/app.py:196
+#: keg/app.py:191
 msgid "administrators notified"
 msgstr ""
 
-#: keg/app.py:226
+#: keg/app.py:221
 msgid "Don't use testing_prep() on Keg.  Create a subclass first."
 msgstr ""
 
-#: keg/assets.py:40
+#: keg/assets.py:41
 msgid "Could not find related assets for template: {template_name}"
 msgstr ""
 
-#: keg/cli.py:64
+#: keg/cli.py:65
 msgid "Developer info and utils."
 msgstr ""
 
-#: keg/cli.py:73
+#: keg/cli.py:74
 msgid "List the routes defined for this app."
 msgstr ""
 
-#: keg/cli.py:97
+#: keg/cli.py:98
 msgid "Show paths searched for a template."
 msgstr ""
 
-#: keg/cli.py:113
+#: keg/cli.py:114
 msgid "List info related to config files, profiles, and values."
 msgstr ""
 
-#: keg/cli.py:122
+#: keg/cli.py:123
 msgid "Default config objects:"
 msgstr ""
 
-#: keg/cli.py:126
+#: keg/cli.py:127
 msgid "Config file locations:"
 msgstr ""
 
-#: keg/cli.py:130
+#: keg/cli.py:131
 msgid "Config objects used:"
 msgstr ""
 
-#: keg/cli.py:134
+#: keg/cli.py:135
 msgid "Resulting app config (including Flask defaults):"
 msgstr ""
 
-#: keg/cli.py:152
+#: keg/cli.py:153
 msgid "Lists database related sub-commands."
 msgstr ""
 
-#: keg/cli.py:159
+#: keg/cli.py:160
 msgid "Database not enabled for this app.  No subcommands available."
 msgstr ""
 
-#: keg/cli.py:168
+#: keg/cli.py:169
 msgid "Create all db objects, send related events."
 msgstr ""
 
-#: keg/cli.py:170
+#: keg/cli.py:171
 msgid "Clear DB of all data and drop all objects before init."
 msgstr ""
 
-#: keg/cli.py:175
+#: keg/cli.py:176
 msgid "Database cleared and initialized"
 msgstr ""
 
-#: keg/cli.py:178
+#: keg/cli.py:179
 msgid "Database initialized"
 msgstr ""
 
-#: keg/cli.py:181
+#: keg/cli.py:182
 msgid "Clear DB of all data and drop all objects."
 msgstr ""
 
-#: keg/cli.py:185
+#: keg/cli.py:186
 msgid "Database cleared"
 msgstr ""
 
-#: keg/cli.py:206
+#: keg/cli.py:207
 msgid ""
 "Keyring module not installed. Keyring functionality disabled.\n"
 "\n"
@@ -119,86 +119,98 @@ msgid ""
 "install keyring`."
 msgstr ""
 
-#: keg/cli.py:212
+#: keg/cli.py:213
 msgid "Lists keyring related sub-commands."
 msgstr ""
 
-#: keg/cli.py:227
+#: keg/cli.py:228
 msgid "Show keyring related status info."
 msgstr ""
 
-#: keg/cli.py:229
+#: keg/cli.py:230
 msgid "Show unavailable backends with reasons."
 msgstr ""
 
-#: keg/cli.py:242
+#: keg/cli.py:243
 msgid "Unavailable backends"
 msgstr ""
 
-#: keg/cli.py:247
+#: keg/cli.py:248
 msgid "    {_class.__module__}:{_class.__name__} - {exception}"
 msgstr ""
 
-#: keg/cli.py:250
+#: keg/cli.py:251
 msgid ""
 "\n"
 "Available backends (backends with priority < 1 are not recommended and "
 "may be insecure)"
 msgstr ""
 
-#: keg/cli.py:253
+#: keg/cli.py:254
 msgid "    {_class.__module__}:{_class.__name__} (priority: {priority})"
 msgstr ""
 
-#: keg/cli.py:256
+#: keg/cli.py:257
 msgid ""
 "\n"
 "Default backend"
 msgstr ""
 
-#: keg/cli.py:258
+#: keg/cli.py:259
 msgid "    {_class.__module__}:{_class.__name__}"
 msgstr ""
 
-#: keg/cli.py:260
+#: keg/cli.py:261
 msgid "    file path: {file_path}"
 msgstr ""
 
-#: keg/cli.py:263
+#: keg/cli.py:264
 msgid ""
 "\n"
 "Keyring functionality for this app has been DISABLED through the config "
 "setting KEG_KEYRING_ENABLE."
 msgstr ""
 
-#: keg/cli.py:266
+#: keg/cli.py:267
 msgid ""
 "\n"
 "WARNING: the current backend is insecure, keyring substitution "
 "unavailable."
 msgstr ""
 
-#: keg/cli.py:269
+#: keg/cli.py:270
 msgid ""
 "\n"
 "TRY THIS: use the SecretStorage Setup utility to get a more secure "
 "keyring backend."
 msgstr ""
 
-#: keg/cli.py:274
+#: keg/cli.py:275
 msgid "Show all keys used in config value substitution."
 msgstr ""
 
-#: keg/cli.py:282
+#: keg/cli.py:283
 msgid "Delete an entry from the keyring."
 msgstr ""
 
-#: keg/cli.py:350
+#: keg/cli.py:351
 msgid "Name of the configuration profile to use."
 msgstr ""
 
-#: keg/cli.py:353
+#: keg/cli.py:354
 msgid "Set default logging level to logging.WARNING."
+msgstr ""
+
+#: keg/cli.py:357
+msgid "Show all commands with subcommands."
+msgstr ""
+
+#: keg/cli.py:386
+msgid "Show help message."
+msgstr ""
+
+#: keg/cli.py:388
+msgid "Show this message and exit."
 msgstr ""
 
 #: keg/keyring.py:27
@@ -248,7 +260,7 @@ msgid ""
 "{calling_args}"
 msgstr ""
 
-#: keg/web.py:136
+#: keg/web.py:134
 msgid "Unimplemented method {name}"
 msgstr ""
 

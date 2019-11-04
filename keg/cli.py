@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 from collections import defaultdict
+from contextlib import contextmanager
 import platform
 
 import click
@@ -350,7 +351,10 @@ class CLILoader(object):
                          help=_('Name of the configuration profile to use.'),),
             click.Option(['--quiet'], is_eager=True, is_flag=True, default=False,
                          callback=self.options_callback,
-                         help=_('Set default logging level to logging.WARNING.'))
+                         help=_('Set default logging level to logging.WARNING.')),
+            click.Option(['--help-all'], is_eager=True, is_flag=True, expose_value=False,
+                         callback=self.help_all_callback,
+                         help=_('Show all commands with subcommands.')),
         ]
 
     def options_callback(self, ctx, param, value):
@@ -360,6 +364,103 @@ class CLILoader(object):
         """
         si = ctx.ensure_object(flask.cli.ScriptInfo)
         si.data[param.name] = value
+
+    def help_all_callback(self, ctx, param, value):
+        if not value or ctx.resilient_parsing:
+            return
+        formatter = ctx.make_formatter()
+
+        ctx.command.format_usage(ctx, formatter)
+        ctx.command.format_help_text(ctx, formatter)
+        self.format_options(ctx.command, ctx, formatter)
+        self.format_commands(ctx.command, ctx, formatter)
+        ctx.command.format_epilog(ctx, formatter)
+
+        click.echo(formatter.getvalue().rstrip('\n'))
+        ctx.exit()
+
+    def format_options(self, command, ctx, formatter):
+        opts = []
+        for param in command.get_params(ctx):
+            if param.name == 'help':
+                opts.append(('--help', _('Show help message.')))
+            elif param.name == 'help_all':
+                opts.append(('--help-all', _('Show this message and exit.')))
+            else:
+                rv = param.get_help_record(ctx)
+                if rv is not None:
+                    opts.append(rv)
+
+        if opts:
+            with formatter.section('Options'):
+                formatter.write_dl(opts)
+
+    def format_commands(self, command, ctx, formatter):
+        if hasattr(command, 'list_commands'):
+            subcommands = command.list_commands(ctx)
+
+            if len(subcommands):
+                # allow for 3 times the default spacing
+                limit = formatter.width - 6 - max(len(subcommand) for subcommand in subcommands)
+
+                rows = []
+                commands = []
+                for subcommand in subcommands:
+                    cmd = command.get_command(ctx, subcommand)
+                    if cmd is None:
+                        continue
+                    if cmd.hidden:
+                        continue
+                    commands.append(cmd)
+                    help = cmd.get_short_help_str(limit)
+                    rows.append((subcommand, help))
+
+                with self.compact_section(formatter, 'Commands'):
+                    self.write_dl_with_subcommands(ctx, formatter, rows, commands)
+
+    def write_dl_with_subcommands(self, ctx, formatter, rows, commands, col_max=30, col_spacing=2):
+        rows = list(rows)
+        widths = click.formatting.measure_table(rows)
+        if len(widths) != 2:
+            raise TypeError('Expected two columns for definition list')
+
+        first_col = min(widths[0], col_max) + col_spacing
+
+        for (first, second), command in zip(
+            click.formatting.iter_rows(rows, len(widths)), commands
+        ):
+            formatter.write('%*s%s' % (formatter.current_indent, '', first))
+            if not second:
+                formatter.write('\n')
+                continue
+            if click.formatting.term_len(first) <= first_col - col_spacing:
+                formatter.write(' ' * (first_col - click.formatting.term_len(first)))
+            else:
+                formatter.write('\n')
+                formatter.write(' ' * (first_col + formatter.current_indent))
+
+            text_width = max(formatter.width - first_col - 2, 10)
+            lines = iter(click.formatting.wrap_text(second, text_width).splitlines())
+            if lines:
+                formatter.write(next(lines) + '\n')
+                for i, line in enumerate(lines):
+                    formatter.write('%*s%s\n' % (
+                        first_col + formatter.current_indent, '', line))
+            else:
+                formatter.write('\n')
+
+            # Add subcommands under current command (recursive)
+            with formatter.indentation():
+                self.format_commands(command, ctx, formatter)
+
+    @contextmanager
+    def compact_section(self, formatter, name):
+        formatter.write_heading(name)
+        formatter.indent()
+        try:
+            yield
+        finally:
+            formatter.dedent()
 
     def main_callback(self, **kwargs):
         """
