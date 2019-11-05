@@ -1,3 +1,3 @@
-from keg import KegComponent
+from keg import KegViewComponent
 
-__component__ = KegComponent('blog')
+__component__ = KegViewComponent('blog')

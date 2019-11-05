@@ -159,8 +159,7 @@ class Keg(flask.Flask):
         for comp_path in self.config.get('KEG_REGISTERED_COMPONENTS', set()):
             comp_module = importlib.import_module(comp_path)
             comp_object = getattr(comp_module, '__component__')
-            comp_object.set_dotted_path(comp_path)
-            comp_object.init_app(self)
+            comp_object.init_app(self, parent_path=comp_path)
 
     def init_blueprints(self):
         # TODO: probably want to be selective about adding our blueprint

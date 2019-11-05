@@ -1,4 +1,4 @@
-from keg import KegComponent
+from keg import KegModelComponent
 
 
-__component__ = KegComponent('blog')
+__component__ = KegModelComponent('blog')
