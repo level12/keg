@@ -2,6 +2,10 @@
 class DefaultProfile(object):
     KEG_KEYRING_ENABLE = False
 
+    KEG_REGISTERED_COMPONENTS = {
+        'keg_apps.db.blog',
+    }
+
 
 class TestProfile(object):
     KEG_DB_DIALECT_OPTIONS = {

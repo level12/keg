@@ -13,7 +13,7 @@ def sayfoo():
 
 
 class WebApp(Keg):
-    import_name = __name__
+    import_name = 'keg_apps.web'
     use_blueprints = all_blueprints
     keyring_enabled = False
 

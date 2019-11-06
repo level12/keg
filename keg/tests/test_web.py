@@ -30,3 +30,11 @@ class TestBlueprintUsage(WebBase):
     def test_blueprint_template_folder(self):
         resp = self.testapp.get('/tanagra/blueprint-test')
         assert 'blueprint template found ok' in resp
+
+
+class TestComponentBlueprint(WebBase):
+    appcls = WebApp
+
+    def test_component_blueprint_loads(self):
+        resp = self.testapp.get('/blog')
+        assert 'I am a blog' in resp
