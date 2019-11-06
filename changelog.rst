@@ -1,6 +1,20 @@
 Changelog
 =========
 
+0.8.1 released 2019-11-06
+-------------------------
+
+- Add basic component structure for app organization into logical blocks (830f93b_)
+- Add `--help-all` option to print out nested tree of app commands (b11fe7e_)
+- Clean up view's use of blueprint attributes to discover templates and calculate URLs/endpoints (949c578_)
+- Limit flask to <1.1.0 until context breakage is resolved (217246f_)
+
+.. _830f93b: https://github.com/level12/keg/commit/830f93b
+.. _b11fe7e: https://github.com/level12/keg/commit/b11fe7e
+.. _949c578: https://github.com/level12/keg/commit/949c578
+.. _217246f: https://github.com/level12/keg/commit/217246f
+
+
 0.8.0 released 2019-03-25
 -------------------------
 
