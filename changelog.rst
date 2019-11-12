@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.8.2 released 2019-11-12
+-------------------------
+
+- fix bug in calculating URL with prefix-less blueprints (7d02b01_)
+
+.. _7d02b01: https://github.com/level12/keg/commit/7d02b01
+
+
 0.8.1 released 2019-11-06
 -------------------------
 
