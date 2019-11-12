@@ -212,7 +212,7 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
     def calc_url(cls, use_blueprint=True):
         # calc_url will generally return the full url to reach a view. Turn use_blueprint off when
         # setting up the blueprint itself (see init_routes and init_blueprint)
-        prefix = cls.blueprint.url_prefix if cls.blueprint and use_blueprint else ''
+        prefix = (cls.blueprint.url_prefix or '') if cls.blueprint and use_blueprint else ''
         if cls.url is not None:
             return prefix + cls.url
         return prefix + '/' + case_cw2dash(cls.__name__)
