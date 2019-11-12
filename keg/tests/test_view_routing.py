@@ -1,8 +1,44 @@
 from __future__ import absolute_import
 
+import flask
+
 from keg.testing import WebBase
+from keg.web import BaseView
 
 from keg_apps.web.app import WebApp
+
+
+class TestViewCalculations:
+    def test_view_defaults_no_blueprint(self):
+        class MyView(BaseView):
+            pass
+
+        assert MyView.calc_url() == '/my-view'
+        assert MyView.calc_endpoint() == 'my-view'
+
+    def test_view_url_no_blueprint(self):
+        class MyView(BaseView):
+            url = '/some-other-place'
+
+        assert MyView.calc_url() == '/some-other-place'
+
+    def test_view_url_with_blueprint_prefix(self):
+        class MyView(BaseView):
+            blueprint = flask.Blueprint('testallthethings', __name__, url_prefix='/foo')
+            url = '/some-other-place'
+
+        assert MyView.calc_url() == '/foo/some-other-place'
+        assert MyView.calc_url(use_blueprint=False) == '/some-other-place'
+
+    def test_view_defaults_with_blueprint(self):
+        class MyView(BaseView):
+            blueprint = flask.Blueprint('testallthethings', __name__)
+
+        assert MyView.calc_url() == '/my-view'
+        assert MyView.calc_endpoint() == 'testallthethings.my-view'
+        assert MyView.calc_url(use_blueprint=False) == '/my-view'
+        assert MyView.calc_endpoint(use_blueprint=False) == 'my-view'
+
 
 
 class TestViewRouting(WebBase):
