@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.8.3 released 2019-11-29
+-------------------------
+
+- Remove Flask version pin (0b03f12_)
+
+.. _0b03f12: https://github.com/level12/keg/commit/0b03f12
+
+
 0.8.2 released 2019-11-12
 -------------------------
 
