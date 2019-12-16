@@ -1,10 +1,8 @@
 from __future__ import absolute_import
 
 import importlib
-import warnings
 
 import flask
-from flask.config import ConfigAttribute
 from six.moves import range
 from werkzeug.datastructures import ImmutableDict
 
@@ -28,10 +26,8 @@ class Keg(flask.Flask):
     import_name = None
     use_blueprints = ()
     oauth_providers = ()
-    keyring_enabled = ConfigAttribute('KEG_KEYRING_ENABLE')
     config_class = keg.config.Config
     logging_class = keg.logging.Logging
-    keyring_manager_class = None
 
     _cli = None
     cli_loader_class = keg.cli.CLILoader
@@ -61,7 +57,6 @@ class Keg(flask.Flask):
         # passed in value takes precedence
         import_name = import_name or self.import_name
 
-        self.keyring_manager = None
         self._init_config = kwargs.pop('config', {})
 
         flask.Flask.__init__(self, import_name, *args, **kwargs)
@@ -83,7 +78,6 @@ class Keg(flask.Flask):
 
         self.init_config(config_profile, use_test_profile, config)
         self.init_logging()
-        self.init_keyring()
         self.init_oath()
         self.init_error_handling()
         self.init_extensions()
@@ -118,20 +112,6 @@ class Keg(flask.Flask):
     def on_config_complete(self):
         """ For subclasses to override """
         pass
-
-    def init_keyring(self):
-        # do keyring substitution
-        if self.keyring_enabled:
-            from keg.keyring import Manager, keyring
-            if keyring is None:
-                warnings.warn(_('Keyring substitution is enabled, but the keyring package is not'
-                                ' installed.  Please install the keyring package (pip install'
-                                ' keyring) or disable keyring support by setting'
-                                ' `KEG_KEYRING_ENABLE = False` in your configuration profile.'))
-                return
-
-            self.keyring_manager = Manager(self)
-            self.keyring_manager.substitute(self.config)
 
     def init_extensions(self):
         self.init_db()

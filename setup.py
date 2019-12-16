@@ -50,7 +50,6 @@ setup(
         'tests': [
             'flask-webtest',
             'flask-wtf',
-            'keyring',
             "sqlalchemy_pyodbc_mssql; sys_platform == 'win32'",
             'pytest',
             'pytest-cov',
