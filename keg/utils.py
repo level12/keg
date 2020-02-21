@@ -64,19 +64,17 @@ classproperty = ClassProperty
 
 class HybridMethod(object):
     """
-        A decorator which allows definition of a Python object method with both
-        instance-level and class-level behavior:
+    A decorator which allows definition of a Python object method with both
+    instance-level and class-level behavior::
 
-            Class Bar:
+        Class Bar:
+            @hybridmethod
+            def foo(self, rule, **options):
+                # this is used in an instance context
 
-                @hybridmethod
-                def foo(self, rule, **options):
-                    # this is used in an instance context
-
-                @foo.classmethod
-                def foo(cls, rule, **options):
-                    # this is used in class context
-
+            @foo.classmethod
+            def foo(cls, rule, **options):
+                # this is used in class context
     """
 
     def __init__(self, func, cm_func=None):
@@ -119,7 +117,7 @@ def pymodule_fpaths_to_objects(fpaths):
 
 
 def app_environ_get(app_import_name, key, default=None):
-    # App names often have periods and it is not possibe to export an
+    # App names often have periods and it is not possible to export an
     # environment variable with a period in it.
     app_name = app_import_name.replace('.', '_').upper()
     environ_key = '{}_{}'.format(app_name, key.upper())

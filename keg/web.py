@@ -99,6 +99,12 @@ class _ViewMeta(MethodViewType):
 
 
 class BaseView(with_metaclass(_ViewMeta, MethodView)):
+    """
+    Base class for all Keg views to inherit from. `BaseView` automatically calculates and installs
+    routing, templating, and responding methods for HTTP verb named functions.
+
+    .. literalinclude:: /examples/BaseView.py
+    """
     blueprint = None
     url = None
     template_name = None
