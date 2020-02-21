@@ -188,6 +188,7 @@ class Keg(flask.Flask):
         return '500 SERVER ERROR<br/><br/>{}'.format(_('administrators notified'))
 
     def request_context(self, environ):
+        """Request context for the app."""
         return KegRequestContext(self, environ)
 
     def _cli_getter(cls):  # noqa: first argument is not self in this context due to @classproperty
@@ -235,6 +236,7 @@ class Keg(flask.Flask):
 
     @property
     def logger(self):
+        """Standard logger for the app."""
         return self.logging.app_logger
 
     @hybridmethod
@@ -245,7 +247,7 @@ class Keg(flask.Flask):
     @route.classmethod
     def route(cls, rule, **options):  # noqa
         """
-            Enable .route() to be used in a class context as well.  E.g.:
+        Enable .route() to be used in a class context as well.  E.g.::
 
             KegApp.route('/something'):
             def view_something():
