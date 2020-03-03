@@ -73,7 +73,7 @@ class TestCLI2(CLIBase):
         expected_lines = [
             'Usage', '', 'Options', '--profile', '--quiet', '--help-all', '--help',
             'Commands', 'develop', 'Commands', 'config', 'db', 'Commands', 'clear',
-            'init', 'keyring', 'Commands', 'delete', 'list-keys', 'status', 'routes',
+            'init', 'routes',
             'run', 'shell', 'templates', 'hello1', 'is-not-quiet', 'is-quiet', 'reverse',
             ''
         ]

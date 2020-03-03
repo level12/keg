@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 from collections import defaultdict
 from contextlib import contextmanager
-import platform
 
 import click
 import flask
@@ -11,7 +10,6 @@ from six.moves import urllib
 
 from keg import current_app
 from keg.extensions import gettext as _
-from keg.keyring import keyring as keg_keyring
 
 
 class KegAppGroup(flask.cli.AppGroup):
@@ -184,107 +182,6 @@ def database_init(clear_first):
 def database_clear():
     current_app.db_manager.db_clear()
     click.echo(_('Database cleared'))
-
-
-class KeyringGroup(click.MultiCommand):
-
-    def list_commands(self, ctx):
-        if keg_keyring:
-            return ['delete', 'list-keys', 'setup', 'status']
-        else:
-            return ['status']
-
-    def get_command(self, ctx, name):
-        if name == 'status':
-            return keyring_status
-        if name == 'list-keys':
-            return keyring_list_keys
-        if name == 'delete':
-            return keyring_delete
-
-
-def keyring_notify_no_module():
-    click.echo(_('Keyring module not installed. Keyring functionality disabled.\n\nYou can'
-                 ' enable keyring functionality by installing the package:'
-                 ' `pip install keyring`.'))
-
-
-@dev_command.command('keyring', cls=KeyringGroup, invoke_without_command=True,
-                     help=_('Lists keyring related sub-commands.'))
-@click.pass_context
-def keyring_group(ctx):
-    # only take action if no subcommand is involved.
-    if ctx.invoked_subcommand is None:
-        if keg_keyring is None:
-            keyring_notify_no_module()
-        else:
-            # keyring is available, but no subcommand was given, therefore we want to just show
-            # the help message, which would be the default behavior if we had not used the
-            # invoke_Without_command option.
-            click.echo(ctx.get_help())
-            ctx.exit()
-
-
-@click.command('status', short_help=_('Show keyring related status info.'))
-@click.option('--unavailable', default=False, is_flag=True,
-              help=_('Show unavailable backends with reasons.'))
-@flask.cli.with_appcontext
-def keyring_status(unavailable):
-    if keg_keyring is None:
-        keyring_notify_no_module()
-        return
-    import keyring
-    import keyring.backend as kb
-    viable = kb.get_all_keyring()
-
-    # call get_all_keyring() before this so we are sure all keyrings are loaded
-    # on KeyringBackend
-    if unavailable:
-        click.echo(_('Unavailable backends'))
-        for cls in kb.KeyringBackend._classes:
-            try:
-                cls.priority
-            except Exception as e:
-                click.echo(_('    {_class.__module__}:{_class.__name__} - {exception}',
-                             _class=cls, exception=e))
-
-    click.echo(_('\nAvailable backends (backends with priority < 1 are not'
-                 ' recommended and may be insecure)'))
-    for backend in viable:
-        click.echo(_('    {_class.__module__}:{_class.__name__} (priority: {priority})',
-                     _class=backend.__class__, priority=backend.priority))
-
-    click.echo(_('\nDefault backend'))
-    backend = keyring.get_keyring()
-    click.echo(_('    {_class.__module__}:{_class.__name__}', _class=backend.__class__))
-    if hasattr(backend, 'file_path'):
-        click.echo(_('    file path: {file_path}', file_path=backend.file_path))
-
-    if not flask.current_app.keyring_enabled:
-        click.echo(_('\nKeyring functionality for this app has been DISABLED through the config'
-                     ' setting KEG_KEYRING_ENABLE.'))
-    elif not flask.current_app.keyring_manager.verify_backend():
-        click.echo(_('\nWARNING: the current backend is insecure,'
-                     ' keyring substitution unavailable.'))
-        if platform.system() == 'Linux':
-            click.echo(_('\nTRY THIS: use the SecretStorage Setup utility to get a more secure'
-                         ' keyring backend.'))
-            click.echo('https://pypi.python.org/pypi/SecretStorage-Setup\n')
-
-
-@click.command('list-keys', short_help=_('Show all keys used in config value substitution.'))
-@flask.cli.with_appcontext
-def keyring_list_keys():
-    km = flask.current_app.keyring_manager
-    for key in sorted(km.sub_keys_seen):
-        click.echo(key)
-
-
-@click.command('delete', short_help=_('Delete an entry from the keyring.'))
-@click.argument('key')
-@flask.cli.with_appcontext
-def keyring_delete(key):
-    flask.current_app.keyring_manager.delete(key)
 
 
 class CLILoader(object):

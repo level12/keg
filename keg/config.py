@@ -171,8 +171,6 @@ class DefaultProfile(object):
         after_logout='public.home',
     )
 
-    KEG_KEYRING_ENABLE = True
-
     KEG_SMTP_HOST = 'localhost'
 
     KEG_DB_DIALECT_OPTIONS = {}
@@ -186,7 +184,6 @@ class DevProfile(object):
 class TestProfile(object):
     DEBUG = True
     TESTING = True
-    KEG_KEYRING_ENABLE = False
     KEG_LOG_SYSLOG_ENABLED = False
 
     # set this to allow generation of URLs without a request context
