@@ -26,6 +26,7 @@ author = 'Level 12'
 
 cfg = configparser.SafeConfigParser()
 cfg.read('../../setup.cfg')
+master_doc = 'index'
 
 tag = cfg.get('egg_info', 'tag_build')
 
