@@ -25,7 +25,6 @@ class KegAppError(Exception):
 class Keg(flask.Flask):
     import_name = None
     use_blueprints = ()
-    oauth_providers = ()
     config_class = keg.config.Config
     logging_class = keg.logging.Logging
 
@@ -78,7 +77,6 @@ class Keg(flask.Flask):
 
         self.init_config(config_profile, use_test_profile, config)
         self.init_logging()
-        self.init_oath()
         self.init_error_handling()
         self.init_extensions()
         self.init_routes()
@@ -159,16 +157,6 @@ class Keg(flask.Flask):
 
         # utility to abort responses
         self.errorhandler(keg.web.ImmediateResponse)(keg.web.handle_immediate_response)
-
-    def init_oath(self):
-        # if no providers are listed, then we don't need to do anything else
-        if not self.oauth_providers:
-            return
-
-        from keg.oauth import oauthlib, bp, manager
-        self.register_blueprint(bp)
-        oauthlib.init_app(self)
-        manager.register_providers(self.oauth_providers)
 
     def init_jinja(self):
         self.jinja_env.filters.update(self.template_filters)
