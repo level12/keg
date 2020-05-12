@@ -57,7 +57,7 @@ setup(
             'mock',
         ],
         'i18n': [
-            'morphi'
+            'morphi>=0.2.0'
         ],
     }
 )

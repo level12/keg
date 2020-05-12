@@ -32,5 +32,17 @@ def catch_error():
     raise Exception(_('deliberate exception for testing'))
 
 
+@CLIApp.cli.command('verify-translations', help='Verifies all strings marked for translation')
+def verify_translations():
+    from pathlib import Path
+    from morphi.messages.validation import check_translations
+
+    root_path = Path(__file__).resolve().parent.parent
+    check_translations(
+        root_path,
+        'keg',
+    )
+
+
 if __name__ == '__main__':
     CLIApp.cli.main()
