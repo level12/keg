@@ -1,6 +1,22 @@
 Changelog
 =========
 
+0.8.4 released 2020-05-12
+-------------------------
+
+- remove unused oauth code (use keg-auth instead) (8e6a2c0_)
+- check translations in CI (b377eee_)
+- fix test suite issues (06320e9_)
+- adding sphinx docs (69e5c31_)
+- remove keyring support (500994d_)
+
+.. _8e6a2c0: https://github.com/level12/keg/commit/8e6a2c0
+.. _b377eee: https://github.com/level12/keg/commit/b377eee
+.. _06320e9: https://github.com/level12/keg/commit/06320e9
+.. _69e5c31: https://github.com/level12/keg/commit/69e5c31
+.. _500994d: https://github.com/level12/keg/commit/500994d
+
+
 0.8.3 released 2019-11-29
 -------------------------
 
