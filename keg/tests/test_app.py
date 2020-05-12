@@ -3,14 +3,14 @@ from __future__ import absolute_import
 import pytest
 
 from keg.app import Keg, KegAppError
+from keg_apps.cli2.app import CLI2App
 
 
 class TestInit(object):
 
-    @pytest.mark.skip("Fails when flask version is >1.0")
     def test_init_called_twice_error(self):
         with pytest.raises(KegAppError, match=r'init\(\) already called on this instance'):
-            app = Keg(__name__)
+            app = CLI2App(__name__)
             app.init(use_test_profile=True)
             app.init(use_test_profile=True)
 

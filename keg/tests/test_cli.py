@@ -27,7 +27,7 @@ class TestCLI(CLIBase):
 
     def test_missing_command(self):
         result = self.invoke(cmd_name='baz', exit_code=2)
-        assert 'No such command "baz"' in result.output
+        assert 'No such command \'baz\'' in result.output
 
     @pytest.mark.skipif(True, reason='reminder')
     def test_default_exception_handling(self):

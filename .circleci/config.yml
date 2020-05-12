@@ -3,7 +3,7 @@ jobs:
     build:
         docker:
             - image: level12/python-test-multi
-            - image: postgres:9.6
+            - image: postgres:12-alpine
               environment:
                   POSTGRES_USER: postgres
                   POSTGRES_PASSWORD: password
