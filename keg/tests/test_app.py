@@ -1,9 +1,13 @@
 from __future__ import absolute_import
 
+from unittest import mock
+
 import pytest
+import sqlalchemy as sa
 
 from keg.app import Keg, KegAppError
 from keg_apps.cli2.app import CLI2App
+from keg_apps.db2 import DB2App
 
 
 class TestInit(object):
@@ -13,6 +17,18 @@ class TestInit(object):
             app = CLI2App(__name__)
             app.init(use_test_profile=True)
             app.init(use_test_profile=True)
+
+
+class TestSQLitePragma:
+    @mock.patch('keg.app.sa_event', autospec=True, spec_set=True)
+    def test_config_set(self, m_sa_event):
+        DB2App.testing_prep(KEG_SQLITE_ENABLE_FOREIGN_KEYS=True)
+        m_sa_event.listens_for.assert_called_once_with(sa.engine.Engine, 'connect')
+
+    @mock.patch('keg.app.sa_event', autospec=True, spec_set=True)
+    def test_config_not_set(self, m_sa_event):
+        DB2App.testing_prep()
+        m_sa_event.listens_for.assert_not_called()
 
 
 class TestRouteDecorator(object):

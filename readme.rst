@@ -328,3 +328,4 @@ This is not an exhaustive list of `KEG_` specific configuration variables:
           'json_serializer': flask.json.dumps,
           'json_deserializer': flask.json.loads,
       }
+- ``KEG_SQLITE_ENABLE_FOREIGN_KEYS``: Configure SQLite to enforce foreign keys by default

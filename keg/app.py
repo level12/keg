@@ -4,6 +4,8 @@ import importlib
 
 import flask
 from six.moves import range
+import sqlalchemy as sa
+import sqlalchemy.event as sa_event
 from werkzeug.datastructures import ImmutableDict
 
 from keg.blueprints import keg as kegbp
@@ -128,6 +130,16 @@ class Keg(flask.Flask):
         if self.db_enabled:
             cls = self.db_manager_cls()
             self.db_manager = cls(self)
+            if self.config.get('KEG_SQLITE_ENABLE_FOREIGN_KEYS'):
+                sa_event.listens_for(sa.engine.Engine, 'connect')(self._set_sqlite_pragma)
+
+    def _set_sqlite_pragma(self, connection, conn_record):
+        # Sets a pragma to tell sqlite to not ignore FK constraints.
+        from sqlite3 import Connection as SQLite3Connection
+        if isinstance(connection, SQLite3Connection):
+            cursor = connection.cursor()
+            cursor.execute("PRAGMA foreign_keys=ON;")
+            cursor.close()
 
     def init_registered_components(self, app):
         # KEG_REGISTERED_COMPONENTS is presumed to be a set/list/iterable of dotted paths usable
