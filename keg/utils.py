@@ -107,12 +107,13 @@ def pymodule_fpaths_to_objects(fpaths):
     """
     retval = []
     for fpath in fpaths:
-        path = pathlib.Path(fpath)
-        if path.exists():
+        try:
             pymodule_globals = {}
             with open(fpath) as fo:
                 exec(compile(fo.read(), fpath, 'exec'), pymodule_globals)
             retval.append((fpath, pymodule_globals))
+        except (FileNotFoundError, PermissionError):
+            pass
     return retval
 
 

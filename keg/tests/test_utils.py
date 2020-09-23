@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import tempfile
+from unittest import mock
 
 from keg.utils import pymodule_fpaths_to_objects
 
@@ -31,3 +32,13 @@ class TestUtils(object):
 
         # result should now be empty since fpath3 should get filtered out b/c it's not present
         assert len(result) == 0
+
+    @mock.patch('keg.utils.open')
+    def test_pymodule_fpaths_to_objects_permission_error(self, m_open):
+        m_open.side_effect = PermissionError
+        with tempfile.NamedTemporaryFile(delete=False) as fh:
+            fpath = fh.name
+            fh.write(b'foo1="bar"')
+
+        result = pymodule_fpaths_to_objects([fpath])
+        assert not result
