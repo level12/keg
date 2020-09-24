@@ -126,6 +126,11 @@ def config_command():
     for val in config.config_file_paths():
         click.echo('    {}'.format(val))
 
+    if config.configs_unreadable:
+        click.echo(_('Could not access the following config paths:'))
+        for path in config.configs_unreadable:
+            click.echo('    {}'.format(path))
+
     click.echo(_('Config objects used:'))
     for val in config.configs_found:
         click.echo('    {}'.format(val))

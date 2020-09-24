@@ -112,8 +112,12 @@ def pymodule_fpaths_to_objects(fpaths):
             with open(fpath) as fo:
                 exec(compile(fo.read(), fpath, 'exec'), pymodule_globals)
             retval.append((fpath, pymodule_globals))
-        except (FileNotFoundError, PermissionError):
+        except FileNotFoundError:
+            # Paths are not guaranteed or required to exist
             pass
+        except (IsADirectoryError, PermissionError):
+            # "None" means we could not access the path, which may or may not exist
+            retval.append((fpath, None))
     return retval
 
 
