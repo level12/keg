@@ -204,7 +204,7 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
             return self.template_name
         template_path = '{}.html'.format(case_cw2us(self.__class__.__name__))
         blueprint_name = request.blueprint
-        if blueprint_name and not flask.current_app.blueprints[blueprint_name].template_folder:
+        if blueprint_name:
             template_path = '{}/{}'.format(blueprint_name, template_path)
         return template_path
 
