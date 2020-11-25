@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.8.5 released 2020-11-25
+-------------------------
+
+- follow flask namespace recommendations for component blueprint templates (b5d6cf8_)
+
+.. _b5d6cf8: https://github.com/level12/keg/commit/b5d6cf8
+
+
 0.8.4 released 2020-05-12
 -------------------------
 
