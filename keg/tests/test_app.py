@@ -20,12 +20,12 @@ class TestInit(object):
 
 
 class TestSQLitePragma:
-    @mock.patch('keg.app.sa_event', autospec=True, spec_set=True)
+    @mock.patch('keg.db.sa_event', autospec=True, spec_set=True)
     def test_config_set(self, m_sa_event):
         DB2App.testing_prep(KEG_SQLITE_ENABLE_FOREIGN_KEYS=True)
         m_sa_event.listens_for.assert_called_once_with(sa.engine.Engine, 'connect')
 
-    @mock.patch('keg.app.sa_event', autospec=True, spec_set=True)
+    @mock.patch('keg.db.sa_event', autospec=True, spec_set=True)
     def test_config_not_set(self, m_sa_event):
         DB2App.testing_prep()
         m_sa_event.listens_for.assert_not_called()

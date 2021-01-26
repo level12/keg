@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 import flask_sqlalchemy as fsa
+import sqlalchemy as sa
+import sqlalchemy.event as sa_event
 
 from keg.signals import testing_run_start, db_init_pre, db_init_post, db_clear_pre, db_clear_post
 from keg.utils import visit_modules
@@ -18,6 +20,11 @@ class KegSQLAlchemy(fsa.SQLAlchemy):
         # http://docs.sqlalchemy.org/en/latest/core/pooling.html#disconnect-handling-pessimistic
         engine_opts.setdefault('pool_pre_ping', True)
 
+        # While this isn't an engine options change, it is in the domain of db engine
+        # setup and so belongs here.
+        if app.config.get('KEG_SQLITE_ENABLE_FOREIGN_KEYS'):
+            sa_event.listens_for(sa.engine.Engine, 'connect')(self._set_sqlite_pragma)
+
         # Update the options with the engine options we received from the application
         options.update(engine_opts)
 
@@ -33,6 +40,14 @@ class KegSQLAlchemy(fsa.SQLAlchemy):
                 retval.append((bind_name, self.get_engine(app, bind=bind_name)))
 
         return retval
+
+    def _set_sqlite_pragma(self, connection, conn_record):
+        # Sets a pragma to tell sqlite to not ignore FK constraints.
+        from sqlite3 import Connection as SQLite3Connection
+        if isinstance(connection, SQLite3Connection):
+            cursor = connection.cursor()
+            cursor.execute("PRAGMA foreign_keys=ON;")
+            cursor.close()
 
 
 db = KegSQLAlchemy()
