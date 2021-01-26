@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 
+from unittest import mock
+
 import flask
+import pytest
 
 from keg.testing import WebBase
 from keg.web import BaseView
@@ -106,6 +109,32 @@ class TestViewRouting(WebBase):
         assert rule.rule == '/some-route'
         assert rule.methods == {'GET', 'HEAD', 'OPTIONS'}
         assert rule.endpoint == 'routing.explicit-route'
+
+    def test_explicit_route_assigned_blueprint(self):
+        resp = self.testapp.get('/some-route-alt', status=404)
+
+        from keg_apps.web.views.routing import ExplicitRouteAlt
+        blueprint = flask.Blueprint('test_explicit_route_assigned_blueprint', __name__)
+
+        with pytest.raises(Exception, match='could not be assigned'):
+            ExplicitRouteAlt.assign_blueprint(None)
+
+        ExplicitRouteAlt.assign_blueprint(blueprint)
+        with mock.patch('flask.current_app._got_first_request', False):
+            flask.current_app.register_blueprint(blueprint)
+
+        resp = self.testapp.get('/some-route-alt')
+        assert resp.text == 'get some-route alt'
+
+        rules = list(self.app.url_map.iter_rules(
+            endpoint='test_explicit_route_assigned_blueprint.explicit-route-alt'
+        ))
+        assert len(rules) == 1
+        rule = rules.pop()
+
+        assert rule.rule == '/some-route-alt'
+        assert rule.methods == {'GET', 'HEAD', 'OPTIONS'}
+        assert rule.endpoint == 'test_explicit_route_assigned_blueprint.explicit-route-alt'
 
     def test_blueprint_routes(self):
         self.testapp.get('/blueprint-test', status=404)
