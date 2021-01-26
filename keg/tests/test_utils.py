@@ -24,28 +24,24 @@ class TestUtils(object):
 
         result = pymodule_fpaths_to_objects([fpath1, fpath2, fpath3])
 
-        fpath, fpath_objs = result.pop(0)
+        fpath, fpath_objs, exc = result.pop(0)
         assert fpath == fpath1
         assert fpath_objs['foo1'] == 'bar'
 
-        fpath, fpath_objs = result.pop(0)
+        fpath, fpath_objs, exc = result.pop(0)
         assert fpath == fpath2
         assert fpath_objs['foo2'] == 'bar'
 
-        # result should now be empty since fpath3 should get filtered out b/c it's not present
-        assert len(result) == 0
+        # result should now have fpath3. Error case is tested separately.
+        assert len(result) == 1
 
+    @pytest.mark.parametrize('error', (FileNotFoundError, IsADirectoryError, PermissionError))
     @mock.patch('keg.utils.open')
-    def test_pymodule_fpaths_to_objects_not_found_error(self, m_open):
-        m_open.side_effect = FileNotFoundError
-
-        result = pymodule_fpaths_to_objects(['some-path.py'])
-        assert not result
-
-    @pytest.mark.parametrize('error', (IsADirectoryError, PermissionError))
-    @mock.patch('keg.utils.open')
-    def test_pymodule_fpaths_to_objects_permission_error(self, m_open, error):
+    def test_pymodule_fpaths_to_objects_error(self, m_open, error):
         m_open.side_effect = error
 
         result = pymodule_fpaths_to_objects(['some-path.py'])
-        assert result == [('some-path.py', None)]
+        fpath, fpath_objs, exc = result.pop(0)
+        assert fpath == 'some-path.py'
+        assert fpath_objs is None
+        assert isinstance(exc, error)

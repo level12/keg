@@ -104,6 +104,9 @@ def pymodule_fpaths_to_objects(fpaths):
         Takes an iterable of file paths reprenting possible python modules and will return an
         iterable of tuples with the file path along with the contents of that file if the file
         exists.
+
+        If the file does not exist or cannot be accessed, the third term of the tuple stores
+        the exception.
     """
     retval = []
     for fpath in fpaths:
@@ -111,13 +114,9 @@ def pymodule_fpaths_to_objects(fpaths):
             pymodule_globals = {}
             with open(fpath) as fo:
                 exec(compile(fo.read(), fpath, 'exec'), pymodule_globals)
-            retval.append((fpath, pymodule_globals))
-        except FileNotFoundError:
-            # Paths are not guaranteed or required to exist
-            pass
-        except (IsADirectoryError, PermissionError):
-            # "None" means we could not access the path, which may or may not exist
-            retval.append((fpath, None))
+            retval.append((fpath, pymodule_globals, None))
+        except (FileNotFoundError, IsADirectoryError, PermissionError) as exc:
+            retval.append((fpath, None, exc))
     return retval
 
 

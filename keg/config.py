@@ -65,7 +65,7 @@ class Config(flask.Config):
         self.dirs = appdirs.AppDirs(app_import_name, appauthor=False, multipath=True)
         self.app_import_name = app_import_name
         self.app_root_path = app_root_path
-        self.configs_unreadable = []
+        self.config_paths_unreadable = []
 
         if config_file_objs:
             self.config_file_objs = config_file_objs
@@ -73,9 +73,9 @@ class Config(flask.Config):
             self.config_file_objs = []
             possible_config_fpaths = self.config_file_paths()
             fpaths_to_objects = pymodule_fpaths_to_objects(possible_config_fpaths)
-            for fpath, objects in fpaths_to_objects:
+            for fpath, objects, exc in fpaths_to_objects:
                 if objects is None:
-                    self.configs_unreadable.append(fpath)
+                    self.config_paths_unreadable.append((fpath, exc))
                 else:
                     self.config_file_objs.append((fpath, objects))
 
