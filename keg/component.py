@@ -90,9 +90,17 @@ class KegComponent:
             app.register_blueprint(getattr(mod_imported, bp_attr))
 
     def create_blueprint(self, *args, **kwargs):
-        # Make a flask blueprint having a template folder configured
+        """Make a flask blueprint having a template folder configured.
+
+        Generally, args and kwargs provided will be passed to the blueprint constructor, with
+        the following exceptions:
+
+        - template_folder kwarg defaults to the component's template_folder if not provided
+        - blueprint_cls kwarg may be used to specify an alternative to flask.Blueprint
+        """
         kwargs['template_folder'] = kwargs.get('template_folder', self.template_folder)
-        bp = flask.Blueprint(*args, **kwargs)
+        blueprint_cls = kwargs.pop('blueprint_cls', flask.Blueprint)
+        bp = blueprint_cls(*args, **kwargs)
 
         return bp
 

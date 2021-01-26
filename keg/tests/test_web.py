@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import flask
+from keg.component import KegComponent
 from keg.testing import WebBase
 
 from keg_apps.web.app import WebApp
@@ -38,3 +40,11 @@ class TestComponentBlueprint(WebBase):
     def test_component_blueprint_loads(self):
         resp = self.testapp.get('/blog')
         assert 'I am a blog' in resp
+
+    def test_component_blueprint_base(self):
+        class CustomBlueprint(flask.Blueprint):
+            pass
+
+        component = KegComponent('foo')
+        bp = component.create_blueprint('test_blueprint', __name__, blueprint_cls=CustomBlueprint)
+        assert isinstance(bp, CustomBlueprint)
