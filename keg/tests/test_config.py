@@ -46,6 +46,22 @@ class TestConfigDefaults(object):
         config.init_app(None, __name__, '', False, config_file_objs)
         assert config.profile == 'baz'
 
+    def test_profile_from_fpaths(self):
+        fpath_results = [
+            ('foo.py', dict(DEFAULT_PROFILE='baz'), None),
+            ('boo.py', None, FileNotFoundError()),
+        ]
+        config = Config('', {})
+        with mock.patch(
+            'keg.config.pymodule_fpaths_to_objects', autospec=True, spec_set=True
+        ) as m_fpath:
+            m_fpath.return_value = fpath_results
+            config.init_app(None, __name__, '', False)
+        assert config.profile == 'baz'
+        assert config.config_file_objs == [('foo.py', dict(DEFAULT_PROFILE='baz'))]
+        assert config.config_paths_unreadable[0][0] == 'boo.py'
+        assert isinstance(config.config_paths_unreadable[0][1], FileNotFoundError)
+
     def test_default_config_objects_no_profile(self):
         config = Config('', {})
         config.init_app(None, 'fakeapp', '', False)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Keg 0.6.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-11-04 16:56-0500\n"
+"POT-Creation-Date: 2021-01-26 10:25-0500\n"
 "PO-Revision-Date: 2018-08-16 18:25-0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -16,9 +16,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.9.0\n"
 
-#: keg/app.py:57
+#: keg/app.py:53
 msgid ""
 "Please set the \"import_name\" attribute on your app class or pass it "
 "into the app instance."
@@ -26,27 +26,15 @@ msgstr ""
 "Establezca el atributo \"import_name\" en su clase de aplicación o páselo"
 " a la instancia de la aplicación."
 
-#: keg/app.py:80
+#: keg/app.py:75
 msgid "init() already called on this instance"
 msgstr "init () ya llamado en esta instancia"
 
-#: keg/app.py:126
-msgid ""
-"Keyring substitution is enabled, but the keyring package is not "
-"installed.  Please install the keyring package (pip install keyring) or "
-"disable keyring support by setting `KEG_KEYRING_ENABLE = False` in your "
-"configuration profile."
-msgstr ""
-"La sustitución del llavero está habilitada, pero el paquete del llavero "
-"no está instalado. Instale el paquete de claves (pip install keyring) o "
-"deshabilite el soporte de claves configurando `KEG_KEYRING_ENABLE = "
-"False` en su perfil de configuración."
-
-#: keg/app.py:191
+#: keg/app.py:176
 msgid "administrators notified"
 msgstr "administradores notificados"
 
-#: keg/app.py:221
+#: keg/app.py:207
 msgid "Don't use testing_prep() on Keg.  Create a subclass first."
 msgstr "No use testing_prep() en Keg. Crea una subclase primero."
 
@@ -56,216 +44,99 @@ msgstr ""
 "No se pudieron encontrar activos relacionados para la plantilla: "
 "{template_name}"
 
-#: keg/cli.py:65
+#: keg/cli.py:63
 msgid "Developer info and utils."
 msgstr "Información y utilidades del desarrollador."
 
-#: keg/cli.py:74
+#: keg/cli.py:72
 msgid "List the routes defined for this app."
 msgstr "Enumera las rutas definidas para esta aplicación."
 
-#: keg/cli.py:98
+#: keg/cli.py:96
 msgid "Show paths searched for a template."
 msgstr "Mostrar rutas buscadas para una plantilla."
 
-#: keg/cli.py:114
+#: keg/cli.py:112
 msgid "List info related to config files, profiles, and values."
 msgstr ""
 "Lista de información relacionada con archivos de configuración, perfiles "
 "y valores."
 
-#: keg/cli.py:123
+#: keg/cli.py:121
 msgid "Default config objects:"
 msgstr "Objetos de configuración predeterminados:"
 
-#: keg/cli.py:127
+#: keg/cli.py:125
 msgid "Config file locations:"
 msgstr "Ubicaciones de archivos de configuración:"
 
-#: keg/cli.py:131
+#: keg/cli.py:130
+msgid "Could not access the following config paths:"
+msgstr "No se pudo acceder a las siguientes rutas de configuración:"
+
+#: keg/cli.py:134
 msgid "Config objects used:"
 msgstr "Objetos de configuración utilizados:"
 
-#: keg/cli.py:135
+#: keg/cli.py:138
 msgid "Resulting app config (including Flask defaults):"
 msgstr ""
 "Configuración de la aplicación resultante (incluidos los valores "
 "predeterminados del Flask)"
 
-#: keg/cli.py:153
+#: keg/cli.py:156
 msgid "Lists database related sub-commands."
 msgstr "Enumera subcomandos relacionados con la base de datos."
 
-#: keg/cli.py:160
+#: keg/cli.py:163
 msgid "Database not enabled for this app.  No subcommands available."
 msgstr ""
 "La base de datos no está habilitada para esta aplicación. No hay "
 "subcomandos disponibles."
 
-#: keg/cli.py:169
+#: keg/cli.py:172
 msgid "Create all db objects, send related events."
 msgstr "Crea todos los objetos db, envía eventos relacionados."
 
-#: keg/cli.py:171
+#: keg/cli.py:174
 msgid "Clear DB of all data and drop all objects before init."
 msgstr "Borrar DB de todos los datos y soltar todos los objetos antes de init."
 
-#: keg/cli.py:176
+#: keg/cli.py:179
 msgid "Database cleared and initialized"
 msgstr "Base de datos borrada e inicializada"
 
-#: keg/cli.py:179
+#: keg/cli.py:182
 msgid "Database initialized"
 msgstr "Base de datos inicializada"
 
-#: keg/cli.py:182
+#: keg/cli.py:185
 msgid "Clear DB of all data and drop all objects."
 msgstr "Borre la DB de todos los datos y suelte todos los objetos."
 
-#: keg/cli.py:186
+#: keg/cli.py:189
 msgid "Database cleared"
 msgstr "Base de datos limpia"
 
-#: keg/cli.py:207
-msgid ""
-"Keyring module not installed. Keyring functionality disabled.\n"
-"\n"
-"You can enable keyring functionality by installing the package: `pip "
-"install keyring`."
-msgstr ""
-"Módulo de llavero no instalado. Funcionalidad del llavero deshabilitada.\n"
-"\n"
-"Puede habilitar la funcionalidad del conjunto de claves instalando el "
-"paquete: `pip install keyring`."
-
-#: keg/cli.py:213
-msgid "Lists keyring related sub-commands."
-msgstr "Enumera los sub-comandos relacionados con el keyring."
-
-#: keg/cli.py:228
-msgid "Show keyring related status info."
-msgstr "Mostrar información de estado relacionada con el conjunto de claves."
-
-#: keg/cli.py:230
-msgid "Show unavailable backends with reasons."
-msgstr "Mostrar backends no disponibles con motivos."
-
-#: keg/cli.py:243
-msgid "Unavailable backends"
-msgstr "Backends no disponibles"
-
-#: keg/cli.py:248
-msgid "    {_class.__module__}:{_class.__name__} - {exception}"
-msgstr ""
-
-#: keg/cli.py:251
-msgid ""
-"\n"
-"Available backends (backends with priority < 1 are not recommended and "
-"may be insecure)"
-msgstr ""
-"\n"
-"Backends disponibles (backends con prioridad <1 no son recomendados y "
-"pueden ser inseguros)"
-
-#: keg/cli.py:254
-msgid "    {_class.__module__}:{_class.__name__} (priority: {priority})"
-msgstr "    {_class.__module__}:{_class.__name__} (prioridad: {priority})"
-
-#: keg/cli.py:257
-msgid ""
-"\n"
-"Default backend"
-msgstr "Backend predeterminado"
-
-#: keg/cli.py:259
-msgid "    {_class.__module__}:{_class.__name__}"
-msgstr ""
-
-#: keg/cli.py:261
-msgid "    file path: {file_path}"
-msgstr "    ruta de archivo: {file_path}"
-
-#: keg/cli.py:264
-msgid ""
-"\n"
-"Keyring functionality for this app has been DISABLED through the config "
-"setting KEG_KEYRING_ENABLE."
-msgstr ""
-"\n"
-"La funcionalidad de Keyring para esta aplicación ha sido DESHABILITADA "
-"mediante la configuración de configuración KEG_KEYRING_ENABLE."
-
-#: keg/cli.py:267
-msgid ""
-"\n"
-"WARNING: the current backend is insecure, keyring substitution "
-"unavailable."
-msgstr ""
-"\n"
-"ADVERTENCIA: el backend actual es inseguro, la sustitución de los keyring"
-" no está disponible."
-
-#: keg/cli.py:270
-msgid ""
-"\n"
-"TRY THIS: use the SecretStorage Setup utility to get a more secure "
-"keyring backend."
-msgstr ""
-"\n"
-"PRUEBE ESTO: use la utilidad de configuración SecretStorage para obtener "
-"un back-end de claves más seguro."
-
-#: keg/cli.py:275
-msgid "Show all keys used in config value substitution."
-msgstr ""
-"Mostrar todas las claves utilizadas en la sustitución del valor de "
-"configuración."
-
-#: keg/cli.py:283
-msgid "Delete an entry from the keyring."
-msgstr "Eliminar una entrada del llavero."
-
-#: keg/cli.py:351
+#: keg/cli.py:253
 msgid "Name of the configuration profile to use."
 msgstr "Nombre del perfil de configuración a usar."
 
-#: keg/cli.py:354
+#: keg/cli.py:256
 msgid "Set default logging level to logging.WARNING."
 msgstr "Establecer el nivel de registro predeterminado en logging.WARNING."
 
-#: keg/cli.py:357
+#: keg/cli.py:259
 msgid "Show all commands with subcommands."
 msgstr "Mostrar todos los comandos con subcomandos."
 
-#: keg/cli.py:386
+#: keg/cli.py:288
 msgid "Show help message."
 msgstr "Mostrar mensaje de ayuda."
 
-#: keg/cli.py:388
+#: keg/cli.py:290
 msgid "Show this message and exit."
 msgstr "Mostrar este mensaje y salir."
-
-#: keg/keyring.py:27
-msgid "No value for {key} found in key ring"
-msgstr "No se encontró ningún valor para {key} en el llavero"
-
-#: keg/keyring.py:49
-msgid ""
-"Insecure keyring backend detected, keyring substitution unavailable. Run "
-"this app's keyring command for more info."
-msgstr ""
-"Se detectó un backend de llavero inseguro, sustitución de llavero no "
-"disponible. Ejecute el comando de keyring de esta aplicación para obtener"
-" más información."
-
-#: keg/keyring.py:90
-msgid "Keyring Substitute: replacing {raw} for key {clean}"
-msgstr "Reemplazo del llavero: reemplazar {raw} por la llave {clean}"
-
-#: keg/keyring.py:136
-msgid "Missing secret for \"{key}\": "
-msgstr "Falta el secreto para \"{key}\":"
 
 #: keg/logging.py:113
 msgid "Using syslog address: {address}"
@@ -301,7 +172,7 @@ msgstr ""
 "{missing}, extra_keys = {extra_keys}, extra_pos = {extra_pos}. Argumentos"
 " disponibles: {calling_args}"
 
-#: keg/web.py:134
+#: keg/web.py:140
 msgid "Unimplemented method {name}"
 msgstr "Método sin implementar {nombre}"
 
@@ -309,11 +180,141 @@ msgstr "Método sin implementar {nombre}"
 msgid "Deliberate exception for testing purposes"
 msgstr "Excepción deliberada para fines de prueba"
 
-#: keg/oauth/__init__.py:48
-msgid "authentication failure: reason={reason} error={error}"
-msgstr "error de autenticación: reason={reason} error={error}"
+#~ msgid ""
+#~ "Keyring substitution is enabled, but the"
+#~ " keyring package is not installed.  "
+#~ "Please install the keyring package (pip"
+#~ " install keyring) or disable keyring "
+#~ "support by setting `KEG_KEYRING_ENABLE = "
+#~ "False` in your configuration profile."
+#~ msgstr ""
+#~ "La sustitución del llavero está "
+#~ "habilitada, pero el paquete del llavero"
+#~ " no está instalado. Instale el "
+#~ "paquete de claves (pip install keyring)"
+#~ " o deshabilite el soporte de claves"
+#~ " configurando `KEG_KEYRING_ENABLE = False` "
+#~ "en su perfil de configuración."
 
-#: keg/oauth/__init__.py:78
-msgid "Provider \"{provider}\" has not been registered."
-msgstr "El proveedor \"{proveedor}\" no se ha registrado."
+#~ msgid ""
+#~ "Keyring module not installed. Keyring functionality disabled.\n"
+#~ "\n"
+#~ "You can enable keyring functionality by"
+#~ " installing the package: `pip install "
+#~ "keyring`."
+#~ msgstr ""
+#~ "Módulo de llavero no instalado. "
+#~ "Funcionalidad del llavero deshabilitada.\n"
+#~ "\n"
+#~ "Puede habilitar la funcionalidad del "
+#~ "conjunto de claves instalando el "
+#~ "paquete: `pip install keyring`."
+
+#~ msgid "Lists keyring related sub-commands."
+#~ msgstr "Enumera los sub-comandos relacionados con el keyring."
+
+#~ msgid "Show keyring related status info."
+#~ msgstr "Mostrar información de estado relacionada con el conjunto de claves."
+
+#~ msgid "Show unavailable backends with reasons."
+#~ msgstr "Mostrar backends no disponibles con motivos."
+
+#~ msgid "Unavailable backends"
+#~ msgstr "Backends no disponibles"
+
+#~ msgid "    {_class.__module__}:{_class.__name__} - {exception}"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "\n"
+#~ "Available backends (backends with priority "
+#~ "< 1 are not recommended and may"
+#~ " be insecure)"
+#~ msgstr ""
+#~ "\n"
+#~ "Backends disponibles (backends con prioridad"
+#~ " <1 no son recomendados y pueden "
+#~ "ser inseguros)"
+
+#~ msgid "    {_class.__module__}:{_class.__name__} (priority: {priority})"
+#~ msgstr "    {_class.__module__}:{_class.__name__} (prioridad: {priority})"
+
+#~ msgid ""
+#~ "\n"
+#~ "Default backend"
+#~ msgstr "Backend predeterminado"
+
+#~ msgid "    {_class.__module__}:{_class.__name__}"
+#~ msgstr ""
+
+#~ msgid "    file path: {file_path}"
+#~ msgstr "    ruta de archivo: {file_path}"
+
+#~ msgid ""
+#~ "\n"
+#~ "Keyring functionality for this app has"
+#~ " been DISABLED through the config "
+#~ "setting KEG_KEYRING_ENABLE."
+#~ msgstr ""
+#~ "\n"
+#~ "La funcionalidad de Keyring para esta"
+#~ " aplicación ha sido DESHABILITADA mediante"
+#~ " la configuración de configuración "
+#~ "KEG_KEYRING_ENABLE."
+
+#~ msgid ""
+#~ "\n"
+#~ "WARNING: the current backend is "
+#~ "insecure, keyring substitution unavailable."
+#~ msgstr ""
+#~ "\n"
+#~ "ADVERTENCIA: el backend actual es "
+#~ "inseguro, la sustitución de los keyring"
+#~ " no está disponible."
+
+#~ msgid ""
+#~ "\n"
+#~ "TRY THIS: use the SecretStorage Setup"
+#~ " utility to get a more secure "
+#~ "keyring backend."
+#~ msgstr ""
+#~ "\n"
+#~ "PRUEBE ESTO: use la utilidad de "
+#~ "configuración SecretStorage para obtener un"
+#~ " back-end de claves más seguro."
+
+#~ msgid "Show all keys used in config value substitution."
+#~ msgstr ""
+#~ "Mostrar todas las claves utilizadas en"
+#~ " la sustitución del valor de "
+#~ "configuración."
+
+#~ msgid "Delete an entry from the keyring."
+#~ msgstr "Eliminar una entrada del llavero."
+
+#~ msgid "No value for {key} found in key ring"
+#~ msgstr "No se encontró ningún valor para {key} en el llavero"
+
+#~ msgid ""
+#~ "Insecure keyring backend detected, keyring "
+#~ "substitution unavailable. Run this app's "
+#~ "keyring command for more info."
+#~ msgstr ""
+#~ "Se detectó un backend de llavero "
+#~ "inseguro, sustitución de llavero no "
+#~ "disponible. Ejecute el comando de "
+#~ "keyring de esta aplicación para obtener"
+#~ " más información."
+
+#~ msgid "Keyring Substitute: replacing {raw} for key {clean}"
+#~ msgstr "Reemplazo del llavero: reemplazar {raw} por la llave {clean}"
+
+#~ msgid "Missing secret for \"{key}\": "
+#~ msgstr "Falta el secreto para \"{key}\":"
+
+#~ msgid "authentication failure: reason={reason} error={error}"
+#~ msgstr "error de autenticación: reason={reason} error={error}"
+
+#~ msgid "Provider \"{provider}\" has not been registered."
+#~ msgstr "El proveedor \"{proveedor}\" no se ha registrado."
 
