@@ -6,7 +6,7 @@ import pytest
 from keg_apps.cli import CLIApp
 from keg_apps.cli2.app import CLI2App
 from keg_apps.db.app import DBApp
-from keg.testing import CLIBase
+from keg.testing import CLIBase, app_config
 
 
 class TestCLI(CLIBase):
@@ -103,6 +103,11 @@ class TestConfigCommand(CLIBase):
         result = self.invoke(cmd_name='develop db')
         assert 'Database not enabled for this app.  No subcommands available.' in result.output
         assert 'Lists database related sub-commands.' not in result.output
+
+    def test_app_config(self):
+        with app_config(FOO_NAME='Bar'):
+            result = self.invoke()
+        assert 'Bar' in result.output
 
 
 class TestDatabaseCommands(CLIBase):

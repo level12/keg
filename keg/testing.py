@@ -1,12 +1,14 @@
 from __future__ import absolute_import
 
+import contextlib
+
 import click
 import click.testing
 import flask
 import six
 from flask_webtest import TestApp
 
-from keg import current_app
+from keg import current_app, signals
 from keg.utils import app_environ_get
 
 
@@ -55,6 +57,29 @@ class ContextManager(object):
         if appcls not in cls.apps:
             cls.apps[appcls] = cls(appcls)
         return cls.apps[appcls]
+
+
+@contextlib.contextmanager
+def app_config(**kwargs):
+    """
+        Set config values on any apps instantiated while the context manager is active.
+        This is intended to be used with cli tests where the `current_app` in the test will be
+        different from the `current_app` when the CLI command is invoked, making it very difficult
+        to dynamically set app config variables using mock.patch.dict like we normally would.
+        Example::
+
+        class TestCLI(CLIBase):
+            app_cls = MyApp
+            def test_it(self):
+                with testing.app_config(FOO_NAME='Bar'):
+                    result = self.invoke('echo-foo-name')
+                assert 'Bar' in result.output
+    """
+    @signals.config_complete.connect
+    def set_config(app):
+        app.config.update(kwargs)
+
+    yield
 
 
 def invoke_command(app_cls, *args, **kwargs):
