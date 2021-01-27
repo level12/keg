@@ -20,6 +20,7 @@ Contents
    app
    component
    utils
+   signals
    web
    readme/features
    readme/configuration

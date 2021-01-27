@@ -4,7 +4,14 @@ import flask_sqlalchemy as fsa
 import sqlalchemy as sa
 import sqlalchemy.event as sa_event
 
-from keg.signals import testing_run_start, db_init_pre, db_init_post, db_clear_pre, db_clear_post
+from keg.signals import (
+    db_before_import,
+    db_clear_post,
+    db_clear_pre,
+    db_init_post,
+    db_init_pre,
+    testing_run_start,
+)
 from keg.utils import visit_modules
 
 
@@ -81,6 +88,7 @@ class DatabaseManager(object):
 
     def init_app(self):
         db.init_app(self.app)
+        db_before_import.send(self.app)
         visit_modules(self.app.db_visit_modules, self.app.import_name)
 
     def init_events(self):

@@ -14,6 +14,13 @@ app_ready = _signals.signal('app-ready')
 config_ready = _signals.signal('config-ready')
 config_complete = _signals.signal('config-complete')
 
+# Call when db init_app complete, before any models are visited.
+# Note that when this called, app setup is not complete. db is
+# the first extension set up, so other extensions, app.visit_modules,
+# etc. will not be available.
+# Ideal for setting metadata properties.
+db_before_import = _signals.signal('db-before-import')
+
 testing_run_start = _signals.signal('testing-run-start')
 
 db_clear_pre = _signals.signal('db-clear-pre')
