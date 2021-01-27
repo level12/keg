@@ -154,7 +154,10 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
         method_obj = self.calc_responding_method()
         response = _call_with_expected_args(self, calling_args, method_obj)
 
-        if not response:
+        # The following condition is intended to guard against None or no return
+        # from the responding method. But, an empty string is a valid response that
+        # would fail the falsy test, so check that one specifically.
+        if not response and response != '':
             self.process_auto_assign()
             _call_with_expected_args(self, calling_args, 'pre_render')
             response = self.render()

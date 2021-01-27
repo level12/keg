@@ -22,6 +22,10 @@ class TestBaseViewFeatures(WebBase):
         lines = resp.body.splitlines()
         assert lines[0] == b'bar = '
 
+    def test_empty_string_response(self):
+        resp = self.testapp.get('/blank-view')
+        assert resp.body == b''
+
 
 class TestBlueprintUsage(WebBase):
     appcls = WebApp

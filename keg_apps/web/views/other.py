@@ -27,3 +27,9 @@ class AutoAssignWithResponse(BaseView):
     def get(self):
         self.bar = 'bar'
         return self.render()
+
+
+class BlankView(BaseView):
+
+    def get(self):
+        return ''
