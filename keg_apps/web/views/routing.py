@@ -45,6 +45,19 @@ class ExplicitRoute(BaseView):
         return _('get some-route')
 
 
+class ExplicitRouteAlt(KegBaseView):
+    """
+        /some-route-alt -> 'get some-route alt'
+
+        Same as ExplicitRoute, but blueprint is not assigned in class definition. For route
+        to be available, assign_blueprint must be called prior to blueprint registration.
+    """
+    rule('/some-route-alt')
+
+    def get(self):
+        return _('get some-route alt')
+
+
 class HelloWorld(BaseView):
     """
         /hello -> 'Hello World'

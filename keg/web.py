@@ -86,16 +86,13 @@ def _call_with_expected_args(view, calling_args, method, method_is_bound=True):
 class _ViewMeta(MethodViewType):
     def __init__(cls, name, bases, d):
         MethodViewType.__init__(cls, name, bases, d)
-        rules = []
-        if hasattr(cls, '_rules'):
-            rules = cls._rules
-            del cls._rules
 
         # Assuming child views will always have a blueprint OR they are intended to be used like
-        # abstract classes and will never be routed to directly.
+        # abstract classes and will never be routed to directly. Apps/libs will need to call
+        # assign_blueprint directly if a blueprint is not set in the view class definition, but
+        # the view is intended to receive routes.
         if cls.blueprint is not None:
-            cls.init_routes()
-            cls.init_blueprint(rules)
+            cls.assign_blueprint(cls.blueprint)
 
 
 class BaseView(with_metaclass(_ViewMeta, MethodView)):
@@ -285,6 +282,20 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
 
         for rule, options in cls.url_rules:
             cls.blueprint.add_url_rule(rule, **options)
+
+    @classmethod
+    def assign_blueprint(cls, blueprint):
+        if not blueprint:
+            raise Exception('blueprint {} could not be assigned'.format(blueprint))
+
+        cls.blueprint = blueprint
+        rules = []
+        if hasattr(cls, '_rules'):
+            rules = cls._rules
+            del cls._rules
+
+        cls.init_routes()
+        cls.init_blueprint(rules)
 
 
 class MethodRoute(object):
