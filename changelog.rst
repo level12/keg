@@ -1,6 +1,27 @@
 Changelog
 =========
 
+0.8.6 released 2021-01-27
+-------------------------
+
+- BaseView.assign_blueprint allows adding blueprint after class declaration (6f454fc_)
+- Allow returning an empty string as response (96f3e04_)
+- Provide a signal hook db_before_import prior to loading db entities (948ba82_)
+- Add a setting to enforce SQLite foreign key (a7450ba_)
+- Allow blueprint class to be specified for component (78ac281_)
+- Add testing.app_config context manager for injecting config during starting (4b97985_)
+- Resolve failures in config resolution, and provide better reporting in CLI (e9537df_)
+
+.. _6f454fc: https://github.com/level12/keg/commit/6f454fc
+.. _96f3e04: https://github.com/level12/keg/commit/96f3e04
+.. _948ba82: https://github.com/level12/keg/commit/948ba82
+.. _a7450ba: https://github.com/level12/keg/commit/a7450ba
+.. _78ac281: https://github.com/level12/keg/commit/78ac281
+.. _4b97985: https://github.com/level12/keg/commit/4b97985
+.. _e9537df: https://github.com/level12/keg/commit/e9537df
+.. _295f5df: https://github.com/level12/keg/commit/295f5df
+
+
 0.8.5 released 2020-11-25
 -------------------------
 
