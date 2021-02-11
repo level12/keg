@@ -12,9 +12,22 @@ from keg import current_app
 from keg.extensions import gettext as _
 
 
+try:
+    import dotenv
+except ImportError:
+    dotenv = None
+
+try:
+    from flask.helpers import get_load_dotenv
+except ImportError:
+    def get_load_dotenv(default=False):
+        return False
+
+
 class KegAppGroup(flask.cli.AppGroup):
-    def __init__(self, create_app, add_default_commands=True, *args, **kwargs):
+    def __init__(self, create_app, add_default_commands=True, load_dotenv=True, *args, **kwargs):
         self.create_app = create_app
+        self.load_dotenv = load_dotenv
 
         flask.cli.AppGroup.__init__(self, *args, **kwargs)
         if add_default_commands:
@@ -51,6 +64,9 @@ class KegAppGroup(flask.cli.AppGroup):
         return click.Group.get_command(self, ctx, name)
 
     def main(self, *args, **kwargs):
+        if get_load_dotenv(self.load_dotenv):
+            flask.cli.load_dotenv()
+
         obj = kwargs.get('obj')
         if obj is None:
             obj = flask.cli.ScriptInfo(create_app=self.create_app)

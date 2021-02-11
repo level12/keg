@@ -1,12 +1,20 @@
 from __future__ import absolute_import
 
+import os
+
 import mock
 import pytest
 
+from keg.cli import dotenv, get_load_dotenv
+from keg.testing import CLIBase, app_config
 from keg_apps.cli import CLIApp
 from keg_apps.cli2.app import CLI2App
 from keg_apps.db.app import DBApp
-from keg.testing import CLIBase, app_config
+
+
+need_dotenv = pytest.mark.skipif(
+    not get_load_dotenv() or dotenv is None, reason='dotenv not supported'
+)
 
 
 class TestCLI(CLIBase):
@@ -28,6 +36,38 @@ class TestCLI(CLIBase):
     def test_missing_command(self):
         result = self.invoke(cmd_name='baz', exit_code=2)
         assert 'No such command \'baz\'' in result.output
+
+    @need_dotenv
+    def test_dotenv(self):
+        test_dir = os.path.dirname(__file__)
+
+        # Place dotenv file in search path of python-dotenv
+        flaskenv = os.path.abspath(os.path.join(test_dir, '..', '..', '.flaskenv'))
+        try:
+            with open(flaskenv, 'w') as f:
+                f.write('FOO=bar')
+            assert 'FOO' not in os.environ
+            self.invoke()
+            assert os.environ['FOO'] == 'bar'
+        finally:
+            os.remove(flaskenv)
+            del os.environ['FOO']
+
+    @need_dotenv
+    @mock.patch.dict(os.environ, {'FLASK_SKIP_DOTENV': '1'})
+    def test_disable_dotenv_from_env(self):
+        test_dir = os.path.dirname(__file__)
+
+        # Place dotenv file in search path of python-dotenv
+        flaskenv = os.path.abspath(os.path.join(test_dir, '..', '..', '.flaskenv'))
+        try:
+            with open(flaskenv, 'w') as f:
+                f.write('FOO=bar')
+            assert 'FOO' not in os.environ
+            self.invoke()
+            assert 'FOO' not in os.environ
+        finally:
+            os.remove(flaskenv)
 
     @pytest.mark.skipif(True, reason='reminder')
     def test_default_exception_handling(self):
