@@ -54,19 +54,18 @@ class PostgreSQLOps(DialectOperations):
     dialect_name = 'postgresql'
     option_defaults = {'schemas': ('public',)}
 
-    def create_all(self):
+    def create_schemas(self):
         sql = []
         connection_user = self.engine.url.username
         for schema in self.opt_schemas:
-            sql.extend(
-                [
-                    'CREATE SCHEMA IF NOT EXISTS "{}" AUTHORIZATION "{}";'.format(
-                        schema, connection_user
-                    ),
-                    'GRANT ALL ON SCHEMA "{}" TO "{}";'.format(schema, connection_user),
-                ]
-            )
+            sql.extend([
+                f'CREATE SCHEMA IF NOT EXISTS "{schema}" AUTHORIZATION "{connection_user}";',
+                f'GRANT ALL ON SCHEMA "{schema}" TO "{connection_user}";',
+            ])
         self.execute_sql(sql)
+
+    def create_all(self):
+        self.create_schemas()
         super().create_all()
 
     def drop_all(self):
@@ -78,14 +77,7 @@ class PostgreSQLOps(DialectOperations):
         self.execute_sql(sql)
 
     def prep_empty(self):
-        sql = []
-        connection_user = self.engine.url.username
-        for schema in self.opt_schemas:
-            sql.extend([
-                'CREATE SCHEMA "{}" AUTHORIZATION "{}";'.format(schema, connection_user),
-                'GRANT ALL ON SCHEMA "{}" TO "{}";'.format(schema, connection_user),
-            ])
-        self.execute_sql(sql)
+        self.create_schemas()
 
 
 DialectOperations.dialect_map['postgresql'] = PostgreSQLOps

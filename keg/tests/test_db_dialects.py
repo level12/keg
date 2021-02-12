@@ -82,6 +82,27 @@ class TestPostgreSQL(DialectExam):
         self.engine().execute('create view fooschema.vbar as select * from fooschema.bar')
         return 4
 
+    def test_create_all_without_prepping(self):
+        """Test that create_all creates necessary schemas"""
+        self.dialect().drop_all()
+        self.dialect().create_all()
+        assert len(self.obj_names()) == self.entity_count
+
+    def test_create_all_existing_schemas(self):
+        """Test that create_all can be called when schemas already exist"""
+        self.dialect().drop_all()
+        self.dialect().create_all()
+        self.dialect().create_all()
+        assert len(self.obj_names()) == self.entity_count
+
+    def test_prep_all_existing_schemas(self):
+        """Test that prep_all can be called when schemas already exist"""
+        self.dialect().drop_all()
+        self.dialect().prep_empty()
+        self.dialect().create_all()
+        self.dialect().prep_empty()
+        assert len(self.obj_names()) == self.entity_count
+
 
 class TestMicrosoftSQL(DialectExam):
     bind_name = 'mssql'
