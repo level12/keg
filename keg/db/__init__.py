@@ -109,6 +109,10 @@ class DatabaseManager(object):
     def on_testing_start(self, app):
         self.db_init_with_clear()
 
+    def create_all(self):
+        for dialect in self.all_bind_dialects():
+            dialect.create_all()
+
     def drop_all(self):
         db.session.remove()
         for dialect in self.all_bind_dialects():
@@ -125,7 +129,7 @@ class DatabaseManager(object):
 
     def db_init(self):
         db_init_pre.send(self.app)
-        db.create_all()
+        self.create_all()
         db_init_post.send(self.app)
 
     def db_clear(self):
