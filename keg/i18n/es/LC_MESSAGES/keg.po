@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Keg 0.6.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-01-26 10:25-0500\n"
+"POT-Creation-Date: 2021-02-15 17:12-0500\n"
 "PO-Revision-Date: 2018-08-16 18:25-0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -44,97 +44,101 @@ msgstr ""
 "No se pudieron encontrar activos relacionados para la plantilla: "
 "{template_name}"
 
-#: keg/cli.py:63
+#: keg/cli.py:64
 msgid "Developer info and utils."
 msgstr "Información y utilidades del desarrollador."
 
-#: keg/cli.py:72
+#: keg/cli.py:73
 msgid "List the routes defined for this app."
 msgstr "Enumera las rutas definidas para esta aplicación."
 
-#: keg/cli.py:96
+#: keg/cli.py:97
 msgid "Show paths searched for a template."
 msgstr "Mostrar rutas buscadas para una plantilla."
 
-#: keg/cli.py:112
+#: keg/cli.py:113
 msgid "List info related to config files, profiles, and values."
 msgstr ""
 "Lista de información relacionada con archivos de configuración, perfiles "
 "y valores."
 
-#: keg/cli.py:121
+#: keg/cli.py:122
 msgid "Default config objects:"
 msgstr "Objetos de configuración predeterminados:"
 
-#: keg/cli.py:125
+#: keg/cli.py:126
 msgid "Config file locations:"
 msgstr "Ubicaciones de archivos de configuración:"
 
-#: keg/cli.py:130
+#: keg/cli.py:131
 msgid "Could not access the following config paths:"
 msgstr "No se pudo acceder a las siguientes rutas de configuración:"
 
-#: keg/cli.py:134
+#: keg/cli.py:135
 msgid "Config objects used:"
 msgstr "Objetos de configuración utilizados:"
 
-#: keg/cli.py:138
+#: keg/cli.py:139
 msgid "Resulting app config (including Flask defaults):"
 msgstr ""
 "Configuración de la aplicación resultante (incluidos los valores "
 "predeterminados del Flask)"
 
-#: keg/cli.py:156
+#: keg/cli.py:157
 msgid "Lists database related sub-commands."
 msgstr "Enumera subcomandos relacionados con la base de datos."
 
-#: keg/cli.py:163
+#: keg/cli.py:164
 msgid "Database not enabled for this app.  No subcommands available."
 msgstr ""
 "La base de datos no está habilitada para esta aplicación. No hay "
 "subcomandos disponibles."
 
-#: keg/cli.py:172
+#: keg/cli.py:173
 msgid "Create all db objects, send related events."
 msgstr "Crea todos los objetos db, envía eventos relacionados."
 
-#: keg/cli.py:174
+#: keg/cli.py:175
 msgid "Clear DB of all data and drop all objects before init."
 msgstr "Borrar DB de todos los datos y soltar todos los objetos antes de init."
 
-#: keg/cli.py:179
+#: keg/cli.py:180
 msgid "Database cleared and initialized"
 msgstr "Base de datos borrada e inicializada"
 
-#: keg/cli.py:182
+#: keg/cli.py:183
 msgid "Database initialized"
 msgstr "Base de datos inicializada"
 
-#: keg/cli.py:185
+#: keg/cli.py:186
 msgid "Clear DB of all data and drop all objects."
 msgstr "Borre la DB de todos los datos y suelte todos los objetos."
 
-#: keg/cli.py:189
+#: keg/cli.py:190
 msgid "Database cleared"
 msgstr "Base de datos limpia"
 
-#: keg/cli.py:253
+#: keg/cli.py:255
 msgid "Name of the configuration profile to use."
 msgstr "Nombre del perfil de configuración a usar."
 
-#: keg/cli.py:256
-msgid "Set default logging level to logging.WARNING."
-msgstr "Establecer el nivel de registro predeterminado en logging.WARNING."
+#: keg/cli.py:258
+msgid "Increase logging level for reduced logging"
+msgstr "Aumentar el nivel de tala para reducir la tala"
 
-#: keg/cli.py:259
+#: keg/cli.py:261
+msgid "Decrease logging level for increased logging"
+msgstr "Disminuir el nivel de registro para aumentar el registro."
+
+#: keg/cli.py:264
 msgid "Show all commands with subcommands."
 msgstr "Mostrar todos los comandos con subcomandos."
 
-#: keg/cli.py:288
+#: keg/cli.py:293
 msgid "Show help message."
 msgstr "Mostrar mensaje de ayuda."
 
-#: keg/cli.py:290
+#: keg/cli.py:295
 msgid "Show this message and exit."
 msgstr "Mostrar este mensaje y salir."
 
@@ -172,7 +176,7 @@ msgstr ""
 "{missing}, extra_keys = {extra_keys}, extra_pos = {extra_pos}. Argumentos"
 " disponibles: {calling_args}"
 
-#: keg/web.py:140
+#: keg/web.py:137
 msgid "Unimplemented method {name}"
 msgstr "Método sin implementar {nombre}"
 
@@ -317,4 +321,7 @@ msgstr "Excepción deliberada para fines de prueba"
 
 #~ msgid "Provider \"{provider}\" has not been registered."
 #~ msgstr "El proveedor \"{proveedor}\" no se ha registrado."
+
+#~ msgid "Set default logging level to logging.WARNING."
+#~ msgstr "Establecer el nivel de registro predeterminado en logging.WARNING."
 
