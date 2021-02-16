@@ -7,6 +7,8 @@ import click.testing
 import flask
 import six
 from flask_webtest import TestApp
+from werkzeug.datastructures import MultiDict
+import wrapt
 
 from keg import current_app, signals
 from keg.utils import app_environ_get
@@ -80,6 +82,20 @@ def app_config(**kwargs):
         app.config.update(kwargs)
 
     yield
+
+
+def inrequest(*req_args, **req_kwargs):
+    """
+        A decorator to add the flask request context to a test function
+    """
+    @wrapt.decorator
+    def wrapper(wrapped, instance, args, kwargs):
+        with flask.current_app.test_request_context(*req_args, **req_kwargs):
+            # replaces request.args wth MultiDict so it is mutable
+            flask.request.args = MultiDict(flask.request.args)
+            return wrapped(*args, **kwargs)
+
+    return wrapper
 
 
 def invoke_command(app_cls, *args, **kwargs):
