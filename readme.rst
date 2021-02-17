@@ -302,12 +302,14 @@ Preview Readme
 
 When updating the readme, use `restview --long-description` to preview changes.
 
+Links
+=====
 
-Issues & Discussion
-====================
-
-Please direct questions, comments, bugs, feature requests, etc. to:
-https://github.com/level12/keg/issues
+* Documentation: https://keg.readthedocs.io/en/stable/index.html
+* Releases: https://pypi.org/project/Keg/
+* Code: https://github.com/level12/keg
+* Issue tracker: https://github.com/level12/keg/issues
+* Questions & comments: http://groups.google.com/group/blazelibs
 
 Current Status
 ==============
