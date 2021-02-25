@@ -31,7 +31,11 @@ class DialectOperations(object):
             self.engine.execute(sql)
 
     def create_all(self):
+        self.create_schemas()
         db.create_all(bind=self.bind_name)
+
+    def create_schemas(self):
+        pass
 
     @classmethod
     def create_for(cls, engine, bind_name, options):
@@ -42,9 +46,6 @@ class DialectOperations(object):
         else:
             raise Exception('DialectOperations does not yet support the "{}" database.'
                             .format(dialect_name))
-
-    def prep_empty(self):
-        pass
 
     def on_connect(self, dbapi_connection, connection_record):
         pass
@@ -75,9 +76,6 @@ class PostgreSQLOps(DialectOperations):
                 'DROP SCHEMA IF EXISTS "{}" CASCADE;'.format(schema),
             ])
         self.execute_sql(sql)
-
-    def prep_empty(self):
-        self.create_schemas()
 
 
 DialectOperations.dialect_map['postgresql'] = PostgreSQLOps
@@ -150,12 +148,19 @@ class MicrosoftSQLOps(DialectOperations):
         # all drops should be in order, execute them all
         self.execute_sql(delete_sql)
 
-    def prep_empty(self):
+    def create_schemas(self):
         sql = []
         for schema in self.opt_schemas:
-            sql.extend([
-                'CREATE SCHEMA {}'.format(schema),
-            ])
+            # MSSQL has to run CREATE SCHEMA as its own batch
+            # So, we can't use an IF NOT EXISTS at the same time. Test first, then create.
+            existing = self.engine.execute(
+                "SELECT COUNT(*) FROM sys.schemas WHERE name = N'{}'".format(schema)
+            ).scalar()
+
+            if not existing:
+                sql.extend([
+                    'CREATE SCHEMA {}'.format(schema),
+                ])
         self.execute_sql(sql)
 
 

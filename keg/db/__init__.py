@@ -118,10 +118,6 @@ class DatabaseManager(object):
         for dialect in self.all_bind_dialects():
             dialect.drop_all()
 
-    def prep_empty(self):
-        for dialect in self.all_bind_dialects():
-            dialect.prep_empty()
-
     # The methods that follow will trigger application events.
     def db_init_with_clear(self):
         self.db_clear()
@@ -135,6 +131,4 @@ class DatabaseManager(object):
     def db_clear(self):
         db_clear_pre.send(self.app)
         self.drop_all()
-        # todo: prep_empty() should probably be an event
-        self.prep_empty()
         db_clear_post.send(self.app)
