@@ -53,6 +53,7 @@ setup(
             "sqlalchemy_pyodbc_mssql; sys_platform == 'win32'",
             'pytest',
             'pytest-cov',
+            'python-dotenv',
             'psycopg2-binary',
             'mock',
         ],
