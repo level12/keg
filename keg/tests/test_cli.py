@@ -93,28 +93,45 @@ class TestCLI2(CLIBase):
     def test_no_commands_help_message(self):
         result = self.invoke()
         assert 'Usage: ' in result.output
-        assert '--quiet         Set default logging level to logging.WARNING' in result.output
+        assert '-q, --quiet     Increase logging level for reduced logging' in result.output
+        assert '-v, --verbose   Decrease logging level for increased logging' in result.output
         assert '--profile TEXT  Name of the configuration profile to use.' in result.output
         assert '--help-all      Show all commands with subcommands.' in result.output
-        assert 'develop       Developer info and utils.' in result.output
+        assert 'develop         Developer info and utils.' in result.output
         assert 'hello1' in result.output
 
-    def test_quiet(self):
+    @pytest.mark.parametrize('args,enabled', (
+        ([], {'warning', 'error', 'critical'}),
+        (['--quiet'], {'error', 'critical'}),
+        (['--quiet', '--quiet'], {'critical'}),
+        (['--quiet', '--quiet', '--quiet'], set()),
+        (['--quiet', '--quiet', '--quiet', '--quiet'], set()),
+        (['--verbose'], {'info', 'warning', 'error', 'critical'}),
+        (['--verbose', '--verbose'], {'debug', 'info', 'warning', 'error', 'critical'}),
+        (
+            ["--verbose", "--verbose", "--verbose"],
+            {"debug", "info", "warning", "error", "critical"},
+        ),
+        # Flags cancel each other out
+        (['--quiet', '--verbose'], {'warning', 'error', 'critical'}),
+    ))
+    def test_loglevel(self, args, enabled):
         # the asserts for these tests are in keg_apps.cli2.cli
-        result = self.invoke('--quiet', 'is-quiet')
+        levels = {'debug', 'info', 'warning', 'error', 'critical'}
+        disabled = levels - enabled
+        result = self.invoke(*args, 'test-log-level')
         assert 'printed foo' in result.output
-        assert 'logged foo' not in result.output
-
-        result = self.invoke('is-not-quiet')
-        assert 'printed foo' in result.output
-        assert 'logged foo' in result.output
+        for level in disabled:
+            assert f'{level} logged foo' not in result.output
+        for level in enabled:
+            assert f'{level} logged foo' in result.output
 
     def test_help_all(self):
         expected_lines = [
-            'Usage', '', 'Options', '--profile', '--quiet', '--help-all', '--help',
-            'Commands', 'develop', 'Commands', 'config', 'db', 'Commands', 'clear',
-            'init', 'routes',
-            'run', 'shell', 'templates', 'hello1', 'is-not-quiet', 'is-quiet', 'reverse',
+            'Usage', '', 'Options', '--profile', '-q, --quiet', '-v, --verbose',
+            '--help-all', '--help', 'Commands', 'develop', 'Commands', 'config',
+            'db', 'Commands', 'clear', 'init', 'routes',
+            'run', 'shell', 'templates', 'hello1', 'reverse', 'test-log-level',
             ''
         ]
         result = self.invoke('--help-all')
