@@ -4,7 +4,7 @@ Signals
 As Keg is based on Flask architecture, signals are used to set up and execute callback
 methods upon certain events.
 
-Attaching a callback to a signal involves the connect decorator:
+Attaching a callback to a signal involves the connect decorator::
 
     from keg.signals import init_complete
 
@@ -29,17 +29,17 @@ Keg Events
 
   - App config has been loaded
   - Config is the first property of the app to be initialized. `app.config` will be available,
-  but do not count on anything else.
+    but do not count on anything else.
 
 * `db_before_import`
 
   - Database options have been configured, and the app is about to visit modules containing
-  entities
+    entities
   - Config, logging, and error handling have been loaded, but no other extensions
   - Some SQLAlchemy metadata attributes, such as naming convention, need to be set prior to
-  entities loading. Attaching a method on this signal is an ideal way to set these properties.
+    entities loading. Attaching a method on this signal is an ideal way to set these properties.
   - If customization of the db object, metadata, engine options, etc. is needed, ensure that
-  no modules containing entities are imported before the connected callback runs.
+    no modules containing entities are imported before the connected callback runs.
 
 * `testing_run_start`
 
@@ -50,4 +50,4 @@ Keg Events
 * `db_clear_pre`, `db_clear_post`, `db_init_pre`, `db_init_post`
 
   - Called during the database initialization process, which occurs in test setup and from CLI
-  commands
+    commands

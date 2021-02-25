@@ -21,6 +21,7 @@ Contents
    component
    utils
    signals
+   testing
    web
    readme/features
    readme/configuration
