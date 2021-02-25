@@ -1,6 +1,8 @@
 # If a branch has a PR, don't build it separately.  Avoids queueing two appveyor runs for the same
 # commit.
 skip_branch_with_pr: true
+image:
+  - Visual Studio 2015
 environment:
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
