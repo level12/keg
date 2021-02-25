@@ -159,7 +159,9 @@ class BaseView(with_metaclass(_ViewMeta, MethodView)):
             _call_with_expected_args(self, calling_args, 'pre_render')
             response = self.render()
         calling_args['_response'] = response
-        _call_with_expected_args(self, calling_args, 'pre_response')
+        pre_response = _call_with_expected_args(self, calling_args, 'pre_response')
+        if pre_response is not None:
+            return pre_response
         return response
 
     def process_calling_args(self, urlargs):

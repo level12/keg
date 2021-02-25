@@ -33,3 +33,17 @@ class BlankView(BaseView):
 
     def get(self):
         return ''
+
+
+class ResponseMiddleware(BaseView):
+    url = '/response-middleware/<string:name>'
+
+    def pre_response(self, _response):
+        if _response == 'bar':
+            return None
+        if _response == 'baz':
+            return ''
+        return _response + '_test'
+
+    def get(self, name):
+        return name

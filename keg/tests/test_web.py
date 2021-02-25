@@ -26,6 +26,20 @@ class TestBaseViewFeatures(WebBase):
         resp = self.testapp.get('/blank-view')
         assert resp.body == b''
 
+    def test_pre_response_middleware(self):
+        # Test that response is available to pre_response
+        resp = self.testapp.get('/response-middleware/foo')
+        assert resp.body == b'foo_test'
+
+        # Test that original response returned when pre_response does not
+        # return
+        resp = self.testapp.get('/response-middleware/bar')
+        assert resp.body == b'bar'
+
+        # Test empty response allowed from pre_response
+        resp = self.testapp.get('/response-middleware/baz')
+        assert resp.body == b''
+
 
 class TestBlueprintUsage(WebBase):
     appcls = WebApp
