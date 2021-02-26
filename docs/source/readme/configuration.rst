@@ -1,6 +1,24 @@
 App Configuration
 =================
 
+Configuration Variables
+-----------------------
+
+- ``KEG_LOG_AUTO_CLEAR_HANDLERS``: Remove existing handlers before creating new ones. Default True.
+- ``KEG_LOG_JSON_FORMAT_STR``: Format string to use for JSON log output (option for syslog)
+- ``KEG_LOG_JSON_FORMATTER_KWARGS``: Args to provide to JSON formatter
+- ``KEG_LOG_LEVEL``: Default log level, defaults to INFO and can be modified with CLI options
+- ``KEG_LOG_MANAGED_LOGGERS``: Keg creates loggers for these paths. Defaults to no paths
+- ``KEG_LOG_STDOUT_FORMAT_STR``: Format string to use for stdout log output
+- ``KEG_LOG_STREAM_ENABLED``: Directs Keg to set up a StreamHandler. Default True.
+- ``KEG_LOG_SYSLOG_ENABLED``: Directs Keg to set up a SysLogHandler. Default True.
+- ``KEG_LOG_SYSLOG_FORMAT_STR``: Format string to use for syslog log output
+- ``KEG_LOG_SYSLOG_IDENT``: Log ident for syslog. Defaults to "<app_import_name>.app"
+- ``KEG_LOG_SYSLOG_JSON``: Directs Keg to output to syslog with JSON. Default False.
+- ``KEG_LOG_SYSLOG_JSON_PREFIX``: Prefix to set in JSON output. Default "@cee:"
+- ``KEG_REGISTERED_COMPONENTS``: List of paths to import as component extensions
+- ``KEG_SQLITE_ENABLE_FOREIGN_KEYS``: Configure SQLite to enforce foreign keys by default
+
 CLI Command
 -----------
 
