@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import warnings
 
 import flask_sqlalchemy as fsa
 import sqlalchemy as sa
@@ -131,4 +132,8 @@ class DatabaseManager(object):
     def db_clear(self):
         db_clear_pre.send(self.app)
         self.drop_all()
+        if hasattr(self, 'prep_empty') and callable(self.prep_empty):
+            warnings.warn('prep_empty is deprecated and will not be called in future versions',
+                          DeprecationWarning, 2)
+            self.prep_empty()
         db_clear_post.send(self.app)
