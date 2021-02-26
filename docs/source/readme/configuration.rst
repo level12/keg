@@ -4,6 +4,9 @@ App Configuration
 Configuration Variables
 -----------------------
 
+- ``KEG_DB_DIALECT_OPTIONS``: Dict of options to provide to the db manager. E.g. "postgresql.schemas".
+- ``KEG_DIR_MODE``: Mode used by ``ensure_dirs``. Default 0o777.
+- ``KEG_ENDPOINTS``: Keys/endpoints usable via ``keg.web.redirect``.
 - ``KEG_LOG_AUTO_CLEAR_HANDLERS``: Remove existing handlers before creating new ones. Default True.
 - ``KEG_LOG_JSON_FORMAT_STR``: Format string to use for JSON log output (option for syslog)
 - ``KEG_LOG_JSON_FORMATTER_KWARGS``: Args to provide to JSON formatter
