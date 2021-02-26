@@ -178,10 +178,7 @@ class DefaultProfile(object):
         after_logout='public.home',
     )
 
-    KEG_SMTP_HOST = 'localhost'
-
     KEG_DB_DIALECT_OPTIONS = {}
-    KEG_DB_ENGINE_OPTIONS = {}
 
 
 class DevProfile(object):

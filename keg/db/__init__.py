@@ -22,11 +22,9 @@ class KegSQLAlchemy(fsa.SQLAlchemy):
         """Override some driver specific settings"""
         super(KegSQLAlchemy, self).apply_driver_hacks(app, info, options)
 
-        engine_opts = app.config.get('KEG_DB_ENGINE_OPTIONS', {})
-
         # Turn on SA pessimistic disconnect handling by default:
         # http://docs.sqlalchemy.org/en/latest/core/pooling.html#disconnect-handling-pessimistic
-        engine_opts.setdefault('pool_pre_ping', True)
+        options.setdefault('pool_pre_ping', True)
 
         # While this isn't an engine options change, it is in the domain of db engine
         # setup and so belongs here.
@@ -34,6 +32,11 @@ class KegSQLAlchemy(fsa.SQLAlchemy):
             sa_event.listens_for(sa.engine.Engine, 'connect')(self._set_sqlite_pragma)
 
         # Update the options with the engine options we received from the application
+        engine_opts = app.config.get('KEG_DB_ENGINE_OPTIONS', {})
+        if engine_opts:
+            warnings.warn('KEG_DB_ENGINE_OPTIONS is deprecated and will not be used in future '
+                          'versions. Use SQLALCHEMY_ENGINE_OPTIONS instead.',
+                          DeprecationWarning, 2)
         options.update(engine_opts)
 
     def get_engines(self, app):

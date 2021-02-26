@@ -125,6 +125,7 @@ class TestDatabaseManager(object):
                 'prep_empty is deprecated and will not be called in future versions',
                 DeprecationWarning, 2)
 
+            m_warn.reset_mock()
             current_app.db_manager.prep_empty = None
             current_app.db_manager.db_init_with_clear()
             assert not m_warn.call_count
@@ -138,3 +139,23 @@ class TestKegSQLAlchemy(object):
         assert 'hello db cli' in result.output
 
         assert id(db.session) == sess_id
+
+    def test_options_deprecation(self):
+        config_mock = mock.patch.dict(current_app.config, {'KEG_DB_ENGINE_OPTIONS': {'foo': 'bar'}})
+        with config_mock:
+            options = {}
+            db.apply_driver_hacks(current_app, mock.Mock(), options)
+            assert options['foo'] == 'bar'
+
+        with mock.patch('keg.db.warnings.warn', autospec=True, spec_set=True) as m_warn:
+            with config_mock:
+                db.apply_driver_hacks(current_app, mock.Mock(), {})
+
+            m_warn.assert_called_once_with(
+                'KEG_DB_ENGINE_OPTIONS is deprecated and will not be used in future '
+                'versions. Use SQLALCHEMY_ENGINE_OPTIONS instead.',
+                DeprecationWarning, 2)
+
+            m_warn.reset_mock()
+            db.apply_driver_hacks(current_app, mock.Mock(), {})
+            assert not m_warn.call_count
