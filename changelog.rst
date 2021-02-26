@@ -1,6 +1,28 @@
 Changelog
 =========
 
+0.8.7 released 2021-02-26
+-------------------------
+
+- Deprecate KEG_DB_ENGINE_OPTIONS config in favor of Flask-SQLAlchemy's SQLALCHEMY_ENGINE_OPTIONS (6e1038d_)
+- Remove make_shell_context from app, as the Flask app has that method now since 0.11 (75e4541_)
+- Update db init to create needed schemas from dialect options. Deprecates prep_empty (8def18a_)
+- Allow quiet and verbose CLI options to influence log level (ac5fad6_)
+- Add inrequest decorator and context manager for testing views without full stack (041a0cf_)
+- Link documentation in readme (e12044b_)
+- Allow replacing class view response via pre_response lifecycle method (741c60e_)
+- Support python-dotenv use (1100b39_)
+
+.. _6e1038d: https://github.com/level12/keg/commit/6e1038d
+.. _75e4541: https://github.com/level12/keg/commit/75e4541
+.. _8def18a: https://github.com/level12/keg/commit/8def18a
+.. _ac5fad6: https://github.com/level12/keg/commit/ac5fad6
+.. _041a0cf: https://github.com/level12/keg/commit/041a0cf
+.. _e12044b: https://github.com/level12/keg/commit/e12044b
+.. _741c60e: https://github.com/level12/keg/commit/741c60e
+.. _1100b39: https://github.com/level12/keg/commit/1100b39
+
+
 0.8.6 released 2021-01-27
 -------------------------
 
