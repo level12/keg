@@ -124,7 +124,7 @@ class TestDatabaseManager(object):
             m_warn.assert_called_once_with(
                 'prep_empty is deprecated and will not be called in future versions',
                 DeprecationWarning, 2)
-            
+
             current_app.db_manager.prep_empty = None
             current_app.db_manager.db_init_with_clear()
             assert not m_warn.call_count
