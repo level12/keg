@@ -219,9 +219,6 @@ class Keg(flask.Flask):
 
         return cm.app
 
-    def make_shell_context(self):
-        return {}
-
     @property
     def logger(self):
         """Standard logger for the app."""
