@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import warnings
 
 import flask_sqlalchemy as fsa
 import sqlalchemy as sa
@@ -109,14 +110,14 @@ class DatabaseManager(object):
     def on_testing_start(self, app):
         self.db_init_with_clear()
 
+    def create_all(self):
+        for dialect in self.all_bind_dialects():
+            dialect.create_all()
+
     def drop_all(self):
         db.session.remove()
         for dialect in self.all_bind_dialects():
             dialect.drop_all()
-
-    def prep_empty(self):
-        for dialect in self.all_bind_dialects():
-            dialect.prep_empty()
 
     # The methods that follow will trigger application events.
     def db_init_with_clear(self):
@@ -125,12 +126,14 @@ class DatabaseManager(object):
 
     def db_init(self):
         db_init_pre.send(self.app)
-        db.create_all()
+        self.create_all()
         db_init_post.send(self.app)
 
     def db_clear(self):
         db_clear_pre.send(self.app)
         self.drop_all()
-        # todo: prep_empty() should probably be an event
-        self.prep_empty()
+        if hasattr(self, 'prep_empty') and callable(self.prep_empty):
+            warnings.warn('prep_empty is deprecated and will not be called in future versions',
+                          DeprecationWarning, 2)
+            self.prep_empty()
         db_clear_post.send(self.app)

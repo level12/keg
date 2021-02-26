@@ -31,7 +31,11 @@ class DialectOperations(object):
             self.engine.execute(sql)
 
     def create_all(self):
+        self.create_schemas()
         db.create_all(bind=self.bind_name)
+
+    def create_schemas(self):
+        pass
 
     @classmethod
     def create_for(cls, engine, bind_name, options):
@@ -43,9 +47,6 @@ class DialectOperations(object):
             raise Exception('DialectOperations does not yet support the "{}" database.'
                             .format(dialect_name))
 
-    def prep_empty(self):
-        pass
-
     def on_connect(self, dbapi_connection, connection_record):
         pass
 
@@ -54,21 +55,25 @@ class PostgreSQLOps(DialectOperations):
     dialect_name = 'postgresql'
     option_defaults = {'schemas': ('public',)}
 
+    def create_schemas(self):
+        sql = []
+        connection_user = self.engine.url.username
+        for schema in self.opt_schemas:
+            sql.extend([
+                f'CREATE SCHEMA IF NOT EXISTS "{schema}" AUTHORIZATION "{connection_user}";',
+                f'GRANT ALL ON SCHEMA "{schema}" TO "{connection_user}";',
+            ])
+        self.execute_sql(sql)
+
+    def create_all(self):
+        self.create_schemas()
+        super().create_all()
+
     def drop_all(self):
         sql = []
         for schema in self.opt_schemas:
             sql.extend([
                 'DROP SCHEMA IF EXISTS "{}" CASCADE;'.format(schema),
-            ])
-        self.execute_sql(sql)
-
-    def prep_empty(self):
-        sql = []
-        connection_user = self.engine.url.username
-        for schema in self.opt_schemas:
-            sql.extend([
-                'CREATE SCHEMA "{}" AUTHORIZATION "{}";'.format(schema, connection_user),
-                'GRANT ALL ON SCHEMA "{}" TO "{}";'.format(schema, connection_user),
             ])
         self.execute_sql(sql)
 
@@ -143,12 +148,19 @@ class MicrosoftSQLOps(DialectOperations):
         # all drops should be in order, execute them all
         self.execute_sql(delete_sql)
 
-    def prep_empty(self):
+    def create_schemas(self):
         sql = []
         for schema in self.opt_schemas:
-            sql.extend([
-                'CREATE SCHEMA {}'.format(schema),
-            ])
+            # MSSQL has to run CREATE SCHEMA as its own batch
+            # So, we can't use an IF NOT EXISTS at the same time. Test first, then create.
+            existing = self.engine.execute(
+                "SELECT COUNT(*) FROM sys.schemas WHERE name = N'{}'".format(schema)
+            ).scalar()
+
+            if not existing:
+                sql.extend([
+                    'CREATE SCHEMA {}'.format(schema),
+                ])
         self.execute_sql(sql)
 
 
