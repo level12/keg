@@ -115,7 +115,7 @@ class TestDatabaseManager(object):
         assert self.clear_pre_connected
         assert self.clear_post_connected
 
-    def prep_empty_deprecation(self, m_warnings):
+    def test_prep_empty_deprecation(self):
         current_app.db_manager.prep_empty = lambda *args, **kwargs: False
         current_app.db_manager.db_init_with_clear()
 
