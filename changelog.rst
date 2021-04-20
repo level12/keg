@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.8.8 released 2021-04-20
+-------------------------
+
+- limit sqlalchemy and flask-sqlalchemy updates until we support (ab46a44_)
+- correct db test case (abf4919_)
+
+.. _ab46a44: https://github.com/level12/keg/commit/ab46a44
+.. _abf4919: https://github.com/level12/keg/commit/abf4919
+
+
 0.8.7 released 2021-02-26
 -------------------------
 
