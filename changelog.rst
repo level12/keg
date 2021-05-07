@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.8.9 released 2021-05-07
+-------------------------
+
+- update python support indicators and drop pathlib dependency (fef7088_)
+
+.. _fef7088: https://github.com/level12/keg/commit/fef7088
+
+
 0.8.8 released 2021-04-20
 -------------------------
 
