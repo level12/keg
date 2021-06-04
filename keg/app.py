@@ -36,7 +36,7 @@ class Keg(flask.Flask):
     db_manager = None
 
     jinja_options = ImmutableDict(
-        extensions=['jinja2.ext.autoescape', 'jinja2.ext.with_', AssetsExtension]
+        extensions=[AssetsExtension]
     )
 
     template_filters = ImmutableDict()

@@ -1,10 +1,8 @@
 from __future__ import absolute_import
 
 import os
-import sys
 
 import flask
-from flask._compat import reraise
 import pathlib
 from werkzeug.utils import import_string
 
@@ -33,11 +31,6 @@ def ensure_dirs(newdir, mode=NotGiven):
 
     ensure_dirs(dpath.parent, mode=mode)
     dpath.mkdir(mode)
-
-
-def reraise_lastexc():
-    exc_type, exc_value, tb = sys.exc_info()
-    reraise(exc_type, exc_value, tb)
 
 
 class ClassProperty(property):
