@@ -22,8 +22,6 @@ services:
         # Ok for local dev, potentially UNSAFE in other applications.  Don't blindly copy & paste
         # without considering implications.
         POSTGRES_HOST_AUTH_METHOD: trust
-        # Could use this instead with a strong password if working outside a dev env
-        # POSTGRES_PASSWORD: password
         POSTGRES_MULTIPLE_DATABASES: keg_tests
       volumes:
         - ./docker/pg-init-scripts:/docker-entrypoint-initdb.d
