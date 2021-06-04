@@ -284,12 +284,15 @@ To develop on keg, begin by installing dependencies and running the tests::
     git clone https://github.com/level12/keg keg-src
     cd keg-src
 
-    cp keg_apps/db/user-config-tpl.py ~/.config/keg_apps.db/keg_apps.db-config.py
-    # edit the DB connection info in this file (you don't have to use vim):
-    vim ~/.config/keg_apps.db/keg_apps.db-config.py
+    docker-compose up -d
 
     # Create a virtualenv with a supported python version.  Activate it.
+    vex -m keg
+
+    # Install editable keg and test dependencies
     pip install -e .[tests]
+
+    # Run tests
     pytest keg
 
 You can then examine tox.ini for insights into our development process.  In particular, we:
