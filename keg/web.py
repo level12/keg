@@ -9,9 +9,9 @@ from flask import request
 from flask.views import MethodView, MethodViewType, http_method_funcs
 import six
 from werkzeug.datastructures import MultiDict
-from werkzeug.utils import validate_arguments, ArgumentValidationError
 
 from keg.extensions import lazy_gettext as _
+from keg.utils import validate_arguments, ArgumentValidationError
 
 
 class ImmediateResponse(Exception):
