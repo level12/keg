@@ -39,10 +39,10 @@ setup(
         'blinker',
         'Click>=3.0',
         'Flask',
-        'Flask-SQLAlchemy<2.5',
+        'Flask-SQLAlchemy',
         'python-json-logger',
         'six',
-        'sqlalchemy<1.4',
+        'sqlalchemy',
     ],
     extras_require={
         'tests': [
