@@ -248,7 +248,7 @@ class CLILoader(object):
             invoke_without_command=True,
         )
 
-    def create_app(self, script_info):
+    def create_app(self, script_info=None):
         """ Instantiate our app, sending CLI option values through as needed. """
         init_kwargs = self.option_processor(script_info.data)
         return self.appcls().init(**init_kwargs)
