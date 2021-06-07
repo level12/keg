@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.9.0 released 2021-06-07
+-------------------------
+
+- BREAKING CHANGE: Revert "quiet and verbose flags to (in/de)crement log level" (a64ff15_)
+- Merge Flask 2.x support & related (8578b2f_)
+
+
+.. _a64ff15: https://github.com/level12/keg/commit/a64ff15
+.. _8578b2f: https://github.com/level12/keg/commit/8578b2f
+
+
 0.8.9 released 2021-05-07
 -------------------------
 
