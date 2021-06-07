@@ -4,9 +4,9 @@ from __future__ import print_function
 from keg_apps import fix_sys_path
 fix_sys_path()
 
-import click  # noqa
+import click  # noqa: E402
 
-from keg.app import Keg  # noqa
+from keg.app import Keg  # noqa: E402
 from keg_apps.extensions import gettext as _  # noqa: E402
 
 

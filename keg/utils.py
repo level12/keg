@@ -1,14 +1,16 @@
 from __future__ import absolute_import
 
+import inspect
 import os
-import sys
+import weakref
 
 import flask
-from flask._compat import reraise
 import pathlib
 from werkzeug.utils import import_string
 
 from keg.extensions import lazy_gettext as _
+
+_signature_cache = weakref.WeakKeyDictionary()
 
 
 # sentinal object
@@ -33,11 +35,6 @@ def ensure_dirs(newdir, mode=NotGiven):
 
     ensure_dirs(dpath.parent, mode=mode)
     dpath.mkdir(mode)
-
-
-def reraise_lastexc():
-    exc_type, exc_value, tb = sys.exc_info()
-    reraise(exc_type, exc_value, tb)
 
 
 class ClassProperty(property):
@@ -134,3 +131,158 @@ def visit_modules(dotted_paths, base_path=None):
         if path.startswith('.') and base_path is not None:
             path = base_path + path
         import_string(path)
+
+
+def validate_arguments(func, args, kwargs, drop_extra=True):  # type: ignore
+    """Checks if the function accepts the arguments and keyword arguments.
+    Returns a new ``(args, kwargs)`` tuple that can safely be passed to
+    the function without causing a `TypeError` because the function signature
+    is incompatible.  If `drop_extra` is set to `True` (which is the default)
+    any extra positional or keyword arguments are dropped automatically.
+
+    The exception raised provides three attributes:
+
+    `missing`
+        A set of argument names that the function expected but where
+        missing.
+
+    `extra`
+        A dict of keyword arguments that the function can not handle but
+        where provided.
+
+    `extra_positional`
+        A list of values that where given by positional argument but the
+        function cannot accept.
+
+    This can be useful for decorators that forward user submitted data to
+    a view function::
+
+        from werkzeug.utils import ArgumentValidationError, validate_arguments
+
+        def sanitize(f):
+            def proxy(request):
+                data = request.values.to_dict()
+                try:
+                    args, kwargs = validate_arguments(f, (request,), data)
+                except ArgumentValidationError:
+                    raise BadRequest('The browser failed to transmit all '
+                                     'the data expected.')
+                return f(*args, **kwargs)
+            return proxy
+
+    :param func: the function the validation is performed against.
+    :param args: a tuple of positional arguments.
+    :param kwargs: a dict of keyword arguments.
+    :param drop_extra: set to `False` if you don't want extra arguments
+                       to be silently dropped.
+    :return: tuple in the form ``(args, kwargs)``.
+
+    .. deprecated:: 2.0
+        Will be removed in Werkzeug 2.1. Use :func:`inspect.signature`
+        instead.
+
+    Copied from Werkzeug
+    """
+    parser = _parse_signature(func)
+    args, kwargs, missing, extra, extra_positional = parser(args, kwargs)[:5]
+    if missing:
+        raise ArgumentValidationError(tuple(missing))
+    elif (extra or extra_positional) and not drop_extra:
+        raise ArgumentValidationError(None, extra, extra_positional)
+    return tuple(args), kwargs
+
+
+def _parse_signature(func):  # type: ignore
+    """Return a signature object for the function.
+
+    .. deprecated:: 2.0
+        Will be removed in Werkzeug 2.1 along with ``utils.bind`` and
+        ``validate_arguments``.
+    """
+    # if we have a cached validator for this function, return it
+    parse = _signature_cache.get(func)
+    if parse is not None:
+        return parse
+
+    # inspect the function signature and collect all the information
+    tup = inspect.getfullargspec(func)
+    positional, vararg_var, kwarg_var, defaults = tup[:4]
+    defaults = defaults or ()
+    arg_count = len(positional)
+    arguments = []
+    for idx, name in enumerate(positional):
+        if isinstance(name, list):
+            raise TypeError(
+                "cannot parse functions that unpack tuples in the function signature"
+            )
+        try:
+            default = defaults[idx - arg_count]
+        except IndexError:
+            param = (name, False, None)
+        else:
+            param = (name, True, default)
+        arguments.append(param)
+    arguments = tuple(arguments)
+
+    def parse(args, kwargs):  # type: ignore
+        new_args = []
+        missing = []
+        extra = {}
+
+        # consume as many arguments as positional as possible
+        for idx, (name, has_default, default) in enumerate(arguments):
+            try:
+                new_args.append(args[idx])
+            except IndexError:
+                try:
+                    new_args.append(kwargs.pop(name))
+                except KeyError:
+                    if has_default:
+                        new_args.append(default)
+                    else:
+                        missing.append(name)
+            else:
+                if name in kwargs:
+                    extra[name] = kwargs.pop(name)
+
+        # handle extra arguments
+        extra_positional = args[arg_count:]
+        if vararg_var is not None:
+            new_args.extend(extra_positional)
+            extra_positional = ()
+        if kwargs and kwarg_var is None:
+            extra.update(kwargs)
+            kwargs = {}
+
+        return (
+            new_args,
+            kwargs,
+            missing,
+            extra,
+            extra_positional,
+            arguments,
+            vararg_var,
+            kwarg_var,
+        )
+
+    _signature_cache[func] = parse
+    return parse
+
+
+class ArgumentValidationError(ValueError):
+    """Raised if :func:`validate_arguments` fails to validate
+
+    .. deprecated:: 2.0
+        Will be removed in Werkzeug 2.1 along with ``utils.bind`` and
+        ``validate_arguments``.
+    """
+
+    def __init__(self, missing=None, extra=None, extra_positional=None):  # type: ignore
+        self.missing = set(missing or ())
+        self.extra = extra or {}
+        self.extra_positional = extra_positional or []
+        super().__init__(
+            "function arguments invalid."
+            f" ({len(self.missing)} missing,"
+            f" {len(self.extra) + len(self.extra_positional)} additional)"
+        )

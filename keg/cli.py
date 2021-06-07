@@ -248,8 +248,13 @@ class CLILoader(object):
             invoke_without_command=True,
         )
 
-    def create_app(self, script_info):
-        """ Instantiate our app, sending CLI option values through as needed. """
+    def create_app(self, script_info=False):
+        """ Instantiate our app, sending CLI option values through as needed.
+
+            `script_info:` required for Flask 1.X create_app signature, but not valid in Flask 2.1.
+            So keep it as an arg, but don't use it to get the object.  See #163.
+        """
+        script_info = click.get_current_context().obj
         init_kwargs = self.option_processor(script_info.data)
         return self.appcls().init(**init_kwargs)
 

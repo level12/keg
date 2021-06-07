@@ -19,6 +19,8 @@ class TestProfile(object):
     # Appveyor: see user-config-tpl-appveyor.py
     # Developers: see instructions in readme for setup of local config file
     SQLALCHEMY_BINDS = {
-        'postgres': 'postgresql://postgres:password@localhost/postgres',
+        # This string will connect to the postgresql DB setup in docker-compose.yaml and
+        # work in CircleCI.
+        'postgres': 'postgresql://postgres@127.0.0.1:54321/postgres',
         'sqlite2': 'sqlite:///'
     }

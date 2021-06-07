@@ -25,9 +25,9 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
     license='BSD',
     packages=find_packages(),
@@ -39,10 +39,10 @@ setup(
         'blinker',
         'Click>=3.0',
         'Flask',
-        'Flask-SQLAlchemy<2.5',
+        'Flask-SQLAlchemy',
         'python-json-logger',
         'six',
-        'sqlalchemy<1.4',
+        'sqlalchemy',
     ],
     extras_require={
         'tests': [

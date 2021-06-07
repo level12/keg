@@ -6,13 +6,12 @@ import sys
 from blazeutils.strings import case_cw2us, case_cw2dash
 import flask
 from flask import request
-from flask._compat import with_metaclass
 from flask.views import MethodView, MethodViewType, http_method_funcs
 import six
 from werkzeug.datastructures import MultiDict
-from werkzeug.utils import validate_arguments, ArgumentValidationError
 
 from keg.extensions import lazy_gettext as _
+from keg.utils import validate_arguments, ArgumentValidationError
 
 
 class ImmediateResponse(Exception):
@@ -95,7 +94,7 @@ class _ViewMeta(MethodViewType):
             cls.assign_blueprint(cls.blueprint)
 
 
-class BaseView(with_metaclass(_ViewMeta, MethodView)):
+class BaseView(MethodView, metaclass=_ViewMeta):
     """
     Base class for all Keg views to inherit from. `BaseView` automatically calculates and installs
     routing, templating, and responding methods for HTTP verb named functions.

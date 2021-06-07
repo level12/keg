@@ -3,10 +3,14 @@ jobs:
     build:
         docker:
             - image: level12/python-test-multi
-            - image: postgres:12-alpine
+            - image: postgres:13-alpine
               environment:
                   POSTGRES_USER: postgres
-                  POSTGRES_PASSWORD: password
+                  # Ok for local dev, potentially UNSAFE in other applications.  Don't blindly copy & paste
+                  # without considering implications.
+                  POSTGRES_HOST_AUTH_METHOD: trust
+                  POSTGRES_DB: keg_tests
+                  PGPORT: 54321
         steps:
             - checkout
 

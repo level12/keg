@@ -1,0 +1,27 @@
+# Docker Notes
+# ============
+# - `docker-compose up`: bring up containers
+# - `docker-compose up -d`: same, but run in background/daemon mode
+# - `docker-compose down`: bring down containers started with `-d`
+# - `docker ps`: show running containers
+# - `docker ps -a`: show all containers
+# - `docker-compose exec <container name> /bin/bash`: get shell in app container
+# - `docker images`
+# - `docker rmi <image name>`
+# - `docker stop $(docker ps -aq)`: stop all running containers
+# - `docker rm $(docker ps -a -q)`: remove all stopped containers
+
+version: '2'
+services:
+  keg-pg:
+      image: postgres:13-alpine
+      container_name: keg-pg
+      ports:
+        - '127.0.0.1:54321:5432'
+      environment:
+        # Ok for local dev, potentially UNSAFE in other applications.  Don't blindly copy & paste
+        # without considering implications.
+        POSTGRES_HOST_AUTH_METHOD: trust
+        POSTGRES_MULTIPLE_DATABASES: keg_tests
+      volumes:
+        - ./docker/pg-init-scripts:/docker-entrypoint-initdb.d
