@@ -6,16 +6,16 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Keg 0.8.6\n"
+"Project-Id-Version: Keg 0.8.9\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-15 17:12-0500\n"
+"POT-Creation-Date: 2021-06-07 12:49-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: keg/app.py:53
 msgid ""
@@ -39,95 +39,95 @@ msgstr ""
 msgid "Could not find related assets for template: {template_name}"
 msgstr ""
 
-#: keg/cli.py:64
+#: keg/cli.py:80
 msgid "Developer info and utils."
 msgstr ""
 
-#: keg/cli.py:73
+#: keg/cli.py:89
 msgid "List the routes defined for this app."
 msgstr ""
 
-#: keg/cli.py:97
+#: keg/cli.py:113
 msgid "Show paths searched for a template."
 msgstr ""
 
-#: keg/cli.py:113
+#: keg/cli.py:129
 msgid "List info related to config files, profiles, and values."
 msgstr ""
 
-#: keg/cli.py:122
+#: keg/cli.py:138
 msgid "Default config objects:"
 msgstr ""
 
-#: keg/cli.py:126
+#: keg/cli.py:142
 msgid "Config file locations:"
 msgstr ""
 
-#: keg/cli.py:131
+#: keg/cli.py:147
 msgid "Could not access the following config paths:"
 msgstr ""
 
-#: keg/cli.py:135
+#: keg/cli.py:151
 msgid "Config objects used:"
 msgstr ""
 
-#: keg/cli.py:139
+#: keg/cli.py:155
 msgid "Resulting app config (including Flask defaults):"
 msgstr ""
 
-#: keg/cli.py:157
+#: keg/cli.py:173
 msgid "Lists database related sub-commands."
 msgstr ""
 
-#: keg/cli.py:164
+#: keg/cli.py:180
 msgid "Database not enabled for this app.  No subcommands available."
 msgstr ""
 
-#: keg/cli.py:173
+#: keg/cli.py:189
 msgid "Create all db objects, send related events."
 msgstr ""
 
-#: keg/cli.py:175
+#: keg/cli.py:191
 msgid "Clear DB of all data and drop all objects before init."
 msgstr ""
 
-#: keg/cli.py:180
+#: keg/cli.py:196
 msgid "Database cleared and initialized"
 msgstr ""
 
-#: keg/cli.py:183
+#: keg/cli.py:199
 msgid "Database initialized"
 msgstr ""
 
-#: keg/cli.py:186
+#: keg/cli.py:202
 msgid "Clear DB of all data and drop all objects."
 msgstr ""
 
-#: keg/cli.py:190
+#: keg/cli.py:206
 msgid "Database cleared"
 msgstr ""
 
-#: keg/cli.py:255
+#: keg/cli.py:276
 msgid "Name of the configuration profile to use."
 msgstr ""
 
-#: keg/cli.py:258
+#: keg/cli.py:279
 msgid "Increase logging level for reduced logging"
 msgstr ""
 
-#: keg/cli.py:261
+#: keg/cli.py:282
 msgid "Decrease logging level for increased logging"
 msgstr ""
 
-#: keg/cli.py:264
+#: keg/cli.py:285
 msgid "Show all commands with subcommands."
 msgstr ""
 
-#: keg/cli.py:293
+#: keg/cli.py:314
 msgid "Show help message."
 msgstr ""
 
-#: keg/cli.py:295
+#: keg/cli.py:316
 msgid "Show this message and exit."
 msgstr ""
 
@@ -143,24 +143,24 @@ msgstr ""
 msgid "asset_include does not yet support parameters"
 msgstr ""
 
-#: keg/utils.py:31
+#: keg/utils.py:33
 msgid ""
 "A file with the same name as the desired directory, '{dpath}', already "
 "exists."
 msgstr ""
 
-#: keg/utils.py:57
+#: keg/utils.py:54
 msgid "can't set attribute"
 msgstr ""
 
-#: keg/web.py:74
+#: keg/web.py:73
 msgid ""
 "Argument mismatch occured: method={method}, missing={missing}, "
 "extra_keys={extra_keys}, extra_pos={extra_pos}.  Arguments available: "
 "{calling_args}"
 msgstr ""
 
-#: keg/web.py:137
+#: keg/web.py:136
 msgid "Unimplemented method {name}"
 msgstr ""
 
