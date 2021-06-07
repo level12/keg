@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 from collections import defaultdict
 from contextlib import contextmanager
-import logging
 
 import click
 import flask
@@ -264,9 +263,8 @@ class CLILoader(object):
             into a dict which will be given as kwargs to the app's .init() method.
         """
         retval = dict(config_profile=cli_options.get('profile', None), config={})
-        quiet = cli_options.get('quiet', 0)
-        verbose = cli_options.get('verbose', 0)
-        retval['config']['KEG_LOG_LEVEL'] = logging.WARNING + 10 * quiet - 10 * verbose
+        if cli_options.get('quiet', False):
+            retval['config']['KEG_LOG_STREAM_ENABLED'] = False
         return retval
 
     def create_script_options(self):
@@ -274,12 +272,9 @@ class CLILoader(object):
         return [
             click.Option(['--profile'], is_eager=True, default=None, callback=self.options_callback,
                          help=_('Name of the configuration profile to use.'),),
-            click.Option(['--quiet', '-q'], is_eager=True, default=0,
-                         count=True, callback=self.options_callback,
-                         help=_('Increase logging level for reduced logging')),
-            click.Option(['--verbose', '-v'], is_eager=True, default=0,
-                         count=True, callback=self.options_callback,
-                         help=_('Decrease logging level for increased logging')),
+            click.Option(['--quiet'], is_eager=True, is_flag=True, default=False,
+                         callback=self.options_callback,
+                         help=_('Set default logging level to logging.WARNING.')),
             click.Option(['--help-all'], is_eager=True, is_flag=True, expose_value=False,
                          callback=self.help_all_callback,
                          help=_('Show all commands with subcommands.')),

@@ -12,14 +12,16 @@ def hello1():
     click.echo('hello1')
 
 
-@CLI2App.cli.command('test-log-level')
-def test_log_level():
+@CLI2App.cli.command('is-quiet')
+def is_quiet():
     print('printed foo')
-    log.debug('debug logged foo')
-    log.info('info logged foo')
-    log.warning('warning logged foo')
-    log.error('error logged foo')
-    log.critical('critical logged foo')
+    log.info('logged foo')
+
+
+@CLI2App.cli.command('is-not-quiet')
+def is_not_quiet():
+    print('printed foo')
+    log.info('logged foo')
 
 
 @CLI2App.cli.command()
