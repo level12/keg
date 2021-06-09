@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Keg 0.8.9\n"
+"Project-Id-Version: Keg 0.9.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-07 12:49-0400\n"
+"POT-Creation-Date: 2021-06-09 16:34-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,95 +39,91 @@ msgstr ""
 msgid "Could not find related assets for template: {template_name}"
 msgstr ""
 
-#: keg/cli.py:80
+#: keg/cli.py:79
 msgid "Developer info and utils."
 msgstr ""
 
-#: keg/cli.py:89
+#: keg/cli.py:88
 msgid "List the routes defined for this app."
 msgstr ""
 
-#: keg/cli.py:113
+#: keg/cli.py:112
 msgid "Show paths searched for a template."
 msgstr ""
 
-#: keg/cli.py:129
+#: keg/cli.py:128
 msgid "List info related to config files, profiles, and values."
 msgstr ""
 
-#: keg/cli.py:138
+#: keg/cli.py:137
 msgid "Default config objects:"
 msgstr ""
 
-#: keg/cli.py:142
+#: keg/cli.py:141
 msgid "Config file locations:"
 msgstr ""
 
-#: keg/cli.py:147
+#: keg/cli.py:146
 msgid "Could not access the following config paths:"
 msgstr ""
 
-#: keg/cli.py:151
+#: keg/cli.py:150
 msgid "Config objects used:"
 msgstr ""
 
-#: keg/cli.py:155
+#: keg/cli.py:154
 msgid "Resulting app config (including Flask defaults):"
 msgstr ""
 
-#: keg/cli.py:173
+#: keg/cli.py:172
 msgid "Lists database related sub-commands."
 msgstr ""
 
-#: keg/cli.py:180
+#: keg/cli.py:179
 msgid "Database not enabled for this app.  No subcommands available."
 msgstr ""
 
-#: keg/cli.py:189
+#: keg/cli.py:188
 msgid "Create all db objects, send related events."
 msgstr ""
 
-#: keg/cli.py:191
+#: keg/cli.py:190
 msgid "Clear DB of all data and drop all objects before init."
 msgstr ""
 
-#: keg/cli.py:196
+#: keg/cli.py:195
 msgid "Database cleared and initialized"
 msgstr ""
 
-#: keg/cli.py:199
+#: keg/cli.py:198
 msgid "Database initialized"
 msgstr ""
 
-#: keg/cli.py:202
+#: keg/cli.py:201
 msgid "Clear DB of all data and drop all objects."
 msgstr ""
 
-#: keg/cli.py:206
+#: keg/cli.py:205
 msgid "Database cleared"
 msgstr ""
 
-#: keg/cli.py:276
+#: keg/cli.py:274
 msgid "Name of the configuration profile to use."
 msgstr ""
 
-#: keg/cli.py:279
-msgid "Increase logging level for reduced logging"
+#: keg/cli.py:277
+msgid "Set default logging level to logging.WARNING."
 msgstr ""
 
-#: keg/cli.py:282
-msgid "Decrease logging level for increased logging"
-msgstr ""
-
-#: keg/cli.py:285
+#: keg/cli.py:280
 msgid "Show all commands with subcommands."
 msgstr ""
 
-#: keg/cli.py:314
+#: keg/cli.py:309
 msgid "Show help message."
 msgstr ""
 
-#: keg/cli.py:316
+#: keg/cli.py:311
 msgid "Show this message and exit."
 msgstr ""
 
