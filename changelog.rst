@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.9.1 released 2021-06-09
+-------------------------
+
+- BaseView: expose template name calculation (47d95af_)
+- fix translation files (3e1375e_)
+
+.. _47d95af: https://github.com/level12/keg/commit/47d95af
+.. _3e1375e: https://github.com/level12/keg/commit/3e1375e
+
+
 0.9.0 released 2021-06-07
 -------------------------
 
