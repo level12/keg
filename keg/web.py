@@ -200,10 +200,13 @@ class BaseView(MethodView, metaclass=_ViewMeta):
         for key in self.auto_assign:
             self.assign(key, getattr(self, key))
 
+    def calc_class_fname(self):
+        return case_cw2us(self.__class__.__name__)
+
     def calc_template_name(self):
         if self.template_name is not None:
             return self.template_name
-        template_path = '{}.html'.format(case_cw2us(self.__class__.__name__))
+        template_path = '{}.html'.format(self.calc_class_fname())
         blueprint_name = request.blueprint
         if blueprint_name:
             template_path = '{}/{}'.format(blueprint_name, template_path)
