@@ -33,6 +33,18 @@ class KegSQLAlchemy(fsa.SQLAlchemy):
 
         return super_return_value
 
+    def get_engine(self, app=None, bind=None):
+        if not hasattr(self, '_app_engines'):
+            # older version of flask-sqlalchemy, we can just call super
+            return super().get_engine(app=app, bind=bind)
+        
+        # More recent flask-sqlalchemy, use the cached engines directly.
+        # Note: we don't necessarily have an app context active here, depending
+        # on if this is being called during app init. But if we attempt to access
+        # the underlying cache directly, we get a weak ref error.
+        with app.app_context():
+            return self.engines[bind]
+
     def get_engines(self, app):
         # the default engine doesn't have a bind
         retval = [(None, self.get_engine(app))]

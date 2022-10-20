@@ -32,7 +32,7 @@ class DialectOperations(object):
 
     def create_all(self):
         self.create_schemas()
-        db.create_all(bind=self.bind_name)
+        db.create_all(self.bind_name)
 
     def create_schemas(self):
         pass
