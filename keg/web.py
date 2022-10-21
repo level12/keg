@@ -8,9 +8,9 @@ import flask
 from flask import request
 from flask.views import MethodView, http_method_funcs
 try:
-   from flask.views import MethodViewType
+    from flask.views import MethodViewType
 except ImportError:
-   MethodViewType = None
+    MethodViewType = None
 import six
 from werkzeug.datastructures import MultiDict
 
@@ -123,7 +123,7 @@ class BaseView(MethodView, metaclass=_ViewMeta):
         changed to using `init_subclass`. If the old way is enabled, no need to
         do anything but call the super here."""
         super().__init_subclass__(**kwargs)
-        
+
         if MethodViewType is None and cls.blueprint is not None:
             cls.assign_blueprint(cls.blueprint)
 
