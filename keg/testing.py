@@ -171,9 +171,17 @@ def invoke_command(app_cls, *args, **kwargs):
 
 
 def cleanup_app_contexts():
-    while flask.current_app or False:
+    while flask.current_app:
         cm = ContextManager.get_for(flask.current_app.__class__)
-        cm.cleanup()
+        if cm.ctx:
+            cm.cleanup()
+        else:
+            break
+
+    # support older flask as well
+    if flask.current_app and getattr(flask, '_app_ctx_stack'):
+        while flask._app_ctx_stack.pop():
+            pass
 
 
 class CLIBase(object):
