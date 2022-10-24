@@ -48,7 +48,8 @@ setup(
         'tests': [
             'flask-webtest',
             'flask-wtf',
-            "sqlalchemy_pyodbc_mssql; sys_platform == 'win32'",
+            'sqlalchemy_pyodbc_mssql',
+            'pyodbc==4.0.34',
             'pytest',
             'pytest-cov',
             'python-dotenv',
