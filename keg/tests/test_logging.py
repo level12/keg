@@ -58,7 +58,7 @@ class TestLogging(object):
 
 
 class TestJsonFormatter(object):
-    def setup(self):
+    def setup_method(self):
         self.logger = logging.getLogger('logging-test')
         self.logger.setLevel(logging.DEBUG)
         self.buffer = six.StringIO()
