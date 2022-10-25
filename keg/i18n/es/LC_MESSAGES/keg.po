@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Keg 0.6.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-09 16:34-0400\n"
+"POT-Creation-Date: 2022-10-25 09:50-0700\n"
 "PO-Revision-Date: 2018-08-16 18:25-0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.1\n"
+"Generated-By: Babel 2.10.3\n"
 
 #: keg/app.py:53
 msgid ""
@@ -102,39 +102,47 @@ msgstr "Crea todos los objetos db, envía eventos relacionados."
 msgid "Clear DB of all data and drop all objects before init."
 msgstr "Borrar DB de todos los datos y soltar todos los objetos antes de init."
 
-#: keg/cli.py:195
+#: keg/cli.py:195 keg/cli.py:211
+msgid "Are you sure? You will delete all the data!"
+msgstr "¿Está seguro? ¡Borrarás todos los datos!"
+
+#: keg/cli.py:201
 msgid "Database cleared and initialized"
 msgstr "Base de datos borrada e inicializada"
 
-#: keg/cli.py:198
+#: keg/cli.py:204
 msgid "Database initialized"
 msgstr "Base de datos inicializada"
 
-#: keg/cli.py:201
+#: keg/cli.py:207
 msgid "Clear DB of all data and drop all objects."
 msgstr "Borre la DB de todos los datos y suelte todos los objetos."
 
-#: keg/cli.py:205
+#: keg/cli.py:213
 msgid "Database cleared"
 msgstr "Base de datos limpia"
 
-#: keg/cli.py:274
+#: keg/cli.py:215
+msgid "Database untouched"
+msgstr "Base de datos intacta"
+
+#: keg/cli.py:284
 msgid "Name of the configuration profile to use."
 msgstr "Nombre del perfil de configuración a usar."
 
-#: keg/cli.py:277
+#: keg/cli.py:287
 msgid "Set default logging level to logging.WARNING."
 msgstr "Establecer el nivel de registro predeterminado en logging.WARNING."
 
-#: keg/cli.py:280
+#: keg/cli.py:290
 msgid "Show all commands with subcommands."
 msgstr "Mostrar todos los comandos con subcomandos."
 
-#: keg/cli.py:309
+#: keg/cli.py:319
 msgid "Show help message."
 msgstr "Mostrar mensaje de ayuda."
 
-#: keg/cli.py:311
+#: keg/cli.py:321
 msgid "Show this message and exit."
 msgstr "Mostrar este mensaje y salir."
 
@@ -146,7 +154,7 @@ msgstr "Usando la dirección syslog: {address}"
 msgid "did not find syslog address"
 msgstr "no encontró la dirección de syslog"
 
-#: keg/templating.py:43
+#: keg/templating.py:57
 msgid "asset_include does not yet support parameters"
 msgstr "asset_include aún no admite parámetros"
 
@@ -162,7 +170,7 @@ msgstr ""
 msgid "can't set attribute"
 msgstr "no se puede establecer el atributo"
 
-#: keg/web.py:73
+#: keg/web.py:77
 msgid ""
 "Argument mismatch occured: method={method}, missing={missing}, "
 "extra_keys={extra_keys}, extra_pos={extra_pos}.  Arguments available: "
@@ -172,7 +180,7 @@ msgstr ""
 "{missing}, extra_keys = {extra_keys}, extra_pos = {extra_pos}. Argumentos"
 " disponibles: {calling_args}"
 
-#: keg/web.py:136
+#: keg/web.py:152
 msgid "Unimplemented method {name}"
 msgstr "Método sin implementar {nombre}"
 

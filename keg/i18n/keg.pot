@@ -1,21 +1,21 @@
 # Translations template for Keg.
-# Copyright (C) 2021 ORGANIZATION
+# Copyright (C) 2022 ORGANIZATION
 # This file is distributed under the same license as the Keg project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Keg 0.9.0\n"
+"Project-Id-Version: Keg 0.9.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-09 16:34-0400\n"
+"POT-Creation-Date: 2022-10-25 09:50-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.1\n"
+"Generated-By: Babel 2.10.3\n"
 
 #: keg/app.py:53
 msgid ""
@@ -91,39 +91,47 @@ msgstr ""
 msgid "Clear DB of all data and drop all objects before init."
 msgstr ""
 
-#: keg/cli.py:195
-msgid "Database cleared and initialized"
-msgstr ""
-
-#: keg/cli.py:198
-msgid "Database initialized"
+#: keg/cli.py:195 keg/cli.py:211
+msgid "Are you sure? You will delete all the data!"
 msgstr ""
 
 #: keg/cli.py:201
+msgid "Database cleared and initialized"
+msgstr ""
+
+#: keg/cli.py:204
+msgid "Database initialized"
+msgstr ""
+
+#: keg/cli.py:207
 msgid "Clear DB of all data and drop all objects."
 msgstr ""
 
-#: keg/cli.py:205
+#: keg/cli.py:213
 msgid "Database cleared"
 msgstr ""
 
-#: keg/cli.py:274
+#: keg/cli.py:215
+msgid "Database untouched"
+msgstr ""
+
+#: keg/cli.py:284
 msgid "Name of the configuration profile to use."
 msgstr ""
 
-#: keg/cli.py:277
+#: keg/cli.py:287
 msgid "Set default logging level to logging.WARNING."
 msgstr ""
 
-#: keg/cli.py:280
+#: keg/cli.py:290
 msgid "Show all commands with subcommands."
 msgstr ""
 
-#: keg/cli.py:309
+#: keg/cli.py:319
 msgid "Show help message."
 msgstr ""
 
-#: keg/cli.py:311
+#: keg/cli.py:321
 msgid "Show this message and exit."
 msgstr ""
 
@@ -135,7 +143,7 @@ msgstr ""
 msgid "did not find syslog address"
 msgstr ""
 
-#: keg/templating.py:43
+#: keg/templating.py:57
 msgid "asset_include does not yet support parameters"
 msgstr ""
 
@@ -149,14 +157,14 @@ msgstr ""
 msgid "can't set attribute"
 msgstr ""
 
-#: keg/web.py:73
+#: keg/web.py:77
 msgid ""
 "Argument mismatch occured: method={method}, missing={missing}, "
 "extra_keys={extra_keys}, extra_pos={extra_pos}.  Arguments available: "
 "{calling_args}"
 msgstr ""
 
-#: keg/web.py:136
+#: keg/web.py:152
 msgid "Unimplemented method {name}"
 msgstr ""
 

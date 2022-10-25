@@ -192,8 +192,8 @@ def database_group(ctx):
 @flask.cli.with_appcontext
 def database_init(clear_first, yes):
     prompt = clear_first and not yes
-    if prompt and not click.confirm('Are you sure? You will delete all the data!'):
-        click.echo('Database untouched.')
+    if prompt and not click.confirm(_('Are you sure? You will delete all the data!')):
+        click.echo('Database untouched')
         return
 
     if clear_first:
@@ -208,11 +208,11 @@ def database_init(clear_first, yes):
 @click.option('--yes', default=False, is_flag=True, help="Force confirmation")
 @flask.cli.with_appcontext
 def database_clear(yes):
-    if yes or click.confirm('Are you sure you want to do this? You might clear the database'):
+    if yes or click.confirm(_('Are you sure? You will delete all the data!')):
         current_app.db_manager.db_clear()
-        click.echo('Database cleared.')
+        click.echo(_('Database cleared'))
     else:
-        click.echo('Database untouched.')
+        click.echo(_('Database untouched'))
 
 
 class CLILoader(object):
