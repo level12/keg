@@ -11,13 +11,21 @@
 # - `docker stop $(docker ps -aq)`: stop all running containers
 # - `docker rm $(docker ps -a -q)`: remove all stopped containers
 
-version: '2'
+version: '2.1'
 services:
+  keg-mssql:
+      image: mcr.microsoft.com/mssql/server
+      container_name: keg-mssql
+      ports:
+        - '${KEG_LIB_MSSQL_IP:-127.0.0.1}:${KEG_LIB_MSSQL_PORT:-14331}:1433'
+      environment:
+        ACCEPT_EULA: Y
+        MSSQL_SA_PASSWORD: "Password12!"
   keg-pg:
       image: postgres:13-alpine
       container_name: keg-pg
       ports:
-        - '127.0.0.1:54321:5432'
+        - '${KEG_LIB_POSTGRES_IP:-127.0.0.1}:${KEG_LIB_POSTGRES_PORT:-54321}:5432'
       environment:
         # Ok for local dev, potentially UNSAFE in other applications.  Don't blindly copy & paste
         # without considering implications.

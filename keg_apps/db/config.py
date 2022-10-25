@@ -22,5 +22,7 @@ class TestProfile(object):
         # This string will connect to the postgresql DB setup in docker-compose.yaml and
         # work in CircleCI.
         'postgres': 'postgresql://postgres@127.0.0.1:54321/postgres',
+        'mssql': 'mssql+pyodbc_mssql://sa:Password12!@127.0.0.1:14331/tempdb'
+        '?driver=ODBC+Driver+17+for+SQL+Server',
         'sqlite2': 'sqlite:///'
     }
