@@ -2,15 +2,17 @@ from __future__ import absolute_import
 
 import inspect
 import sys
+from warnings import warn
 
 from blazeutils.strings import case_cw2us, case_cw2dash
 import flask
-from flask import request
+from flask import current_app, request
 from flask.views import MethodView, http_method_funcs
 try:
     from flask.views import MethodViewType
 except ImportError:
     MethodViewType = None
+from jinja2 import TemplateNotFound
 import six
 from werkzeug.datastructures import MultiDict
 
@@ -216,16 +218,44 @@ class BaseView(MethodView, metaclass=_ViewMeta):
         for key in self.auto_assign:
             self.assign(key, getattr(self, key))
 
-    def calc_class_fname(self):
-        return case_cw2us(self.__class__.__name__)
+    def calc_class_fname(self, use_us=False):
+        if use_us:
+            return case_cw2us(self.__class__.__name__)
+        return case_cw2dash(self.__class__.__name__)
 
-    def calc_template_name(self):
+    def calc_template_name(self, use_us=False):
         if self.template_name is not None:
             return self.template_name
-        template_path = '{}.html'.format(self.calc_class_fname())
+        template_path = '{}.html'.format(self.calc_class_fname(use_us=use_us))
         blueprint_name = request.blueprint
         if blueprint_name:
             template_path = '{}/{}'.format(blueprint_name, template_path)
+
+        # This block and `use_us` usage can be removed when we drop
+        # template names generated with underscores.
+        jinja_env = current_app.jinja_env
+        try:
+            jinja_env.get_template(template_path)
+        except TemplateNotFound:
+            raise_original_exception = False
+            if not use_us:
+                # Fall back to underscore-named templates for now, but warn if
+                # that succeeds
+                try:
+                    template_path = self.calc_template_name(use_us=True)
+                    warn(
+                        'Templates named by underscore-notated class names are '
+                        'deprecated and will not be supported. Rename the template '
+                        'files using dashes.',
+                        DeprecationWarning,
+                        stacklevel=2
+                    )
+                except TemplateNotFound:
+                    # Neither template exists. Raise the exception from the dashed name
+                    raise_original_exception = True
+            if use_us or raise_original_exception:
+                raise
+
         return template_path
 
     def assign(self, key, value):
