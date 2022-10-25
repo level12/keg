@@ -170,6 +170,20 @@ def invoke_command(app_cls, *args, **kwargs):
     return result
 
 
+def cleanup_app_contexts():
+    while flask.current_app:
+        cm = ContextManager.get_for(flask.current_app.__class__)
+        if cm.ctx:
+            cm.cleanup()
+        else:
+            break
+
+    # support older flask as well
+    if flask.current_app and getattr(flask, '_app_ctx_stack'):
+        while flask._app_ctx_stack.pop():
+            pass
+
+
 class CLIBase(object):
     """Test class base for testing Keg click commands.
 
@@ -186,6 +200,10 @@ class CLIBase(object):
 
     @classmethod
     def setup_class(cls):
+        # If a current app context is set, it may complicate what click is doing to
+        # set up and run a specific app.
+        cleanup_app_contexts()
+
         cls.runner = click.testing.CliRunner()
 
     def invoke(self, *args, **kwargs):

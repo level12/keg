@@ -6,7 +6,7 @@ import mock
 
 from keg.app import Keg
 from keg.config import Config
-from keg.testing import invoke_command
+from keg.testing import cleanup_app_contexts, invoke_command
 from keg_apps.profile.cli import ProfileApp
 
 
@@ -137,6 +137,7 @@ class TestProfileLoading(object):
         """
             Using testing.invoke_command() should use a testing profile by default.
         """
+        cleanup_app_contexts()
         resp = invoke_command(ProfileApp, 'show-profile')
         assert 'testing-default' in resp.output
 
@@ -144,6 +145,7 @@ class TestProfileLoading(object):
         """
             Environement overrides should still take priority for invoke_command() usage.
         """
+        cleanup_app_contexts()
         resp = invoke_command(ProfileApp, 'show-profile',
                               env={'KEG_APPS_PROFILE_CONFIG_PROFILE': 'EnvironmentProfile'})
         assert 'environment' in resp.output

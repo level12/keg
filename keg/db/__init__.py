@@ -17,10 +17,11 @@ from keg.utils import visit_modules
 
 
 class KegSQLAlchemy(fsa.SQLAlchemy):
-
-    def apply_driver_hacks(self, app, info, options):
+    def _apply_driver_defaults(self, options, app):
         """Override some driver specific settings"""
-        super_return_value = super(KegSQLAlchemy, self).apply_driver_hacks(app, info, options)
+        super_return_value = None
+        if hasattr(super(), '_apply_driver_defaults'):
+            super_return_value = super()._apply_driver_defaults(options, app)
 
         # Turn on SA pessimistic disconnect handling by default:
         # http://docs.sqlalchemy.org/en/latest/core/pooling.html#disconnect-handling-pessimistic
@@ -32,6 +33,27 @@ class KegSQLAlchemy(fsa.SQLAlchemy):
             sa_event.listens_for(sa.engine.Engine, 'connect')(self._set_sqlite_pragma)
 
         return super_return_value
+
+    def apply_driver_hacks(self, app, info, options):
+        """This method is renamed to _apply_driver_defaults in flask-sqlalchemy 3.0"""
+        super_return_value = super().apply_driver_hacks(app, info, options)
+
+        # follow the logic to set some defaults, but the super won't exist there
+        self._apply_driver_defaults(options, app)
+
+        return super_return_value
+
+    def get_engine(self, app=None, bind=None):
+        if not hasattr(self, '_app_engines'):
+            # older version of flask-sqlalchemy, we can just call super
+            return super().get_engine(app=app, bind=bind)
+
+        # More recent flask-sqlalchemy, use the cached engines directly.
+        # Note: we don't necessarily have an app context active here, depending
+        # on if this is being called during app init. But if we attempt to access
+        # the underlying cache directly, we get a weak ref error.
+        with app.app_context():
+            return self.engines[bind]
 
     def get_engines(self, app):
         # the default engine doesn't have a bind

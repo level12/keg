@@ -40,9 +40,12 @@ class TestCLI(CLIBase):
     @need_dotenv
     def test_dotenv(self):
         test_dir = os.path.dirname(__file__)
+        # ensure flask looks in the expected working directory
+        working_dir = os.path.abspath(os.path.join(test_dir, '..', '..'))
+        os.chdir(working_dir)
 
         # Place dotenv file in search path of python-dotenv
-        flaskenv = os.path.abspath(os.path.join(test_dir, '..', '..', '.flaskenv'))
+        flaskenv = os.path.join(working_dir, '.flaskenv')
         try:
             with open(flaskenv, 'w') as f:
                 f.write('FOO=bar')
@@ -57,9 +60,12 @@ class TestCLI(CLIBase):
     @mock.patch.dict(os.environ, {'FLASK_SKIP_DOTENV': '1'})
     def test_disable_dotenv_from_env(self):
         test_dir = os.path.dirname(__file__)
+        # ensure flask looks in the expected working directory
+        working_dir = os.path.abspath(os.path.join(test_dir, '..', '..'))
+        os.chdir(working_dir)
 
         # Place dotenv file in search path of python-dotenv
-        flaskenv = os.path.abspath(os.path.join(test_dir, '..', '..', '.flaskenv'))
+        flaskenv = os.path.join(working_dir, '.flaskenv')
         try:
             with open(flaskenv, 'w') as f:
                 f.write('FOO=bar')

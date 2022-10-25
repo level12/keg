@@ -6,7 +6,11 @@ import sys
 from blazeutils.strings import case_cw2us, case_cw2dash
 import flask
 from flask import request
-from flask.views import MethodView, MethodViewType, http_method_funcs
+from flask.views import MethodView, http_method_funcs
+try:
+    from flask.views import MethodViewType
+except ImportError:
+    MethodViewType = None
 import six
 from werkzeug.datastructures import MultiDict
 
@@ -82,7 +86,7 @@ def _call_with_expected_args(view, calling_args, method, method_is_bound=True):
     return method(*args, **kwargs)
 
 
-class _ViewMeta(MethodViewType):
+class _OldViewMeta(MethodViewType or object):
     def __init__(cls, name, bases, d):
         MethodViewType.__init__(cls, name, bases, d)
 
@@ -92,6 +96,9 @@ class _ViewMeta(MethodViewType):
         # the view is intended to receive routes.
         if cls.blueprint is not None:
             cls.assign_blueprint(cls.blueprint)
+
+
+_ViewMeta = _OldViewMeta if MethodViewType is not None else type
 
 
 class BaseView(MethodView, metaclass=_ViewMeta):
@@ -110,6 +117,15 @@ class BaseView(MethodView, metaclass=_ViewMeta):
     auto_assign = tuple()
     # names of qs arguments that should be merged w/ URL arguments and passed to view methods
     expected_qs_args = []
+
+    def __init_subclass__(cls, **kwargs):
+        """Flask before 2.2.0 used a metaclass to perform view setup, but this
+        changed to using `init_subclass`. If the old way is enabled, no need to
+        do anything but call the super here."""
+        super().__init_subclass__(**kwargs)
+
+        if MethodViewType is None and cls.blueprint is not None:
+            cls.assign_blueprint(cls.blueprint)
 
     def __init__(self, responding_method=None):
         self.responding_method = responding_method
