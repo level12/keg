@@ -173,12 +173,12 @@ class TestDatabaseCommands(CLIBase):
 
     @mock.patch('keg.db.DatabaseManager.db_init_with_clear')
     def test_init_with_clear(self, m_db_init_wc):
-        result = self.invoke('init', '--clear-first')
+        result = self.invoke('init', '--clear-first', '--yes')
         assert 'Database cleared and initialized' in result.output
         m_db_init_wc.assert_called_once_with()
 
     @mock.patch('keg.db.DatabaseManager.db_clear')
     def test_clear(self, m_db_clear):
-        result = self.invoke('clear')
+        result = self.invoke('clear', '--yes')
         assert 'Database cleared' in result.output
         m_db_clear.assert_called_once_with()

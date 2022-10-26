@@ -188,8 +188,14 @@ def database_group(ctx):
 @click.command('init', short_help=_('Create all db objects, send related events.'))
 @click.option('--clear-first', default=False, is_flag=True,
               help=_('Clear DB of all data and drop all objects before init.'))
+@click.option('--yes', default=False, is_flag=True, help="Force confirmation")
 @flask.cli.with_appcontext
-def database_init(clear_first):
+def database_init(clear_first, yes):
+    prompt = clear_first and not yes
+    if prompt and not click.confirm(_('Are you sure? You will delete all the data!')):
+        click.echo('Database untouched')
+        return
+
     if clear_first:
         current_app.db_manager.db_init_with_clear()
         click.echo(_('Database cleared and initialized'))
@@ -199,10 +205,14 @@ def database_init(clear_first):
 
 
 @click.command('clear', short_help=_('Clear DB of all data and drop all objects.'))
+@click.option('--yes', default=False, is_flag=True, help="Force confirmation")
 @flask.cli.with_appcontext
-def database_clear():
-    current_app.db_manager.db_clear()
-    click.echo(_('Database cleared'))
+def database_clear(yes):
+    if yes or click.confirm(_('Are you sure? You will delete all the data!')):
+        current_app.db_manager.db_clear()
+        click.echo(_('Database cleared'))
+    else:
+        click.echo(_('Database untouched'))
 
 
 class CLILoader(object):

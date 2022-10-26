@@ -1,9 +1,10 @@
 {
     "": {
         "language": "es",
-        "plural-forms": "nplurals=2; plural=(n != 1)"
+        "plural-forms": "nplurals=2; plural=(n != 1);"
     },
     "A file with the same name as the desired directory, '{dpath}', already exists.": "Ya existe un archivo con el mismo nombre que el directorio deseado, '{dpath}'.",
+    "Are you sure? You will delete all the data!": "\u00bfEst\u00e1 seguro? \u00a1Borrar\u00e1s todos los datos!",
     "Argument mismatch occured: method={method}, missing={missing}, extra_keys={extra_keys}, extra_pos={extra_pos}.  Arguments available: {calling_args}": "La discrepancia en el argumento ocurri\u00f3: method = {method}, missing = {missing}, extra_keys = {extra_keys}, extra_pos = {extra_pos}. Argumentos disponibles: {calling_args}",
     "Clear DB of all data and drop all objects before init.": "Borrar DB de todos los datos y soltar todos los objetos antes de init.",
     "Clear DB of all data and drop all objects.": "Borre la DB de todos los datos y suelte todos los objetos.",
@@ -16,6 +17,7 @@
     "Database cleared and initialized": "Base de datos borrada e inicializada",
     "Database initialized": "Base de datos inicializada",
     "Database not enabled for this app.  No subcommands available.": "La base de datos no est\u00e1 habilitada para esta aplicaci\u00f3n. No hay subcomandos disponibles.",
+    "Database untouched": "Base de datos intacta",
     "Default config objects:": "Objetos de configuraci\u00f3n predeterminados:",
     "Deliberate exception for testing purposes": "Excepci\u00f3n deliberada para fines de prueba",
     "Developer info and utils.": "Informaci\u00f3n y utilidades del desarrollador.",
