@@ -22,7 +22,7 @@ class AutoAssign(BaseView):
 
 class AutoAssignWithResponse(BaseView):
     auto_assign = ('bar',)
-    template_name = 'other/auto_assign.html'
+    template_name = 'other/auto-assign.html'
 
     def get(self):
         self.bar = 'bar'
