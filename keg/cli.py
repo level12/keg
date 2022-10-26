@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from collections import defaultdict
 from contextlib import contextmanager
+from itertools import chain
 
 import click
 import flask
@@ -38,29 +39,46 @@ class KegAppGroup(flask.cli.AppGroup):
     def _load_plugin_commands(self):
         if self._loaded_plugin_commands:
             return
+        entry_point_iterables = []
+
+        # older Flask
         try:
             import pkg_resources
+            entry_point_iterables.extend([
+                pkg_resources.iter_entry_points('flask.commands'),
+                pkg_resources.iter_entry_points('keg.commands'),
+            ])
         except ImportError:
-            self._loaded_plugin_commands = True
             return
 
-        for ep in pkg_resources.iter_entry_points('flask.commands'):
-            self.add_command(ep.load(), ep.name)
-        for ep in pkg_resources.iter_entry_points('keg.commands'):
+        # newer Flask
+        try:
+            # uses importlib, but python has some API variations. Let flask handle that.
+            from flask.cli import metadata
+            entry_point_iterables.extend([
+                metadata.entry_points(group="flask.commands"),
+                metadata.entry_points(group="keg.commands"),
+            ])
+        except ImportError:
+            pass
+
+        for ep in chain.from_iterable(entry_point_iterables):
             self.add_command(ep.load(), ep.name)
         self._loaded_plugin_commands = True
 
-    def list_commands(self, ctx):
+    def _load_app(self, ctx):
         self._load_plugin_commands()
 
         info = ctx.ensure_object(flask.cli.ScriptInfo)
         info.load_app()
+
+    def list_commands(self, ctx):
+        self._load_app(ctx)
         rv = set(click.Group.list_commands(self, ctx))
         return sorted(rv)
 
     def get_command(self, ctx, name):
-        info = ctx.ensure_object(flask.cli.ScriptInfo)
-        info.load_app()
+        self._load_app(ctx)
         return click.Group.get_command(self, ctx, name)
 
     def main(self, *args, **kwargs):
