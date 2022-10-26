@@ -1,12 +1,9 @@
-from __future__ import absolute_import
-
 import os.path as osp
 
 import appdirs
 from blazeutils.helpers import tolist
 import flask
 from pathlib import PurePath
-import six
 from werkzeug.utils import (
     import_string,
     ImportStringError
@@ -191,7 +188,7 @@ class TestProfile(object):
     KEG_LOG_SYSLOG_ENABLED = False
 
     # set this to allow generation of URLs without a request context
-    SERVER_NAME = 'keg.example.com' if six.PY3 else b'keg.example.com'
+    SERVER_NAME = 'keg.example.com'
 
     # simple value for testing is fine
     SECRET_KEY = '12345'

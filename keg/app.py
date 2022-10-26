@@ -1,9 +1,6 @@
-from __future__ import absolute_import
-
 import importlib
 
 import flask
-from six.moves import range
 from werkzeug.datastructures import ImmutableDict
 
 from keg.blueprints import keg as kegbp

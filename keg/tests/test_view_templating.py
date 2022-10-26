@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from keg.testing import WebBase
 
 from keg_apps.web.app import WebApp

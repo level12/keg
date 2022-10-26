@@ -1,10 +1,7 @@
-from __future__ import absolute_import
-
 import os
 
 from jinja2 import TemplateSyntaxError
 import pytest
-import six
 
 from keg import current_app
 from keg_apps.templating.app import TemplatingApp
@@ -50,7 +47,7 @@ class TestAssetsInclude(object):
     def test_include_with_params(self):
         with pytest.raises(TemplateSyntaxError) as e:
             self.render('assets_with_params.html')
-            assert six.text_type(e) == 'asset_include does not yet support parameters'
+            assert str(e) == 'asset_include does not yet support parameters'
 
     def test_assets_content(self):
         self.ctx.assets.content['css'].append(('fake-file.css', 'foo', '//fake-file.css content'))

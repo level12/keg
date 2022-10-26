@@ -1,11 +1,8 @@
-from __future__ import absolute_import
-
 import contextlib
 
 import click
 import click.testing
 import flask
-import six
 from flask_webtest import TestApp
 from werkzeug.datastructures import ImmutableMultiDict, MultiDict
 
@@ -156,13 +153,6 @@ def invoke_command(app_cls, *args, **kwargs):
         app_key = app_cls.environ_key('USE_TEST_PROFILE')
         env[app_key] = 'true'
     result = runner.invoke(app_cls.cli, args, env=env, catch_exceptions=False, **kwargs)
-
-    # if an exception was raised, make sure you output the output to make debugging easier
-    # -1 as an exit code indicates a non SystemExit exception.
-    # 9/16/15: Not sure this is necessary anymore since we force catch_exceptions=False above (RLS).
-    if result.exit_code == -1:
-        click.echo(result.output)
-        six.reraise(result.exc_info[1], None, result.exc_info[2])
 
     error_message = 'Command exit code {}, expected {}.  Result output follows:\n{}'
     assert result.exit_code == exit_code, error_message.format(result.exit_code, exit_code,

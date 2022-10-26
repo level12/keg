@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import inspect
 import sys
 from warnings import warn
@@ -13,7 +11,6 @@ try:
 except ImportError:
     MethodViewType = None
 from jinja2 import TemplateNotFound
-import six
 from werkzeug.datastructures import MultiDict
 
 from keg.extensions import lazy_gettext as _
@@ -54,7 +51,7 @@ def _werkzeug_multi_dict_conv(md):
         if only one value or a list if multiple values
     '''
     retval = {}
-    for key, value in six.iteritems(md.to_dict(flat=False)):
+    for key, value in md.to_dict(flat=False).items():
         if len(value) == 1:
             retval[key] = value[0]
         else:
@@ -64,7 +61,7 @@ def _werkzeug_multi_dict_conv(md):
 
 def _call_with_expected_args(view, calling_args, method, method_is_bound=True):
     """ handle argument conversion to what the method accepts """
-    if isinstance(method, six.string_types):
+    if isinstance(method, str):
         if not hasattr(view, method):
             return
         method = getattr(view, method)
@@ -185,7 +182,7 @@ class BaseView(MethodView, metaclass=_ViewMeta):
         # start with query string arguments that are expected
         args = MultiDict()
         if self.expected_qs_args:
-            for k in six.iterkeys(request.args):
+            for k in request.args.keys():
                 if k in self.expected_qs_args:
                     args.setlist(k, request.args.getlist(k))
 
@@ -193,7 +190,7 @@ class BaseView(MethodView, metaclass=_ViewMeta):
         # arguments get precedence and we don't want to just .update()
         # because that would allow arbitrary get arguments to affect the
         # values of the URL arguments
-        for k, v in six.iteritems(urlargs):
+        for k, v in urlargs.items():
             args[k] = v
 
         return _werkzeug_multi_dict_conv(args)

@@ -1,13 +1,11 @@
-from __future__ import absolute_import
-
 from collections import defaultdict
 from contextlib import contextmanager
 from itertools import chain
+import urllib
 
 import click
 import flask
 import flask.cli
-from six.moves import urllib
 
 from keg import current_app
 from keg.extensions import gettext as _

@@ -1,9 +1,6 @@
-from __future__ import absolute_import
-
 import os
 
 import pytest
-import six
 
 import keg
 from keg.assets import AssetManager, AssetException
@@ -40,7 +37,7 @@ class TestAssets(object):
         with pytest.raises(AssetException) as e:
             am = AssetManager(keg.current_app)
             am.load_related('_not_there.html')
-            assert six.text_type(e) == 'Could not find related assets for template: _not_there.html'
+            assert str(e) == 'Could not find related assets for template: _not_there.html'
 
     def test_load_single_asset(self):
         am = AssetManager(keg.current_app)

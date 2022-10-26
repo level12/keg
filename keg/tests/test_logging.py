@@ -1,9 +1,6 @@
-from __future__ import absolute_import
-
+from io import StringIO
 import logging
-
-import mock
-import six
+from unittest import mock
 
 from keg import signals
 from keg_apps.logging import LoggingApp, log
@@ -12,10 +9,10 @@ from keg_apps.logging import LoggingApp, log
 class TestLogging(object):
 
     def test_stream_handler(self):
-        with mock.patch('sys.stderr', new_callable=six.StringIO) as m_stderr:
+        with mock.patch('sys.stderr', new_callable=StringIO) as m_stderr:
             LoggingApp().init(use_test_profile=True)
-            log.warning(u'test warn log')
-            log.info(u'test info log')
+            log.warning('test warn log')
+            log.info('test info log')
 
         output = m_stderr.getvalue().strip().splitlines()
         assert len(output) == 2, output
@@ -61,7 +58,7 @@ class TestJsonFormatter(object):
     def setup_method(self):
         self.logger = logging.getLogger('logging-test')
         self.logger.setLevel(logging.DEBUG)
-        self.buffer = six.StringIO()
+        self.buffer = StringIO()
 
         self.logHandler = logging.StreamHandler(self.buffer)
         self.logger.addHandler(self.logHandler)

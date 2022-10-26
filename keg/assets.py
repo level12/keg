@@ -1,10 +1,7 @@
-from __future__ import absolute_import
-
 from collections import defaultdict
 import pathlib
 
 from jinja2 import TemplateNotFound
-import six
 
 from keg.extensions import lazy_gettext as _
 
@@ -33,9 +30,9 @@ class AssetManager(object):
             return False
 
     def load_related(self, template_name):
-        js_asset_name = six.text_type(pathlib.PurePosixPath(template_name).with_suffix('.js'))
+        js_asset_name = str(pathlib.PurePosixPath(template_name).with_suffix('.js'))
         js_found = self.load_asset(js_asset_name)
-        css_asset_name = six.text_type(pathlib.PurePosixPath(template_name).with_suffix('.css'))
+        css_asset_name = str(pathlib.PurePosixPath(template_name).with_suffix('.css'))
         css_found = self.load_asset(css_asset_name)
         if not js_found and not css_found:
             raise AssetException(_('Could not find related assets for template: {template_name}',

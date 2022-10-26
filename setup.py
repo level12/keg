@@ -28,6 +28,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
     license='BSD',
     packages=find_packages(),
@@ -41,7 +42,6 @@ setup(
         'Flask',
         'Flask-SQLAlchemy',
         'python-json-logger',
-        'six',
         'sqlalchemy',
     ],
     extras_require={

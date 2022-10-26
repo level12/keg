@@ -1,7 +1,4 @@
-from __future__ import absolute_import
-
 from sqlalchemy import MetaData
-import six
 
 from ..db import db
 
@@ -128,7 +125,7 @@ class MicrosoftSQLOps(DialectOperations):
             'U': 'drop table [{schema_name}].[{name}]',
         }
         delete_sql = []
-        for type, drop_sql in six.iteritems(mapping):
+        for type, drop_sql in mapping.items():
             sql = 'select name, object_name( parent_object_id ) as parent_name '\
                 ', OBJECT_SCHEMA_NAME(object_id) as schema_name '\
                 'from sys.objects where type in (\'{}\')'.format("', '".join(type))
