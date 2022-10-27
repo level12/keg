@@ -9,7 +9,8 @@ class DefaultProfile(object):
 
 class TestProfile(object):
     KEG_DB_DIALECT_OPTIONS = {
-        'postgresql.schemas': ('public', 'fooschema'),
+        'postgresql.schemas': ('public', 'barschema'),
+        'bind.postgres.schemas': ('public', 'fooschema'),
         'mssql.schemas': ('fooschema', ),
     }
 

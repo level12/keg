@@ -1,5 +1,3 @@
-from unittest import mock
-
 import pytest
 
 from keg import current_app
@@ -116,23 +114,6 @@ class TestDatabaseManager(object):
         assert self.init_post_connected
         assert self.clear_pre_connected
         assert self.clear_post_connected
-
-    def test_prep_empty_deprecation(self):
-        current_app.db_manager.prep_empty = lambda *args, **kwargs: False
-
-        try:
-            with mock.patch('keg.db.warnings.warn', autospec=True, spec_set=True) as m_warn:
-                current_app.db_manager.db_init_with_clear()
-                m_warn.assert_called_once_with(
-                    'prep_empty is deprecated and will not be called in future versions',
-                    DeprecationWarning, 2)
-
-                m_warn.reset_mock()
-                current_app.db_manager.prep_empty = None
-                current_app.db_manager.db_init_with_clear()
-                assert not m_warn.call_count
-        finally:
-            del current_app.db_manager.prep_empty
 
 
 class TestKegSQLAlchemy(object):

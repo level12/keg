@@ -1,4 +1,5 @@
 import pytest
+from unittest import mock
 
 from keg import current_app
 from keg.db import db
@@ -91,6 +92,16 @@ class TestPostgreSQL(DialectExam):
         self.dialect().create_all()
         self.dialect().create_all()
         assert len(self.obj_names()) == self.entity_count
+
+    def test_options_follow_bind_dialect_specificity(self):
+        """Test that create_all creates necessary schemas from the dialect option"""
+        dialect_config = current_app.config.get('KEG_DB_DIALECT_OPTIONS').copy()
+        del dialect_config['bind.postgres.schemas']
+        with mock.patch.object(current_app.db_manager, 'dialect_opts', dialect_config):
+            dialect = self.dialect()
+            assert dialect.opt_schemas == ('public', 'barschema')
+        dialect = self.dialect()
+        assert dialect.opt_schemas == ('public', 'fooschema')
 
 
 class TestMicrosoftSQL(DialectExam):
