@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from flask.signals import Namespace
 
 _signals = Namespace()

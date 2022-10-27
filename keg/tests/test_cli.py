@@ -1,8 +1,6 @@
-from __future__ import absolute_import
-
 import os
+from unittest import mock
 
-import mock
 import pytest
 
 from keg.cli import dotenv, get_load_dotenv

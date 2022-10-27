@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import flask
 import flask_webtest
 from keg_apps.flaskwtf_bug import BugFixApp, BugApp

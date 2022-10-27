@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from flask import current_app  # noqa: F401
 
 from keg.version import VERSION  # noqa: F401

@@ -1,8 +1,5 @@
-from __future__ import absolute_import
-
 import os
-
-import mock
+from unittest import mock
 
 from keg.app import Keg
 from keg.config import Config

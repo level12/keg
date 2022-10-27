@@ -21,7 +21,7 @@ import keg
 # -- Project information -----------------------------------------------------
 
 project = 'Keg'
-copyright = u'{}, Level 12'.format(dt.datetime.utcnow().year)
+copyright = '{}, Level 12'.format(dt.datetime.utcnow().year)
 author = 'Level 12'
 
 cfg = configparser.SafeConfigParser()

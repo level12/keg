@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 # flask.globals.request_ctx is only available in Flask >= 2.2.0
 try:
     from flask.globals import request_ctx

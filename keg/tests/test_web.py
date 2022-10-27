@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import flask
 from keg.component import KegComponent
 from keg.testing import WebBase

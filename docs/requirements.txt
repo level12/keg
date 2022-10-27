@@ -1,10 +1,4 @@
+--extra-index-url https://package-index.level12.net
+
 sphinx
-appdirs
-BlazeUtils
-blinker
-Click>=3.0
-Flask
-Flask-SQLAlchemy
-pathlib
-python-json-logger
-six
+-e .[tests]

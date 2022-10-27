@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from flask.ctx import RequestContext
 from keg.assets import AssetManager
 
