@@ -17,10 +17,20 @@ class DialectOperations(object):
         if not self.option_defaults:
             return
         for option_key in self.option_defaults.keys():
-            full_key = '{}.{}'.format(self.dialect_name, option_key)
+            # Each option will be determined from the most specific config key set for
+            # the dialect and bind:
+            # bind-level dialect option > generic dialect option > default value
+            dialect_key = '{}.{}'.format(self.dialect_name, option_key)
+            bind_key = 'bind.{}.{}'.format(self.bind_name, option_key)
             attr_name = 'opt_{}'.format(option_key)
             default_opt_value = self.option_defaults[option_key]
-            opt_value = option_pairs.get(full_key, default_opt_value)
+            opt_value = option_pairs.get(
+                bind_key,
+                option_pairs.get(
+                    dialect_key,
+                    default_opt_value
+                )
+            )
             setattr(self, attr_name, opt_value)
 
     def execute_sql(self, statements):

@@ -5,6 +5,17 @@ Configuration Variables
 -----------------------
 
 - ``KEG_DB_DIALECT_OPTIONS``: Dict of options to provide to the db manager. E.g. "postgresql.schemas".
+
+  - Options keys can target either the dialect or a specific bind.
+  
+    - Dialect: ``postgresql.schemas``
+    - Bind: ``bind.<bind-name>.schemas``
+  
+  - If the bind option is present, it will override a corresponding dialect option.
+  - Options supported:
+  
+    - ``schemas``: Tuple of schema names to create. Supported for postgresql and mssql dialects.
+
 - ``KEG_DIR_MODE``: Mode used by ``ensure_dirs``. Default 0o777.
 - ``KEG_ENDPOINTS``: Keys/endpoints usable via ``keg.web.redirect``.
 - ``KEG_LOG_AUTO_CLEAR_HANDLERS``: Remove existing handlers before creating new ones. Default True.
