@@ -7,7 +7,7 @@ Installation
 Upgrade Notes
 =============
 
-While we attempt to preserve backward compatibility, some Keg versions doe introduce
+While we attempt to preserve backward compatibility, some Keg versions do introduce
 breaking changes. This list should provide information on needed app changes.
 
 - 0.10.0
@@ -18,6 +18,8 @@ breaking changes. This list should provide information on needed app changes.
 
       - Provide an absolute route rule: ``rule('/my-route')``
       - Use an empty relative route rule: ``rule()``
+    
+    - All of an app's routes may be shown on CLI with the ``<app> develop routes`` command
 
   - DB manager ``prep_empty`` method no longer called (had been deprecated)
   - Python 2 support removed

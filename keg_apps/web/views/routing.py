@@ -63,7 +63,7 @@ class HelloWorld(BaseView):
         /hello-world -> 'Hello World'
         /hello-world/foo -> 'Hello Foo'
     """
-    rule('')
+    rule()
     rule('<name>')
 
     def get(self, name='World'):

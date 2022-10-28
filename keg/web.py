@@ -316,7 +316,7 @@ class BaseView(MethodView, metaclass=_ViewMeta):
             view_func = cls.as_view(str_endpoint)
 
             for rule, options in rules:
-                if rule.startswith('/'):
+                if rule and rule.startswith('/'):
                     class_url = rule
                 elif not rule:
                     rule = class_url
