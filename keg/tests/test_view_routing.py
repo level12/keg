@@ -54,6 +54,7 @@ class TestViewRouting(WebBase):
             'routing.cars:list',
             'routing.explicit-route',
             'routing.hello-req',
+            'routing.hello-req2',
             'routing.hello-world',
             'routing.hw-rule-default',
             'routing.misc',
@@ -209,6 +210,20 @@ class TestViewRouting(WebBase):
         assert rule.rule == '/hello-req/<name>'
         assert rule.methods == {'GET', 'HEAD', 'OPTIONS'}
         assert rule.endpoint == 'routing.hello-req'
+
+    def test_route_no_absolute_single_endpoint(self):
+        self.testapp.get('/hello-req2', status=404)
+
+        resp = self.testapp.get('/hello-req2/foo')
+        assert resp.text == 'Hello foo'
+
+        rules = list(self.app.url_map.iter_rules(endpoint='routing.hello-req2'))
+        assert len(rules) == 1
+        rule = rules.pop()
+
+        assert rule.rule == '/hello-req2/<name>'
+        assert rule.methods == {'GET', 'HEAD', 'OPTIONS'}
+        assert rule.endpoint == 'routing.hello-req2'
 
     def test_route_plain(self):
         resp = self.testapp.get('/cars/list')

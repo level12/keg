@@ -60,10 +60,10 @@ class ExplicitRouteAlt(KegBaseView):
 
 class HelloWorld(BaseView):
     """
-        /hello -> 'Hello World'
-        /hello/foo -> 'Hello Foo'
+        /hello-world -> 'Hello World'
+        /hello-world/foo -> 'Hello Foo'
     """
-    # relative URL indicates this route should be appended to the default rule for the class
+    rule('')
     rule('<name>')
 
     def get(self, name='World'):
@@ -96,6 +96,18 @@ class HelloReq(BaseView):
     """
     # making the rule absolute disables the default rule that would have been created by the class.
     rule('/hello-req/<name>')
+
+    def get(self, name):
+        return _('Hello {name}', name=name)
+
+
+class HelloReq2(BaseView):
+    """
+        /hello-req2 -> 404
+        /hello-req2/foo -> 'Hello Foo'
+    """
+    # no absolute rule, but only one endpoint to use
+    rule('<name>')
 
     def get(self, name):
         return _('Hello {name}', name=name)
