@@ -3,7 +3,6 @@ import importlib
 import flask
 from werkzeug.datastructures import ImmutableDict
 
-from keg.blueprints import keg as kegbp
 import keg.cli
 import keg.config
 from keg.ctx import KegRequestContext
@@ -137,8 +136,6 @@ class Keg(flask.Flask):
             comp_object.init_app(self, parent_path=comp_path)
 
     def init_blueprints(self):
-        # TODO: probably want to be selective about adding our blueprint
-        self.register_blueprint(kegbp)
         for blueprint in self.use_blueprints:
             self.register_blueprint(blueprint)
 
