@@ -1,6 +1,46 @@
 Changelog
 =========
 
+0.10.0 released 2022-11-01
+--------------------------
+
+- **BREAKING CHANGES**
+
+  - no longer add default route when at least one rule present (15b003e_)
+  - remove default blueprint with ping and exception-test routes (b09d55e_)
+  - remove six dependency and python 2 support (f2339df_)
+
+- **DEPRECATIONS**
+
+  - use dash-named templates by default and warn for underscore-named templates (32e426a_)
+
+- support Flask 2.2 and Flask-SQLAlchemy 3.0 (edde099_)
+- allow bind-specific dialect options (a528fe2_)
+- ensure plugin commands are loaded when running a command (a2e0c0a_)
+- add developer note to readme for how to handle internationalization files (98a792a_)
+- drop morphi-related warning filter (d45a44e_)
+- clarify template used for exception test (f720a76_)
+- protect destructive CLI commands with prompts (0a071d1_)
+- fix docs formatting and clarify db_before_import signal usage (4337461_)
+- resolve pytest deprecation warning about nose methods (e1d1a6e_)
+- resolve mssql/odbc tests in CI (c8e4b47_)
+
+.. _15b003e: https://github.com/level12/keg/commit/15b003e
+.. _b09d55e: https://github.com/level12/keg/commit/b09d55e
+.. _98a792a: https://github.com/level12/keg/commit/98a792a
+.. _a528fe2: https://github.com/level12/keg/commit/a528fe2
+.. _f2339df: https://github.com/level12/keg/commit/f2339df
+.. _d45a44e: https://github.com/level12/keg/commit/d45a44e
+.. _f720a76: https://github.com/level12/keg/commit/f720a76
+.. _32e426a: https://github.com/level12/keg/commit/32e426a
+.. _a2e0c0a: https://github.com/level12/keg/commit/a2e0c0a
+.. _0a071d1: https://github.com/level12/keg/commit/0a071d1
+.. _4337461: https://github.com/level12/keg/commit/4337461
+.. _e1d1a6e: https://github.com/level12/keg/commit/e1d1a6e
+.. _c8e4b47: https://github.com/level12/keg/commit/c8e4b47
+.. _edde099: https://github.com/level12/keg/commit/edde099
+
+
 0.9.1 released 2021-06-09
 -------------------------
 
