@@ -25,3 +25,4 @@ Contents
    web
    readme/features
    readme/configuration
+   readme/internationalization
