@@ -21,5 +21,6 @@ breaking changes. This list should provide information on needed app changes.
     
     - All of an app's routes may be shown on CLI with the ``<app> develop routes`` command
 
+  - Removed ``keg`` blueprint along with ``ping`` and ``exception-test`` routes
   - DB manager ``prep_empty`` method no longer called (had been deprecated)
   - Python 2 support removed
