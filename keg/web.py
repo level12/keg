@@ -315,16 +315,16 @@ class BaseView(MethodView, metaclass=_ViewMeta):
             str_endpoint = str(endpoint)
             view_func = cls.as_view(str_endpoint)
 
-            absolute_found = False
             for rule, options in rules:
-                if rule.startswith('/'):
-                    absolute_found = True
+                if rule and rule.startswith('/'):
                     class_url = rule
+                elif not rule:
+                    rule = class_url
                 else:
                     rule = '{}/{}'.format(class_url, rule)
                 cls.blueprint.add_url_rule(rule, endpoint=endpoint, view_func=view_func, **options)
 
-            if not absolute_found:
+            if not rules:
                 cls.blueprint.add_url_rule(class_url, endpoint=endpoint, view_func=view_func)
 
         for rule, options in cls.url_rules:
