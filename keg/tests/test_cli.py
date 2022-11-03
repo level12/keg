@@ -82,6 +82,9 @@ class TestCLI(CLIBase):
 
 
 class TestCLI2(CLIBase):
+    # We don't set an app_cls (see below), but we do want any current app context cleaned
+    # up before constructing a new one.
+    force_app_context_cleanup = True
 
     @classmethod
     def setup_class(cls):

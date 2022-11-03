@@ -187,12 +187,14 @@ class CLIBase(object):
     # child classes will need to set these values in order to use the class
     app_cls = None
     cmd_name = None
+    force_app_context_cleanup = False
 
     @classmethod
     def setup_class(cls):
         # If a current app context is set, it may complicate what click is doing to
         # set up and run a specific app.
-        cleanup_app_contexts()
+        if cls.app_cls or cls.force_app_context_cleanup:
+            cleanup_app_contexts()
 
         cls.runner = click.testing.CliRunner()
 
