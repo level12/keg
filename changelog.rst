@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.10.1 released 2022-11-03
+--------------------------
+
+- fix break in CLI test context usage (b035e7c_)
+
+.. _b035e7c: https://github.com/level12/keg/commit/b035e7c
+
+
 0.10.0 released 2022-11-01
 --------------------------
 
