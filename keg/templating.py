@@ -22,7 +22,7 @@ def _keg_default_template_ctx_processor():
     """
     reqctx = _get_bc_request_context()
     rv = {}
-    if reqctx is not None:
+    if reqctx:
         rv['assets'] = reqctx.assets
     return rv
 
