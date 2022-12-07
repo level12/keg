@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.10.2 released 2022-12-07
+--------------------------
+
+- fix request context requirement in assets parsing (1d6b60f_)
+
+.. _1d6b60f: https://github.com/level12/keg/commit/1d6b60f
+
+
 0.10.1 released 2022-11-03
 --------------------------
 
