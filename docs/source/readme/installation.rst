@@ -18,9 +18,10 @@ breaking changes. This list should provide information on needed app changes.
 
       - Provide an absolute route rule: ``rule('/my-route')``
       - Use an empty relative route rule: ``rule()``
-    
+
     - All of an app's routes may be shown on CLI with the ``<app> develop routes`` command
 
   - Removed ``keg`` blueprint along with ``ping`` and ``exception-test`` routes
   - DB manager ``prep_empty`` method no longer called (had been deprecated)
   - Python 2 support removed
+  - Flask changed app's ``json_encoder/json_decoder`` attributes to ``_json_encoder/_json_decoder``
