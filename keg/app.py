@@ -190,10 +190,11 @@ class Keg(flask.Flask):
     @classmethod
     def testing_prep(cls, **config):
         """
-            Make sure an instance of this class exists in a state that is ready for testing to
-            commence.
-
-            Trigger `signal.testing_run_start` the first time this method is called for an app.
+            1. Instantiate the app class.
+            2. Cache the app instance after creation so that it's only instantiated once per Python
+                process.
+            3. Trigger `signal.testing_run_start` the first time this method is called for an app
+                class.
         """
         # For now, do the import here so we don't have a hard dependency on WebTest
         from keg.testing import ContextManager
@@ -201,15 +202,15 @@ class Keg(flask.Flask):
             raise TypeError(_('Don\'t use testing_prep() on Keg.  Create a subclass first.'))
         cm = ContextManager.get_for(cls)
 
-        # if the context manager's app isn't ready, that means this will be the first time the app
+        # If the context manager's app isn't ready, that means this will be the first time the app
         # is instantiated.  That seems like a good indicator that tests are just beginning, so it's
         # safe to trigger the signal.  We don't want the signal to fire every time b/c
         # testing_prep() can be called more than once per test run.
-        trigger_signal = not cm.is_ready()
-        cm.ensure_current(config)
-
-        if trigger_signal:
-            signals.testing_run_start.send(cm.app)
+        if not cm.is_ready():
+            app = cm.make_ready(config)
+            # Setup an app context so that DB operations will work without error.
+            with app.app_context():
+                signals.testing_run_start.send(app)
 
         return cm.app
 

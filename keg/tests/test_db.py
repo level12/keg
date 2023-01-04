@@ -13,19 +13,17 @@ from keg_apps.db.app import DBApp
 from keg_apps.db2 import DB2App
 
 
-@pytest.fixture(autouse=True)
-def db_session_prep():
-    """
-        Rollback the session after every test.
-    """
-    db.session.rollback()
-
-
 class TestDB(object):
 
-    @classmethod
-    def setup_class(cls):
-        DBApp.testing_prep()
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_app(self):
+        app = DBApp.testing_prep()
+        # Setup an app context that clears itself when this class's tests are finished.
+        with app.app_context():
+            yield
+
+    def teardown_method(self):
+        db.session.rollback()
 
     def test_primary_db_entity(self):
         # importing Blog here to ensure we're importing after app init, which will only succeed if
@@ -65,9 +63,16 @@ class TestDB2(object):
 
 
 class TestDatabaseManager(object):
-    @classmethod
-    def setup_class(cls):
-        DBApp.testing_prep()
+
+    @pytest.fixture(scope="class", autouse=True)
+    def setup_app(self):
+        app = DBApp.testing_prep()
+        # Setup an app context that clears itself when this class's tests are finished.
+        with app.app_context():
+            yield
+
+    def teardown_method(self):
+        db.session.rollback()
 
     def test_db_init_with_clear(self):
         # importing Blog here to ensure we're importing after app init, which will only succeed if

@@ -187,6 +187,14 @@ class TestProfile(object):
     TESTING = True
     KEG_LOG_SYSLOG_ENABLED = False
 
+    # By default, flask-webtest does not push an app context for each request. That
+    # behavior does not match the flask stack entirely: flask pushes both an app
+    # context and a request context on each request.
+    # Having a fresh app context for each test request is important for libraries that
+    # use flask.g to work properly (e.g. CSRF from flask-wtf, and user caching
+    # in flask-login).
+    FLASK_WEBTEST_PUSH_APP_CONTEXT = True
+
     # set this to allow generation of URLs without a request context
     SERVER_NAME = 'keg.example.com'
 
