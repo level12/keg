@@ -1,6 +1,21 @@
 Changelog
 =========
 
+0.11.0 released 2023-03-03
+--------------------------
+
+- **BREAKING CHANGES**
+
+  - app context is no longer pushed as part of test suite setup (046ce40_)
+
+- fix docs build for CI, needs pytz dependency explicitly since babel doesn't include it now (5215f63_)
+- support SQLAlchemy 2.0 (3dc3c3f_)
+
+.. _5215f63: https://github.com/level12/keg/commit/5215f63
+.. _3dc3c3f: https://github.com/level12/keg/commit/3dc3c3f
+.. _046ce40: https://github.com/level12/keg/commit/046ce40
+
+
 0.10.2 released 2022-12-07
 --------------------------
 
