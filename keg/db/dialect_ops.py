@@ -1,3 +1,4 @@
+import sqlalchemy as sa
 from sqlalchemy import MetaData
 
 from ..db import db
@@ -34,8 +35,9 @@ class DialectOperations(object):
             setattr(self, attr_name, opt_value)
 
     def execute_sql(self, statements):
-        for sql in statements:
-            self.engine.execute(sql)
+        with self.engine.begin() as conn:
+            for sql in statements:
+                conn.execute(sa.text(sql))
 
     def create_all(self):
         self.create_schemas()
@@ -101,17 +103,19 @@ class SQLiteOps(DialectOperations):
     def drop_all(self):
         # drop the views
         sql = "select name from sqlite_master where type='view'"
-        rows = self.engine.execute(sql)
-        drop_sql = ['drop view {0}'.format(record['name']) for record in rows]
+        with self.engine.begin() as conn:
+            rows = conn.execute(sa.text(sql))
+        drop_sql = ['drop view {0}'.format(record.name) for record in rows]
         self.execute_sql(drop_sql)
 
         # Find all the tables using metadata and reflection.  Use a custom MetaData instance to
         # avoid contaminating the metadata associated with our entities.
-        md = MetaData(bind=self.engine)
-        md.reflect()
+        md = MetaData()
+        md.reflect(self.engine)
         for table in reversed(md.sorted_tables):
             try:
-                self.engine.execute('drop table {}'.format(table.name))
+                with self.engine.begin() as conn:
+                    conn.execute(sa.text('drop table {}'.format(table.name)))
             except Exception as e:
                 if 'no such table' not in str(e):
                     raise
@@ -136,22 +140,33 @@ class MicrosoftSQLOps(DialectOperations):
         }
         delete_sql = []
         for type, drop_sql in mapping.items():
-            sql = 'select name, object_name( parent_object_id ) as parent_name '\
-                ', OBJECT_SCHEMA_NAME(object_id) as schema_name '\
-                'from sys.objects where type in (\'{}\')'.format("', '".join(type))
-            rows = self.engine.execute(sql)
-            for row in rows:
-                delete_sql.append(drop_sql.format(**dict(row)))
+            sql = (
+                "select name, object_name( parent_object_id ) as parent_name "
+                ", OBJECT_SCHEMA_NAME(object_id) as schema_name "
+                "from sys.objects where type in ('{}')"
+                " and name not like '#%'"  # Avoid cached temporary tables
+            ).format("', '".join(type))
+            with self.engine.begin() as conn:
+                rows = conn.execute(sa.text(sql))
+                for row in rows:
+                    delete_sql.append(
+                        drop_sql.format(
+                            name=row.name,
+                            parent_name=row.parent_name,
+                            schema_name=row.schema_name,
+                        )
+                    )
         # removing schemas can be tricky. SQL Server 2016+ supports DROP SCHEMA IF EXISTS ...
         #   syntax, but we need to support earlier versions. Technically, an IF EXISTS(...) DROP
         #   SCHEMA should work, but testing shows the drop never happens when executed in this
         #   fashion. So, query sys.schemas directly, and drop any schemas that we are interested
         #   in (according to the bind opts)
         schema_sql = 'select name from sys.schemas'
-        rows = self.engine.execute(schema_sql)
-        for row in rows:
-            if row.name in self.opt_schemas:
-                delete_sql.append('drop schema {}'.format(row.name))
+        with self.engine.begin() as conn:
+            rows = conn.execute(sa.text(schema_sql))
+            for row in rows:
+                if row.name in self.opt_schemas:
+                    delete_sql.append('drop schema {}'.format(row.name))
         # all drops should be in order, execute them all
         self.execute_sql(delete_sql)
 
@@ -160,9 +175,14 @@ class MicrosoftSQLOps(DialectOperations):
         for schema in self.opt_schemas:
             # MSSQL has to run CREATE SCHEMA as its own batch
             # So, we can't use an IF NOT EXISTS at the same time. Test first, then create.
-            existing = self.engine.execute(
-                "SELECT COUNT(*) FROM sys.schemas WHERE name = N'{}'".format(schema)
-            ).scalar()
+            with self.engine.begin() as conn:
+                existing = conn.execute(
+                    sa.text(
+                        "SELECT COUNT(*) FROM sys.schemas WHERE name = N'{}'".format(
+                            schema
+                        )
+                    )
+                ).scalar()
 
             if not existing:
                 sql.extend([

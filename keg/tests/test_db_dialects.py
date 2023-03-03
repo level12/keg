@@ -1,5 +1,7 @@
-import pytest
 from unittest import mock
+
+import pytest
+import sqlalchemy as sa
 
 from keg import current_app
 from keg.db import db
@@ -35,12 +37,14 @@ class DialectExam(object):
         return db.get_engine(current_app, self.bind_name)
 
     def obj_names(self):
-        records = self.engine().execute(self.obj_names_sql).fetchall()
+        with self.engine().begin() as conn:
+            records = conn.execute(sa.text(self.obj_names_sql)).fetchall()
         return set([record[0] for record in records])
 
     def create_objs(self):
-        self.engine().execute('create table foo(label varchar(20))')
-        self.engine().execute('create view vfoo as select * from foo')
+        with self.engine().begin() as conn:
+            conn.execute(sa.text('create table foo(label varchar(20))'))
+            conn.execute(sa.text('create view vfoo as select * from foo'))
         return 2
 
     def test_database_clearing(self):
@@ -73,10 +77,11 @@ class TestPostgreSQL(DialectExam):
     entity_count = 2
 
     def create_objs(self):
-        self.engine().execute('create table foo(label varchar(20))')
-        self.engine().execute('create view vfoo as select * from foo')
-        self.engine().execute('create table fooschema.bar(label varchar(20))')
-        self.engine().execute('create view fooschema.vbar as select * from fooschema.bar')
+        with self.engine().begin() as conn:
+            conn.execute(sa.text('create table foo(label varchar(20))'))
+            conn.execute(sa.text('create view vfoo as select * from foo'))
+            conn.execute(sa.text('create table fooschema.bar(label varchar(20))'))
+            conn.execute(sa.text('create view fooschema.vbar as select * from fooschema.bar'))
         return 4
 
     def test_create_all_without_prepping(self):
@@ -106,9 +111,12 @@ class TestPostgreSQL(DialectExam):
 class TestMicrosoftSQL(DialectExam):
     bind_name = 'mssql'
     # MSSQL supports the INFORMATION_SCHEMA standard
-    obj_names_sql = ("SELECT table_schema + '.' + table_name FROM INFORMATION_SCHEMA.tables"
-                     " WHERE table_type in ('BASE TABLE', 'VIEW')"
-                     " AND table_schema in ('dbo', 'fooschema')")
+    obj_names_sql = (
+        "SELECT table_schema + '.' + table_name FROM INFORMATION_SCHEMA.tables"
+        " WHERE table_type in ('BASE TABLE', 'VIEW')"
+        " AND table_schema in ('dbo', 'fooschema')"
+        " AND table_name not like '#%'"  # Avoid cached temporary tables
+    )
     # How many entities exist for this bind in the application?
     entity_count = 2
 
@@ -117,10 +125,11 @@ class TestMicrosoftSQL(DialectExam):
             pytest.skip('cannot test missing bind for mssql')
 
     def create_objs(self):
-        self.engine().execute('create table foo(label varchar(20))')
-        self.engine().execute('create view vfoo as select * from foo')
-        self.engine().execute('create table fooschema.bar(label varchar(20))')
-        self.engine().execute('create view fooschema.vbar as select * from fooschema.bar')
+        with self.engine().begin() as conn:
+            conn.execute(sa.text('create table foo(label varchar(20))'))
+            conn.execute(sa.text('create view vfoo as select * from foo'))
+            conn.execute(sa.text('create table fooschema.bar(label varchar(20))'))
+            conn.execute(sa.text('create view fooschema.vbar as select * from fooschema.bar'))
         return 4
 
     def test_create_all_without_prepping(self):
