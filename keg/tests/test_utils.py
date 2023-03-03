@@ -4,7 +4,7 @@ from unittest import mock
 import flask
 import pytest
 
-from keg.testing import inrequest
+from keg.testing import ContextManager, inrequest
 from keg.utils import pymodule_fpaths_to_objects
 from keg_apps.web.app import WebApp
 
@@ -52,6 +52,11 @@ class TestInRequest:
     @classmethod
     def setup_class(cls):
         WebApp.testing_prep()
+
+    @pytest.fixture(scope='function', autouse=True)
+    def app_context(self):
+        with ContextManager.get_for(WebApp).app.app_context():
+            yield
 
     @inrequest('/mypath?foo=bar&baz=boo')
     def test_in_request_args(self):

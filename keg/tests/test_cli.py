@@ -86,12 +86,12 @@ class TestCLI2(CLIBase):
     # up before constructing a new one.
     force_app_context_cleanup = True
 
-    @classmethod
-    def setup_class(cls):
-        CLIBase.setup_class()
+    @pytest.fixture(scope='class', autouse=True)
+    def setup_app(self):
         # Use this, instead of setting app_cls on the testing class, in order to test that the
         # machinery in place for using the current app is working.
-        CLI2App.testing_prep()
+        with CLI2App.testing_prep().app_context():
+            yield
 
     def test_invoke(self):
         result = self.invoke('hello1')

@@ -3,10 +3,16 @@ from unittest import mock
 import flask
 import pytest
 
-from keg.testing import WebBase
+from keg.testing import ContextManager, WebBase
 from keg.web import BaseView
 
 from keg_apps.web.app import WebApp
+
+
+@pytest.fixture(scope='function')
+def app_context():
+    with ContextManager.get_for(WebApp).app.app_context():
+        yield
 
 
 class TestViewCalculations:
@@ -109,7 +115,7 @@ class TestViewRouting(WebBase):
         assert rule.methods == {'GET', 'HEAD', 'OPTIONS'}
         assert rule.endpoint == 'routing.explicit-route'
 
-    def test_explicit_route_assigned_blueprint(self):
+    def test_explicit_route_assigned_blueprint(self, app_context):
         resp = self.testapp.get('/some-route-alt', status=404)
 
         from keg_apps.web.views.routing import ExplicitRouteAlt
