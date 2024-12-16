@@ -4,7 +4,7 @@ from logging.handlers import SysLogHandler
 import os
 import stat
 
-from pythonjsonlogger import jsonlogger
+from pythonjsonlogger import json as jsonlogger
 
 from keg.extensions import lazy_gettext as _
 
