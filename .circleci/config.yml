@@ -25,13 +25,13 @@ jobs:
 
             - run:
                 name: install tox and upgrade pip
-                command: pip install --progress-bar off -U pip tox pipenv
+                command: pip3.11 install --progress-bar off -U pip tox
 
             - run:
                 name: version checks
                 command: |
-                    python --version
-                    pip --version
+                    python3.11 --version
+                    pip3.11 --version
                     virtualenv --version
                     tox --version
 
