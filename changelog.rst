@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.11.1 released 2024-12-17
+--------------------------
+
+- update python testing targets (34a04ed_)
+- support newer python-json-logger (4cd5376_)
+
+.. _34a04ed: https://github.com/level12/keg/commit/34a04ed
+.. _4cd5376: https://github.com/level12/keg/commit/4cd5376
+
+
 0.11.0 released 2023-03-03
 --------------------------
 
