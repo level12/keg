@@ -11,7 +11,7 @@ with open(version_fpath) as fo:
     exec(fo.read(), version_globals)
 
 setup(
-    name="Keg",
+    name="keg",
     version=version_globals['VERSION'],
     description=("A web framework built on Flask & SQLAlchemy."
                  "  Somewhere North of Flask but South of Django."),
