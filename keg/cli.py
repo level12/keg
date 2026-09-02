@@ -172,7 +172,7 @@ def config_command():
         click.echo('    {} = {}'.format(key, config[key]))
 
 
-class DatabaseGroup(click.MultiCommand):
+class DatabaseGroup(click.Group):
 
     def list_commands(self, ctx):
         return ['clear', 'init']
