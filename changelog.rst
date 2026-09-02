@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.11.2 released 2026-09-02
+--------------------------
+
+- resolve click MultiCommand -> Group deprecation (da31679_)
+
+.. _da31679: https://github.com/level12/keg/commit/da31679
+
+
 0.11.1 released 2024-12-17
 --------------------------
 
