@@ -6,8 +6,8 @@ Keg: more than Flask
 .. image:: https://codecov.io/github/level12/keg/coverage.svg?branch=master
     :target: https://codecov.io/github/level12/keg?branch=master
 
-.. image:: https://img.shields.io/pypi/v/Keg.svg
-    :target: https://img.shields.io/pypi/v/Keg.svg
+.. image:: https://img.shields.io/pypi/v/keg.svg
+    :target: https://img.shields.io/pypi/v/keg.svg
 
 .. image:: https://img.shields.io/pypi/l/keg.svg
     :target: https://img.shields.io/pypi/l/keg.svg
@@ -15,8 +15,8 @@ Keg: more than Flask
 .. image:: https://img.shields.io/pypi/pyversions/keg.svg
     :target: https://img.shields.io/pypi/pyversions/keg.svg
 
-.. image:: https://img.shields.io/pypi/status/Keg.svg
-    :target: https://img.shields.io/pypi/status/Keg.svg
+.. image:: https://img.shields.io/pypi/status/keg.svg
+    :target: https://img.shields.io/pypi/status/keg.svg
 
 .. image:: https://ci.appveyor.com/api/projects/status/wm35hheykxs8851r
     :alt: AppVeyor Build
@@ -309,7 +309,7 @@ Links
 =====
 
 * Documentation: https://keg.readthedocs.io/en/stable/index.html
-* Releases: https://pypi.org/project/Keg/
+* Releases: https://pypi.org/project/keg/
 * Code: https://github.com/level12/keg
 * Issue tracker: https://github.com/level12/keg/issues
 * Questions & comments: http://groups.google.com/group/blazelibs
