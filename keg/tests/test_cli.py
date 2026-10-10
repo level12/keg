@@ -1,9 +1,15 @@
 import os
 from unittest import mock
 
+import click
 import pytest
 
-from keg.cli import dotenv, get_load_dotenv
+try:
+    from flask.cli import metadata as flask_cli_metadata
+except ImportError:
+    flask_cli_metadata = None
+
+from keg.cli import KegAppGroup, dotenv, get_load_dotenv
 from keg.testing import CLIBase, app_config
 from keg_apps.cli import CLIApp
 from keg_apps.cli2.app import CLI2App
@@ -18,6 +24,36 @@ need_dotenv = pytest.mark.skipif(
 class TestCLI(CLIBase):
     app_cls = CLIApp
     cmd_name = 'hello'
+
+    @pytest.mark.skipif(flask_cli_metadata is None, reason='Flask CLI metadata not supported')
+    def test_load_plugin_commands_with_flask_metadata(self):
+        @click.command('plugin')
+        def plugin_command():
+            pass
+
+        class EntryPoint:
+            name = 'plugin'
+
+            def load(self):
+                return plugin_command
+
+        def entry_points(group):
+            if group == 'keg.commands':
+                return [EntryPoint()]
+            return []
+
+        app_group = KegAppGroup(lambda: None, add_default_commands=False)
+
+        with mock.patch(
+            'flask.cli.metadata.entry_points', side_effect=entry_points
+        ) as m_entry_points:
+            app_group._load_plugin_commands()
+
+        assert app_group.commands['plugin'] is plugin_command
+        assert [call.kwargs['group'] for call in m_entry_points.call_args_list] == [
+            'flask.commands',
+            'keg.commands',
+        ]
 
     def test_class_command(self):
         result = self.invoke()

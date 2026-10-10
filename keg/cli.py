@@ -37,28 +37,16 @@ class KegAppGroup(flask.cli.AppGroup):
     def _load_plugin_commands(self):
         if self._loaded_plugin_commands:
             return
-        entry_point_iterables = []
 
-        # older Flask
         try:
-            import pkg_resources
-            entry_point_iterables.extend([
-                pkg_resources.iter_entry_points('flask.commands'),
-                pkg_resources.iter_entry_points('keg.commands'),
-            ])
+            from flask.cli import metadata
         except ImportError:
             return
 
-        # newer Flask
-        try:
-            # uses importlib, but python has some API variations. Let flask handle that.
-            from flask.cli import metadata
-            entry_point_iterables.extend([
-                metadata.entry_points(group="flask.commands"),
-                metadata.entry_points(group="keg.commands"),
-            ])
-        except ImportError:
-            pass
+        entry_point_iterables = [
+            metadata.entry_points(group="flask.commands"),
+            metadata.entry_points(group="keg.commands"),
+        ]
 
         for ep in chain.from_iterable(entry_point_iterables):
             self.add_command(ep.load(), ep.name)
