@@ -1,8 +1,11 @@
 # Example usage of `keg.web.BaseView`
 import flask
+
 from keg.web import BaseView
 
+
 core_bp = flask.Blueprint('core', __name__)
+
 
 class FooView(BaseView):
     url = '/foo'
@@ -11,8 +14,7 @@ class FooView(BaseView):
 
     def get(self):
         context = {
-            "bar": "baz",
+            'bar': 'baz',
         }
 
         return flask.render_template(self.calc_template_name(), **context)
-

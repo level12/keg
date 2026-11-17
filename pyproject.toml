@@ -1,0 +1,137 @@
+[build-system]
+requires = [
+    'hatchling',
+]
+build-backend = 'hatchling.build'
+
+
+[project]
+name = 'Keg'
+description = 'A web framework built on Flask & SQLAlchemy. Somewhere North of Flask but South of Django.'
+authors = [
+    {name = 'Randy Syring', email = 'randy.syring@level12.io'},
+]
+requires-python = '>=3.10'
+dynamic = ['version']
+readme = 'readme.rst'
+license = 'BSD-3-Clause'
+license-files = ['license.txt']
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
+]
+dependencies = [
+    'appdirs',
+    'BlazeUtils',
+    'blinker',
+    'Click>=8.2',
+    'Flask',
+    'Flask-SQLAlchemy',
+    'python-json-logger',
+    'sqlalchemy',
+]
+
+
+[project.urls]
+Homepage = 'https://github.com/level12/keg'
+Repository = 'https://github.com/level12/keg'
+
+
+[project.optional-dependencies]
+tests = [
+    'flask-webtest',
+    'flask-wtf',
+    'sqlalchemy_pyodbc_mssql',
+    'pyodbc==4.0.34',
+    'pytest',
+    'pytest-cov',
+    'python-dotenv',
+    'psycopg2-binary',
+    'mock',
+]
+i18n = [
+    'morphi>=0.2.0',
+]
+
+
+[dependency-groups]
+dev = [
+    {include-group = "pytest"},
+    {include-group = "prek"},
+    {include-group = "audit"},
+    {include-group = "build"},
+    {include-group = "nox"},
+    'click',
+    'ruff==0.16.2',
+]
+# Used by nox
+pytest = [
+    'flask-webtest',
+    'flask-wtf',
+    'pytest',
+    'pytest-cov',
+    'python-dotenv',
+    'psycopg[binary]',
+    'psycopg2-binary',
+    'mock',
+]
+# Used by nox
+prek = [
+    'prek',
+]
+# Used by nox
+audit = [
+    'pip-audit',
+]
+# Used by nox
+build = [
+    'build',
+    'twine',
+]
+# Used by nox
+docs = [
+    'pytz',
+    'sphinx',
+]
+# Used by CI
+nox = [
+    'nox',
+]
+
+
+# Babel command configuration migrated from setup.cfg.
+[tool.babel.extract_messages]
+input_dirs = ['src/keg']
+mapping_file = 'src/keg/i18n/babel.cfg'
+output_file = 'src/keg/i18n/keg.pot'
+
+
+[tool.babel.init_catalog]
+domain = 'keg'
+input_file = 'src/keg/i18n/keg.pot'
+output_dir = 'src/keg/i18n'
+
+
+[tool.babel.update_catalog]
+domain = 'keg'
+input_file = 'src/keg/i18n/keg.pot'
+output_dir = 'src/keg/i18n'
+
+
+[tool.babel.compile_catalog]
+domain = 'keg'
+directory = 'src/keg/i18n'
+
+
+[tool.babel.compile_json]
+domain = 'keg'
+directory = 'src/keg/i18n'
+output_dir = 'src/keg/static/i18n'

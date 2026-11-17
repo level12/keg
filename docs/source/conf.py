@@ -13,15 +13,16 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import datetime as dt
 import configparser
+import datetime as dt
 
 import keg
+
 
 # -- Project information -----------------------------------------------------
 
 project = 'Keg'
-copyright = '{}, Level 12'.format(dt.datetime.utcnow().year)
+copyright = f'{dt.datetime.utcnow().year}, Level 12'
 author = 'Level 12'
 
 cfg = configparser.SafeConfigParser()
@@ -74,7 +75,7 @@ html_theme_options = {
         'Level 12': 'https://www.level12.io',
         'File an Issue': 'https://github.com/level12/keg-storage/issues/new',
     },
-    'show_powered_by': True
+    'show_powered_by': True,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

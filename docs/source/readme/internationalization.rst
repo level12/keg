@@ -15,4 +15,3 @@ The desired workflow here is to run tox, update strings in the PO files as neces
 .. code::
 
     tox -e i18n
-

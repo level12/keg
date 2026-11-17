@@ -1,18 +1,40 @@
+# Python
 *.pyc
 *.egg-info
-*.komodo*
-.coverage
-.tox
-htmlcov
-/.project
+.venv
+
+# Tox/Nox/Tests/Coverage
+/.nox
+/.tox
+/ci/coverage-html
+*.coverage
+/coverage.xml
 *.pytests.xml
-coverage.xml
-build
-dist
-.cache
-tags
-.vscode
 .pytest_cache
-keg_apps/keg_apps.db-config.py
+
+
+# Editor Clutter
+/.vscode/*
+!/.vscode/settings.json
 .idea
-.python-version
+
+
+# Build related
+dist
+/build
+npm-debug.log
+.*-cache
+node_modules
+
+
+# Local dev files
+/mise.local.toml
+/tmp
+
+# Terraform
+*.tfstate*
+tf.plan
+.terraform
+
+
+# Project specific

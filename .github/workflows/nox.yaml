@@ -1,0 +1,72 @@
+name: Nox
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+
+# Limit this workflow to a single run at a time per-branch to avoid wasting worker resources
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+
+jobs:
+  # JOB
+  nox-other:
+    runs-on: ubuntu-latest
+
+    env:
+      PIP_EXTRA_INDEX_URL: https://package-index.level12.net
+
+    services:
+      postgres:
+        image: postgres:13-alpine
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: keg_tests
+        ports:
+          - 54321:5432
+
+    strategy:
+      fail-fast: false
+      matrix:
+        session: [audit, prek, build, docs, i18n, pytest_lowest, pytest_stable]
+
+    steps:
+      - uses: level12/coppy/gh-actions/nox-run@main
+        with:
+          nox-session: ${{ matrix.session }}
+
+  # JOB
+  nox-pytest:
+    runs-on: ubuntu-latest
+
+    env:
+      PIP_EXTRA_INDEX_URL: https://package-index.level12.net
+
+    services:
+      postgres:
+        image: postgres:13-alpine
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: keg_tests
+        ports:
+          - 54321:5432
+    # Specifying the permissions block sets anything not-specified to `none` so we have have to
+    # re-specify the default read permission to be able to set the write permission.
+    permissions:
+      contents: read    # For actions/checkout
+      id-token: write   # For codecov OIDC
+
+    steps:
+      - uses: level12/coppy/gh-actions/nox-run@main
+        with:
+          nox-session: pytest
+
+      - uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true

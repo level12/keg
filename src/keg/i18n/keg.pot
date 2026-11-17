@@ -1,0 +1,174 @@
+# Translations template for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-11-17 15:16-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: src/keg/app.py:51
+msgid ""
+"Please set the \"import_name\" attribute on your app class or pass it "
+"into the app instance."
+msgstr ""
+
+#: src/keg/app.py:75
+msgid "init() already called on this instance"
+msgstr ""
+
+#: src/keg/app.py:173
+msgid "administrators notified"
+msgstr ""
+
+#: src/keg/app.py:207
+msgid "Don't use testing_prep() on Keg.  Create a subclass first."
+msgstr ""
+
+#: src/keg/assets.py:40
+#, python-brace-format
+msgid "Could not find related assets for template: {template_name}"
+msgstr ""
+
+#: src/keg/cli.py:102
+msgid "Developer info and utils."
+msgstr ""
+
+#: src/keg/cli.py:111
+msgid "List the routes defined for this app."
+msgstr ""
+
+#: src/keg/cli.py:136
+msgid "Show paths searched for a template."
+msgstr ""
+
+#: src/keg/cli.py:153
+msgid "List info related to config files, profiles, and values."
+msgstr ""
+
+#: src/keg/cli.py:162
+msgid "Default config objects:"
+msgstr ""
+
+#: src/keg/cli.py:166
+msgid "Config file locations:"
+msgstr ""
+
+#: src/keg/cli.py:171
+msgid "Could not access the following config paths:"
+msgstr ""
+
+#: src/keg/cli.py:175
+msgid "Config objects used:"
+msgstr ""
+
+#: src/keg/cli.py:179
+msgid "Resulting app config (including Flask defaults):"
+msgstr ""
+
+#: src/keg/cli.py:199
+msgid "Lists database related sub-commands."
+msgstr ""
+
+#: src/keg/cli.py:207
+msgid "Database not enabled for this app.  No subcommands available."
+msgstr ""
+
+#: src/keg/cli.py:216
+msgid "Create all db objects, send related events."
+msgstr ""
+
+#: src/keg/cli.py:221
+msgid "Clear DB of all data and drop all objects before init."
+msgstr ""
+
+#: src/keg/cli.py:227 src/keg/cli.py:243
+msgid "Are you sure? You will delete all the data!"
+msgstr ""
+
+#: src/keg/cli.py:233
+msgid "Database cleared and initialized"
+msgstr ""
+
+#: src/keg/cli.py:236
+msgid "Database initialized"
+msgstr ""
+
+#: src/keg/cli.py:239
+msgid "Clear DB of all data and drop all objects."
+msgstr ""
+
+#: src/keg/cli.py:245
+msgid "Database cleared"
+msgstr ""
+
+#: src/keg/cli.py:247
+msgid "Database untouched"
+msgstr ""
+
+#: src/keg/cli.py:321
+msgid "Name of the configuration profile to use."
+msgstr ""
+
+#: src/keg/cli.py:329
+msgid "Set default logging level to logging.WARNING."
+msgstr ""
+
+#: src/keg/cli.py:337
+msgid "Show all commands with subcommands."
+msgstr ""
+
+#: src/keg/cli.py:367
+msgid "Show help message."
+msgstr ""
+
+#: src/keg/cli.py:369
+msgid "Show this message and exit."
+msgstr ""
+
+#: src/keg/logging.py:114
+#, python-brace-format
+msgid "Using syslog address: {address}"
+msgstr ""
+
+#: src/keg/logging.py:117
+msgid "did not find syslog address"
+msgstr ""
+
+#: src/keg/templating.py:56
+msgid "asset_include does not yet support parameters"
+msgstr ""
+
+#: src/keg/utils.py:34
+#, python-brace-format
+msgid ""
+"A file with the same name as the desired directory, '{dpath}', already "
+"exists."
+msgstr ""
+
+#: src/keg/utils.py:58
+msgid "can't set attribute"
+msgstr ""
+
+#: src/keg/web.py:79
+#, python-brace-format
+msgid ""
+"Argument mismatch occured: method={method}, missing={missing}, "
+"extra_keys={extra_keys}, extra_pos={extra_pos}.  Arguments available: "
+"{calling_args}"
+msgstr ""
+
+#: src/keg/web.py:159
+#, python-brace-format
+msgid "Unimplemented method {name}"
+msgstr ""

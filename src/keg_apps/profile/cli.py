@@ -1,0 +1,17 @@
+import click
+
+import keg
+from keg_apps.profile.app import ProfileApp
+
+
+def cli_entry():
+    ProfileApp.cli.main()
+
+
+@ProfileApp.cli.command('show-profile')
+def show_profile():
+    click.echo(keg.current_app.config['PROFILE_FROM'])
+
+
+if __name__ == '__main__':
+    cli_entry()
