@@ -19,12 +19,9 @@ jobs:
   nox-other:
     runs-on: ubuntu-latest
 
-    env:
-      PIP_EXTRA_INDEX_URL: https://package-index.level12.net
-
     services:
       postgres:
-        image: postgres:13-alpine
+        image: postgres:15-alpine
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: keg_tests
@@ -45,12 +42,9 @@ jobs:
   nox-pytest:
     runs-on: ubuntu-latest
 
-    env:
-      PIP_EXTRA_INDEX_URL: https://package-index.level12.net
-
     services:
       postgres:
-        image: postgres:13-alpine
+        image: postgres:15-alpine
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: keg_tests

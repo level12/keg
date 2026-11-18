@@ -47,8 +47,7 @@ def pytest_stable(session: nox.Session):
     requirements = [
         requirement
         for requirement in Path('stable-requirements.txt').read_text().splitlines()
-        if requirement
-        and not requirement.lower().startswith(('click', 'pyodbc', 'sqlalchemy-pyodbc-mssql'))
+        if requirement and not requirement.lower().startswith(('click', 'sqlalchemy-pyodbc-mssql'))
     ]
     session.install('.', *requirements)
     pytest_run(session, '-W', 'ignore::DeprecationWarning')

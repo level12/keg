@@ -22,7 +22,7 @@ services:
         ACCEPT_EULA: Y
         MSSQL_SA_PASSWORD: "Password12!"
   keg-pg:
-      image: postgres:13-alpine
+      image: postgres:15-alpine
       container_name: keg-pg
       ports:
         - '${KEG_LIB_POSTGRES_IP:-127.0.0.1}:${KEG_LIB_POSTGRES_PORT:-54321}:5432'
