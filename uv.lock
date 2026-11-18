@@ -810,6 +810,7 @@ dev = [
     { name = "twine" },
 ]
 docs = [
+    { name = "flask-webtest" },
     { name = "pytz" },
     { name = "sphinx", version = "9.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "sphinx", version = "9.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
@@ -883,6 +884,7 @@ dev = [
     { name = "twine" },
 ]
 docs = [
+    { name = "flask-webtest" },
     { name = "pytz" },
     { name = "sphinx" },
 ]

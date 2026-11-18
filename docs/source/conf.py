@@ -13,7 +13,6 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import configparser
 import datetime as dt
 
 import keg
@@ -22,21 +21,13 @@ import keg
 # -- Project information -----------------------------------------------------
 
 project = 'Keg'
-copyright = f'{dt.datetime.utcnow().year}, Level 12'
+copyright = f'{dt.datetime.now(dt.UTC).year}, Level 12'
 author = 'Level 12'
 
-cfg = configparser.SafeConfigParser()
-cfg.read('../../setup.cfg')
 master_doc = 'index'
 
-tag = cfg.get('egg_info', 'tag_build')
-
-html_context = {
-    'prerelease': bool(tag),  # True if tag is not the empty string
-}
-
 # The full version, including alpha/beta/rc tags.
-release = keg.VERSION + tag
+release = keg.VERSION
 
 # -- General configuration ---------------------------------------------------
 
@@ -77,8 +68,3 @@ html_theme_options = {
     },
     'show_powered_by': True,
 }
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']

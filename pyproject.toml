@@ -100,6 +100,7 @@ build = [
 ]
 # Used by nox
 docs = [
+    'flask-webtest',
     'pytz',
     'sphinx',
 ]
