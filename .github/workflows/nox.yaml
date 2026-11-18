@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        session: [audit, prek, build, docs, i18n, pytest_lowest, pytest_stable]
+        session: [audit, prek, build, docs, i18n, pytest_stable]
 
     steps:
       - uses: level12/coppy/gh-actions/nox-run@main

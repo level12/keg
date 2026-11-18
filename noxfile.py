@@ -9,17 +9,6 @@ is_circleci = 'CIRCLECI' in environ
 
 nox.options.default_venv_backend = 'uv'
 
-test_dependencies = (
-    'flask-webtest',
-    'flask-wtf',
-    'pytest',
-    'pytest-cov',
-    'python-dotenv',
-    'psycopg[binary]',
-    'psycopg2-binary',
-    'mock',
-)
-
 
 @nox.session(python=['3.12', '3.13', '3.14'])
 def pytest(session: nox.Session):
@@ -28,29 +17,14 @@ def pytest(session: nox.Session):
 
 
 @nox.session(python='3.12')
-def pytest_lowest(session: nox.Session):
-    session.install(
-        'flask<2',
-        'sqlalchemy<2',
-        'markupsafe~=2.0.0',
-        'jinja2<3.1',
-        'itsdangerous<2',
-        'werkzeug<2.1',
-        '.',
-        *test_dependencies,
-    )
-    pytest_run(session, '-W', 'ignore::DeprecationWarning')
-
-
-@nox.session(python='3.12')
 def pytest_stable(session: nox.Session):
     requirements = [
         requirement
         for requirement in Path('stable-requirements.txt').read_text().splitlines()
-        if requirement and not requirement.lower().startswith(('click', 'sqlalchemy-pyodbc-mssql'))
+        if requirement and not requirement.lower().startswith('sqlalchemy-pyodbc-mssql')
     ]
     session.install('.', *requirements)
-    pytest_run(session, '-W', 'ignore::DeprecationWarning')
+    pytest_run(session)
 
 
 @nox.session(python='3.12')

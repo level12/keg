@@ -11,6 +11,8 @@ Unreleased
 - test PostgreSQL using supported server releases starting with PostgreSQL 15
 - exercise the Microsoft SQL Server dialect against SQL Server 2022 in CI
 - remove the stale direct six pin from stable dependency testing
+- drop obsolete SQLAlchemy 1.4 testing and refresh the warning-clean stable
+  dependency snapshot
 
 
 0.11.2 released 2026-09-02
