@@ -11,7 +11,7 @@ description = 'A web framework built on Flask & SQLAlchemy. Somewhere North of F
 authors = [
     {name = 'Randy Syring', email = 'randy.syring@level12.io'},
 ]
-requires-python = '>=3.10'
+requires-python = '>=3.12'
 dynamic = ['version']
 readme = 'readme.rst'
 license = 'BSD-3-Clause'
@@ -22,8 +22,6 @@ classifiers = [
     'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
     'Programming Language :: Python :: 3.14',
@@ -59,6 +57,8 @@ tests = [
 ]
 i18n = [
     'morphi>=0.2.0',
+    # Morphi releases before its Python 3.12 migration import distutils from setuptools.
+    'setuptools',
 ]
 
 

@@ -146,5 +146,5 @@ def _is_socket(path):
 class JSONFormatter(jsonlogger.JsonFormatter):
     def process_log_record(self, log_record):
         # Log processing providers like logzio often auto-recognize a field labeled "timestamp".
-        log_record['timestamp'] = dt.datetime.now(dt.timezone.utc).isoformat()
+        log_record['timestamp'] = dt.datetime.now(dt.UTC).isoformat()
         return log_record

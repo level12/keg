@@ -13,7 +13,7 @@ gh_repo: keg
 project_name: Keg
 py_module: keg
 python_version: '3.14'
-python_version_min: '3.10'
+python_version_min: '3.12'
 script_name: ''
 use_circleci: false
 use_codecov: true

@@ -21,13 +21,13 @@ test_dependencies = (
 )
 
 
-@nox.session(python=['3.10', '3.11', '3.12', '3.13', '3.14'])
+@nox.session(python=['3.12', '3.13', '3.14'])
 def pytest(session: nox.Session):
     uv_sync(session, 'pytest')
     pytest_run(session)
 
 
-@nox.session(python='3.10')
+@nox.session(python='3.12')
 def pytest_lowest(session: nox.Session):
     session.install(
         'flask<2',
@@ -42,7 +42,7 @@ def pytest_lowest(session: nox.Session):
     pytest_run(session, '-W', 'ignore::DeprecationWarning')
 
 
-@nox.session(python='3.10')
+@nox.session(python='3.12')
 def pytest_stable(session: nox.Session):
     requirements = [
         requirement
@@ -54,13 +54,13 @@ def pytest_stable(session: nox.Session):
     pytest_run(session, '-W', 'ignore::DeprecationWarning')
 
 
-@nox.session(python='3.10')
+@nox.session(python='3.12')
 def pytest_i18n(session: nox.Session):
     uv_sync(session, 'pytest', extra='i18n')
     pytest_run(session)
 
 
-@nox.session(python='3.10')
+@nox.session(python='3.12')
 def i18n(session: nox.Session):
     uv_sync(session, 'pytest', project=True, extra='i18n')
     session.run('python', 'src/keg_apps/cli.py', 'verify-translations')
