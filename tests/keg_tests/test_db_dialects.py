@@ -33,7 +33,7 @@ class DialectExam:
         return current_app.db_manager.bind_dialect(cls.bind_name)
 
     def engine(self):
-        return db.get_engine(current_app, self.bind_name)
+        return db.engines[self.bind_name]
 
     def obj_names(self):
         with self.engine().begin() as conn:

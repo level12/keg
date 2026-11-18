@@ -159,11 +159,6 @@ def cleanup_app_contexts():
         else:
             break
 
-    # support older flask as well
-    if flask.current_app and getattr(flask, '_app_ctx_stack'):
-        while flask._app_ctx_stack.pop():
-            pass
-
 
 class CLIBase:
     """Test class base for testing Keg click commands.

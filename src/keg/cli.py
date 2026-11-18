@@ -1,11 +1,12 @@
 from collections import defaultdict
 from contextlib import contextmanager
-from itertools import chain
+from importlib import metadata
 import urllib
 
 import click
 import flask
 import flask.cli
+from flask.helpers import get_load_dotenv
 
 from keg import current_app
 from keg.extensions import gettext as _
@@ -15,13 +16,6 @@ try:
     import dotenv
 except ImportError:
     dotenv = None
-
-try:
-    from flask.helpers import get_load_dotenv
-except ImportError:
-
-    def get_load_dotenv(default=False):
-        return False
 
 
 class KegAppGroup(flask.cli.AppGroup):
@@ -38,37 +32,9 @@ class KegAppGroup(flask.cli.AppGroup):
     def _load_plugin_commands(self):
         if self._loaded_plugin_commands:
             return
-        entry_point_iterables = []
-
-        # older Flask
-        try:
-            import pkg_resources
-
-            entry_point_iterables.extend(
-                [
-                    pkg_resources.iter_entry_points('flask.commands'),
-                    pkg_resources.iter_entry_points('keg.commands'),
-                ]
-            )
-        except ImportError:
-            return
-
-        # newer Flask
-        try:
-            # uses importlib, but python has some API variations. Let flask handle that.
-            from flask.cli import metadata
-
-            entry_point_iterables.extend(
-                [
-                    metadata.entry_points(group='flask.commands'),
-                    metadata.entry_points(group='keg.commands'),
-                ]
-            )
-        except ImportError:
-            pass
-
-        for ep in chain.from_iterable(entry_point_iterables):
-            self.add_command(ep.load(), ep.name)
+        for group in ('flask.commands', 'keg.commands'):
+            for entry_point in metadata.entry_points(group=group):
+                self.add_command(entry_point.load(), entry_point.name)
         self._loaded_plugin_commands = True
 
     def _load_app(self, ctx):
@@ -290,12 +256,8 @@ class CLILoader:
             invoke_without_command=True,
         )
 
-    def create_app(self, script_info=False):
-        """Instantiate our app, sending CLI option values through as needed.
-
-        `script_info:` required for Flask 1.X create_app signature, but not valid in Flask 2.1.
-        So keep it as an arg, but don't use it to get the object.  See #163.
-        """
+    def create_app(self):
+        """Instantiate our app, sending CLI option values through as needed."""
         script_info = click.get_current_context().obj
         init_kwargs = self.option_processor(script_info.data)
         return self.appcls().init(**init_kwargs)

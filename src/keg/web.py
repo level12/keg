@@ -6,12 +6,6 @@ from blazeutils.strings import case_cw2dash, case_cw2us
 import flask
 from flask import current_app, request
 from flask.views import MethodView, http_method_funcs
-
-
-try:
-    from flask.views import MethodViewType
-except ImportError:
-    MethodViewType = None
 from jinja2 import TemplateNotFound
 from werkzeug.datastructures import MultiDict
 
@@ -92,22 +86,7 @@ def _call_with_expected_args(view, calling_args, method, method_is_bound=True):
     return method(*args, **kwargs)
 
 
-class _OldViewMeta(MethodViewType or object):
-    def __init__(cls, name, bases, d):
-        MethodViewType.__init__(cls, name, bases, d)
-
-        # Assuming child views will always have a blueprint OR they are intended to be used like
-        # abstract classes and will never be routed to directly. Apps/libs will need to call
-        # assign_blueprint directly if a blueprint is not set in the view class definition, but
-        # the view is intended to receive routes.
-        if cls.blueprint is not None:
-            cls.assign_blueprint(cls.blueprint)
-
-
-_ViewMeta = _OldViewMeta if MethodViewType is not None else type
-
-
-class BaseView(MethodView, metaclass=_ViewMeta):
+class BaseView(MethodView):
     """
     Base class for all Keg views to inherit from. `BaseView` automatically calculates and installs
     routing, templating, and responding methods for HTTP verb named functions.
@@ -126,12 +105,13 @@ class BaseView(MethodView, metaclass=_ViewMeta):
     expected_qs_args = []
 
     def __init_subclass__(cls, **kwargs):
-        """Flask before 2.2.0 used a metaclass to perform view setup, but this
-        changed to using `init_subclass`. If the old way is enabled, no need to
-        do anything but call the super here."""
         super().__init_subclass__(**kwargs)
 
-        if MethodViewType is None and cls.blueprint is not None:
+        # Assuming child views will always have a blueprint OR they are intended to be used like
+        # abstract classes and will never be routed to directly. Apps/libs will need to call
+        # assign_blueprint directly if a blueprint is not set in the view class definition, but
+        # the view is intended to receive routes.
+        if cls.blueprint is not None:
             cls.assign_blueprint(cls.blueprint)
 
     def __init__(self, responding_method=None):

@@ -56,10 +56,7 @@ class TestDB2:
         # Make sure we don't get an error initializing the app when the SQLALCHEMY_BINDS config
         # option is None
         app = DB2App.testing_prep()
-        value = app.config.get('SQLALCHEMY_BINDS')
-        # flask-sqlalchemy < 3.0: None
-        # flask-sqlalchemy 3.0+: {}
-        assert value is None or value == {}
+        assert app.config.get('SQLALCHEMY_BINDS') == {}
 
 
 class TestDatabaseManager:

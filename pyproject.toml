@@ -31,8 +31,8 @@ dependencies = [
     'BlazeUtils',
     'blinker',
     'Click>=8.2',
-    'Flask',
-    'Flask-SQLAlchemy',
+    'Flask>=3.0',
+    'Flask-SQLAlchemy>=3.0',
     'python-json-logger',
     'sqlalchemy',
 ]

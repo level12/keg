@@ -60,16 +60,6 @@ class Keg(flask.Flask):
 
         flask.Flask.__init__(self, import_name, *args, **kwargs)
 
-    def make_config(self, instance_relative=False):
-        """
-        Needed for Flask <= 0.10.x so we can set the configuration class
-        being used.  Once 0.11 comes out, Flask supports setting the config_class on the app.
-        """
-        root_path = self.root_path
-        if instance_relative:
-            root_path = self.instance_path
-        return self.config_class(root_path, self.default_config)
-
     def init(self, config_profile=None, use_test_profile=False, config=None):
         if self._init_ran:
             raise KegAppError(_('init() already called on this instance'))

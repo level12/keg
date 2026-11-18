@@ -1,26 +1,15 @@
-# flask.globals.request_ctx is only available in Flask >= 2.2.0
-try:
-    from flask.globals import request_ctx
-except ImportError:
-    from flask.globals import _request_ctx_stack
-
-    request_ctx = None
+from flask.globals import request_ctx
 
 from keg.extensions import lazy_gettext as _
 
 
-def _get_bc_request_context():
-    """Flask 2.2 changed the method of fetching the request context
-    from globals. Flask 2.3 will remove the old way of doing it.
-    Support both here."""
-    if request_ctx is None:
-        return _request_ctx_stack.top
+def _get_request_context():
     return request_ctx
 
 
 def _keg_default_template_ctx_processor():
     """Default template context processor.  Injects `assets`."""
-    reqctx = _get_bc_request_context()
+    reqctx = _get_request_context()
     rv = {}
     if reqctx:
         rv['assets'] = reqctx.assets
@@ -67,7 +56,7 @@ class AssetsExtension(Extension):
 
     def _include_support(self, template_name, caller):
         """Helper callback."""
-        ctx = _get_bc_request_context()
+        ctx = _get_request_context()
         ctx.assets.load_related(template_name)
 
         # have to return empty string to avoid exception about None not being iterable.
@@ -89,5 +78,5 @@ class AssetsExtension(Extension):
 
     def _content_support(self, asset_type, caller):
         """Helper callback."""
-        ctx = _get_bc_request_context()
+        ctx = _get_request_context()
         return ctx.assets.combine_content(asset_type)
