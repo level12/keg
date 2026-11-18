@@ -81,7 +81,9 @@ pytest = [
     'python-dotenv',
     'psycopg[binary]',
     'psycopg2-binary',
+    'pyodbc',
     'mock',
+    'sqlalchemy_pyodbc_mssql',
 ]
 # Used by nox
 prek = [

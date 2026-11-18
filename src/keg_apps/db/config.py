@@ -26,10 +26,10 @@ class TestProfile:
         'postgres': 'postgresql://postgres@127.0.0.1:54321/postgres',
         'sqlite2': 'sqlite:///',
     }
-    # The legacy MSSQL dialect has no wheels for current Python versions, so exercise it only when
-    # a developer has explicitly installed the optional test dependencies.
+    # Keep this conditional so the example app remains usable when only Keg's runtime
+    # dependencies are installed. The pytest dependency group installs the dialect in CI.
     if find_spec('sqlalchemy_pyodbc_mssql'):
         SQLALCHEMY_BINDS['mssql'] = (
             'mssql+pyodbc_mssql://sa:Password12!@127.0.0.1:14331/tempdb'
-            '?driver=ODBC+Driver+17+for+SQL+Server'
+            '?driver=ODBC+Driver+18+for+SQL+Server&Encrypt=yes&TrustServerCertificate=yes'
         )

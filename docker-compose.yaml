@@ -14,7 +14,7 @@
 version: '2.1'
 services:
   keg-mssql:
-      image: mcr.microsoft.com/mssql/server
+      image: mcr.microsoft.com/mssql/server:2022-latest
       container_name: keg-mssql
       ports:
         - '${KEG_LIB_MSSQL_IP:-127.0.0.1}:${KEG_LIB_MSSQL_PORT:-14331}:1433'

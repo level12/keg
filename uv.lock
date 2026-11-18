@@ -801,10 +801,12 @@ dev = [
     { name = "prek" },
     { name = "psycopg", extra = ["binary"] },
     { name = "psycopg2-binary" },
+    { name = "pyodbc" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "python-dotenv" },
     { name = "ruff" },
+    { name = "sqlalchemy-pyodbc-mssql" },
     { name = "twine" },
 ]
 docs = [
@@ -824,9 +826,11 @@ pytest = [
     { name = "mock" },
     { name = "psycopg", extra = ["binary"] },
     { name = "psycopg2-binary" },
+    { name = "pyodbc" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "python-dotenv" },
+    { name = "sqlalchemy-pyodbc-mssql" },
 ]
 
 [package.metadata]
@@ -870,10 +874,12 @@ dev = [
     { name = "prek" },
     { name = "psycopg", extras = ["binary"] },
     { name = "psycopg2-binary" },
+    { name = "pyodbc" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "python-dotenv" },
     { name = "ruff", specifier = "==0.16.2" },
+    { name = "sqlalchemy-pyodbc-mssql" },
     { name = "twine" },
 ]
 docs = [
@@ -888,9 +894,11 @@ pytest = [
     { name = "mock" },
     { name = "psycopg", extras = ["binary"] },
     { name = "psycopg2-binary" },
+    { name = "pyodbc" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "python-dotenv" },
+    { name = "sqlalchemy-pyodbc-mssql" },
 ]
 
 [[package]]

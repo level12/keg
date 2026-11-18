@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+- modernize packaging and development tooling with Coppy, uv, Nox, prek, and
+  GitHub Actions
+- support and test Python 3.12 through 3.14
+- use public package indexes and current pyodbc releases for testing
+- test PostgreSQL using supported server releases starting with PostgreSQL 15
+- exercise the Microsoft SQL Server dialect against SQL Server 2022 in CI
+- remove the stale direct six pin from stable dependency testing
+
+
 0.11.2 released 2026-09-02
 --------------------------
 
