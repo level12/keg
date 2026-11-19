@@ -11,7 +11,7 @@ Unreleased
 
 - modernize packaging and development tooling with Coppy, uv, Nox, prek, and
   GitHub Actions
-- support and test Python 3.12 through 3.14
+- support and test Python 3.12 through 3.15
 - use public package indexes and current pyodbc releases for testing
 - test PostgreSQL using supported server releases starting with PostgreSQL 15
 - exercise the Microsoft SQL Server dialect against SQL Server 2022 in CI
