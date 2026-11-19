@@ -11,4 +11,3 @@ Documentation
     :undoc-members:
 
 .. autofunction:: keg.web.redirect
-

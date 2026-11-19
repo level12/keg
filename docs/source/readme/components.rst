@@ -44,4 +44,3 @@ logical blocks, each having their own entities, blueprints, templates, tests, et
   * Paths may also be supplied to the constructor
 
     * e.g. ``__component__ = KegComponent('blog', db_visit_modules=('.somewhere.else', ))``
-

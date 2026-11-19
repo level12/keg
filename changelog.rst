@@ -1,6 +1,27 @@
 Changelog
 =========
 
+0.20261119.1 released 2026-11-19
+--------------------------------
+
+- **BREAKING CHANGES**
+
+  - remove Keg's legacy ``db.get_engine(app, bind=...)`` override; use
+    Flask-SQLAlchemy's ``db.get_engine(bind_key=...)`` API instead
+
+- modernize packaging and development tooling with Coppy, uv, Nox, prek, and
+  GitHub Actions
+- support and test Python 3.12 through 3.15
+- use public package indexes and current pyodbc releases for testing
+- test PostgreSQL using supported server releases starting with PostgreSQL 15
+- exercise the Microsoft SQL Server dialect against SQL Server 2022 in CI
+- remove the stale direct six pin from stable dependency testing
+- drop obsolete SQLAlchemy 1.4 testing and refresh the warning-clean stable
+  dependency snapshot
+- require Flask and Flask-SQLAlchemy 3.0 or newer and remove compatibility
+  paths for older releases
+
+
 0.11.2 released 2026-09-02
 --------------------------
 

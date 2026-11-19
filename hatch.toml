@@ -1,0 +1,13 @@
+## Build
+[build]
+dev-mode-dirs = ['src']
+
+
+[build.targets.wheel]
+packages = ['src/keg', 'src/keg_apps']
+
+
+## Version
+[version]
+source = 'regex'
+path = 'src/keg/version.py'

@@ -1,0 +1,119 @@
+import flask_sqlalchemy as fsa
+import sqlalchemy as sa
+import sqlalchemy.event as sa_event
+
+from keg.signals import (
+    db_before_import,
+    db_clear_post,
+    db_clear_pre,
+    db_init_post,
+    db_init_pre,
+    testing_run_start,
+)
+from keg.utils import visit_modules
+
+
+class KegSQLAlchemy(fsa.SQLAlchemy):
+    def _apply_driver_defaults(self, options, app):
+        """Override some driver specific settings"""
+        super()._apply_driver_defaults(options, app)
+
+        # Turn on SA pessimistic disconnect handling by default:
+        # http://docs.sqlalchemy.org/en/latest/core/pooling.html#disconnect-handling-pessimistic
+        options.setdefault('pool_pre_ping', True)
+
+        # While this isn't an engine options change, it is in the domain of db engine
+        # setup and so belongs here.
+        if app.config.get('KEG_SQLITE_ENABLE_FOREIGN_KEYS'):
+            sa_event.listens_for(sa.engine.Engine, 'connect')(self._set_sqlite_pragma)
+
+    def get_engines(self, app):
+        with app.app_context():
+            return list(self.engines.items())
+
+    def _set_sqlite_pragma(self, connection, conn_record):
+        # Sets a pragma to tell sqlite to not ignore FK constraints.
+        from sqlite3 import Connection as SQLite3Connection
+
+        if isinstance(connection, SQLite3Connection):
+            cursor = connection.cursor()
+            cursor.execute('PRAGMA foreign_keys=ON;')
+            cursor.close()
+
+
+db = KegSQLAlchemy()
+
+# put this import after the above db assignment to avoid circular reference issues
+from .dialect_ops import DialectOperations  # noqa
+
+
+class DatabaseManager:
+    """
+    A per-app-instance utility class that managers all common operations for a Keg app.
+
+    Binds & Dialects
+    ----------------
+
+    Flask SQLAlchemy handles multiple DB connections per application through the use of "binds."
+    When an application wants to communicate events or initiate activites, this manager will
+    will handle distributing those events and activities to all database connections bound
+    to the application.
+
+    Furthermore, this manager delegates to DialectOperations instances to run the events and
+    activities in ways that are specific to the type of RDBMS being used (when needed).
+    """
+
+    def __init__(self, app):
+        self.app = app
+        self.dialect_opts = app.config['KEG_DB_DIALECT_OPTIONS']
+
+        self.init_app()
+        self.init_events()
+
+    def init_app(self):
+        db.init_app(self.app)
+        db_before_import.send(self.app)
+        visit_modules(self.app.db_visit_modules, self.app.import_name)
+
+    def init_events(self):
+        testing_run_start.connect(self.on_testing_start, sender=self.app)
+
+    def bind_dialect(self, bind_name):
+        with self.app.app_context():
+            engine = db.engines[bind_name]
+        return DialectOperations.create_for(engine, bind_name, self.dialect_opts)
+
+    def all_bind_dialects(self):
+        """
+        For each database connection (bind) in this application, yield a DialectOperations
+        instance corresponding to the type of RDBMS the bind is connecting to.
+        """
+        for bind_name, engine in db.get_engines(self.app):
+            yield DialectOperations.create_for(engine, bind_name, self.dialect_opts)
+
+    def on_testing_start(self, app):
+        self.db_init_with_clear()
+
+    def create_all(self):
+        for dialect in self.all_bind_dialects():
+            dialect.create_all()
+
+    def drop_all(self):
+        db.session.remove()
+        for dialect in self.all_bind_dialects():
+            dialect.drop_all()
+
+    # The methods that follow will trigger application events.
+    def db_init_with_clear(self):
+        self.db_clear()
+        self.db_init()
+
+    def db_init(self):
+        db_init_pre.send(self.app)
+        self.create_all()
+        db_init_post.send(self.app)
+
+    def db_clear(self):
+        db_clear_pre.send(self.app)
+        self.drop_all()
+        db_clear_post.send(self.app)
